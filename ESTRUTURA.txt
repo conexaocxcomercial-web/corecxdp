@@ -1,0 +1,68 @@
+core.cx modulo DP — estrutura correta do repositorio
+
+Na raiz do GitHub devem aparecer 4 PASTAS e 8 ARQUIVOS:
+
+  app/                  (pasta)
+  componentes/          (pasta)
+  lib/                  (pasta)
+  public/               (pasta)
+  .env.example
+  .gitignore
+  ESTRUTURA.txt
+  README.md
+  jsconfig.json
+  next.config.mjs
+  package.json
+  postcss.config.mjs
+  tailwind.config.js
+
+Se voce estiver vendo Botao.jsx, page.js ou layout.js soltos na raiz,
+ou nomes como "page (1).js", a estrutura se perdeu no upload. Apague tudo
+e suba de novo arrastando as PASTAS, nao os arquivos de dentro delas.
+
+Arvore completa:
+
+app/
+  layout.js
+  page.js
+  globals.css
+  icon.svg
+  not-found.js
+  acoes.js
+  (sistema)/
+    layout.js
+    error.js
+    painel/page.js
+    indicadores/page.js
+    colaboradores/page.js
+    colaboradores/[matricula]/page.js
+    ocorrencias/page.js
+    atestados/page.js
+    movimentacoes/page.js
+
+componentes/
+  Botao.jsx
+  Campos.jsx
+  Estrutura.jsx
+  Filtros.jsx
+  Graficos.jsx
+  Icones.jsx
+  Marca.jsx
+  Navegacao.jsx
+  PainelDeRegistro.jsx
+  Sinais.jsx
+  Tema.jsx
+
+lib/
+  contexto.js
+  formato.js
+  indicadores.js
+  planilha.js
+  registros.js
+
+public/
+  marca/
+    conexao-cx-branco.png
+    conexao-cx-preto.png
+    cx-rh-estrategico-branco.png
+    cx-rh-estrategico-preto.png
