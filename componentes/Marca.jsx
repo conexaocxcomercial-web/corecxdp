@@ -1,35 +1,17 @@
-/** Marca do produto: core.cx, e o módulo em que a pessoa está. */
+/**
+ * Marca em texto puro: core em preto, .cx no violeta da casa.
+ * No tema escuro o "core" acompanha a cor do texto.
+ */
 export function Marca({ tamanho = 'normal' }) {
-  const texto = tamanho === 'pequeno' ? 'text-[16px]' : 'text-[18px]';
+  const corpo = tamanho === 'pequeno' ? 'text-[16px]' : 'text-[18px]';
+  const modulo = tamanho === 'pequeno' ? 'text-[11.5px]' : 'text-[12.5px]';
 
   return (
-    <span className="inline-flex items-center gap-2">
-      <span className={`marcante font-bold text-texto ${texto}`}>core.cx</span>
-      <span className="rounded-md bg-marca px-1.5 py-[3px] text-[10px] font-bold leading-none text-white">
-        dp
+    <span className="marcante inline-flex items-baseline gap-1.5">
+      <span className={`font-bold text-texto ${corpo}`}>
+        core<span className="text-marca">.cx</span>
       </span>
+      <span className={`font-medium text-texto-3 ${modulo}`}>módulo dp</span>
     </span>
-  );
-}
-
-/** Assinatura da casa. Cada tema mostra a versão que enxerga melhor. */
-export function AssinaturaCX({ className = 'h-[20px] w-auto' }) {
-  return (
-    <>
-      <img
-        src="/marca/cx-rh-estrategico-preto.png"
-        alt="cx RH Estratégico"
-        width={1709}
-        height={372}
-        className={`so-no-claro ${className}`}
-      />
-      <img
-        src="/marca/cx-rh-estrategico-branco.png"
-        alt="cx RH Estratégico"
-        width={1709}
-        height={372}
-        className={`so-no-escuro ${className}`}
-      />
-    </>
   );
 }

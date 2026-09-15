@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { AssinaturaCX, Marca } from '@/componentes/Marca';
+import { Marca } from '@/componentes/Marca';
 import { BotaoDeTema } from '@/componentes/Tema';
 import {
   IconeAtestados,
@@ -87,19 +87,18 @@ export function Navegacao({ empresa }) {
           ))}
         </nav>
 
-        <div className="space-y-4 border-t border-borda p-3">
+        <div className="border-t border-borda p-3">
           <BotaoDeTema />
-          <div className="px-3 pb-2">
-            <AssinaturaCX className="h-[18px] w-auto opacity-60" />
-          </div>
+          <p className="px-3 pb-1 pt-3 text-[11px] leading-snug text-texto-3">
+            Uma solução cx de RH Estratégico
+          </p>
         </div>
       </aside>
 
       {/* ------------------------------------------- topo no celular */}
       <header className="sticky top-0 z-30 flex items-center justify-between gap-3 border-b border-borda bg-superficie/90 px-4 py-3 backdrop-blur lg:hidden">
-        <Link href="/painel" className="flex min-w-0 items-center gap-2.5">
+        <Link href="/painel" className="min-w-0">
           <Marca tamanho="pequeno" />
-          <span className="truncate text-[12px] text-texto-3">{empresa}</span>
         </Link>
         <BotaoDeTema compacto />
       </header>
@@ -170,9 +169,9 @@ export function Navegacao({ empresa }) {
               ))}
             </div>
 
-            <div className="border-t border-borda pt-3">
-              <AssinaturaCX className="h-[16px] w-auto opacity-50" />
-            </div>
+            <p className="border-t border-borda pt-3 text-[11px] text-texto-3">
+              Uma solução cx de RH Estratégico
+            </p>
           </div>
         </div>
       ) : null}

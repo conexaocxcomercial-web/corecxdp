@@ -44,7 +44,7 @@ export function Metricas({ children }) {
   return <div className="mb-5 grid grid-cols-2 gap-3 lg:grid-cols-4">{children}</div>;
 }
 
-export function Metrica({ rotulo, valor, unidade, apoio, cor, href }) {
+export function Metrica({ rotulo, valor, unidade, apoio, cor, href, grafico }) {
   const conteudo = (
     <>
       <div className="flex items-center gap-2">
@@ -62,6 +62,7 @@ export function Metrica({ rotulo, valor, unidade, apoio, cor, href }) {
         {unidade ? <span className="ml-0.5 text-[17px] font-bold">{unidade}</span> : null}
       </p>
       {apoio ? <p className="mt-2 text-[12px] leading-snug text-texto-3">{apoio}</p> : null}
+      {grafico}
     </>
   );
 

@@ -203,8 +203,16 @@ lib/
 ## Identidade e interface
 
 Paleta da conexão: grafite `#1E1E1E`, papel `#F4F4F4`, violeta `#7371FF`, lima `#BEF533`,
-lavanda `#DBBFFF` e rosa `#FF43C0`. Tipografia em Helvetica, uma família só. Os logos estão em
-`public/marca/`, nas versões positiva e negativa.
+lavanda `#DBBFFF` e rosa `#FF43C0`. Tipografia em Helvetica, uma família só.
+
+A marca é tipográfica, sem imagem: `core` na cor do texto, `.cx` no violeta, e `módulo dp` ao
+lado em tom secundário. Os PNG continuam guardados em `public/marca/` caso um dia você queira
+usá-los em outro lugar.
+
+**Gráficos.** São SVG e HTML escritos à mão, sem biblioteca externa. O desenho vai no SVG com
+escala livre; grade, eixo e rótulos ficam em HTML por cima. Assim o gráfico estica em qualquer
+largura sem deformar o texto, e funciona igual no celular. O eixo escolhe sozinho um passo
+redondo, com o topo sempre em quatro passos, para as linhas caírem em números inteiros.
 
 **Claro e escuro.** As cores são tokens semânticos (`fundo`, `superficie`, `borda`, `texto`,
 `acao`) declarados como variáveis CSS em `app/globals.css`. Trocar de tema troca os valores; as

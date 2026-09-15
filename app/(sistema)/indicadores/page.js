@@ -18,13 +18,15 @@ import {
 import { Aviso, Vazio } from '@/componentes/Sinais';
 import { BotaoLink } from '@/componentes/Botao';
 import {
-  GraficoDeColunas,
-  GraficoDeEntradasESaidas,
-  GraficoDoQuadro,
+  GraficoDeArea,
+  GraficoDeBarras,
   ListaProporcional,
+  Rosca,
 } from '@/componentes/Graficos';
 
 export const metadata = { title: 'Indicadores' };
+
+const PALETA = ['#7371FF', '#BEF533', '#FF43C0', '#DBBFFF', '#1E1E1E', '#8A8A8A', '#4B49E8'];
 
 const PERIODOS = [
   { meses: 3, rotulo: '3 meses' },
@@ -172,11 +174,11 @@ export default async function Indicadores({ searchParams }) {
             Turnover
           </CabecalhoDeCartao>
           <div className="p-4 sm:p-5">
-            <GraficoDeColunas
+            <GraficoDeBarras
               serie={serie}
-              campo="turnover"
+              casas={1}
               sufixo="%"
-              cor="#FF43C0"
+              series={[{ campo: 'turnover', nome: 'Turnover', cor: '#FF43C0' }]}
               descricao="Turnover mês a mês, em percentual"
             />
           </div>
@@ -187,10 +189,10 @@ export default async function Indicadores({ searchParams }) {
             Absenteísmo
           </CabecalhoDeCartao>
           <div className="p-4 sm:p-5">
-            <GraficoDeColunas
+            <GraficoDeArea
               serie={serie}
               campo="absenteismo"
-              sufixo="%"
+              casas={1}
               cor="#7371FF"
               descricao="Absenteísmo mês a mês, em percentual"
             />
@@ -200,7 +202,12 @@ export default async function Indicadores({ searchParams }) {
         <Cartao>
           <CabecalhoDeCartao apoio="Pessoas ativas ao fim de cada mês">Quadro</CabecalhoDeCartao>
           <div className="p-4 sm:p-5">
-            <GraficoDoQuadro serie={serie} />
+            <GraficoDeArea
+              serie={serie}
+              campo="quadroFim"
+              cor="#BEF533"
+              descricao="Pessoas ativas ao fim de cada mês"
+            />
           </div>
         </Cartao>
 
@@ -209,7 +216,14 @@ export default async function Indicadores({ searchParams }) {
             Admissões e saídas
           </CabecalhoDeCartao>
           <div className="p-4 sm:p-5">
-            <GraficoDeEntradasESaidas serie={serie} />
+            <GraficoDeBarras
+              serie={serie}
+              series={[
+                { campo: 'admissoes', nome: 'Admissões', cor: '#BEF533' },
+                { campo: 'saidas', nome: 'Saídas', cor: '#FF43C0' },
+              ]}
+              descricao="Admissões e saídas por mês"
+            />
             {resumo.semRegistroDeSaida > 0 ? (
               <p className="mt-4 border-t border-borda pt-3.5 text-[12.5px] leading-relaxed text-texto-3">
                 {resumo.semRegistroDeSaida}{' '}
@@ -235,10 +249,9 @@ export default async function Indicadores({ searchParams }) {
         <Cartao>
           <CabecalhoDeCartao apoio="Dias de atestado lançados por mês">Atestados</CabecalhoDeCartao>
           <div className="p-4 sm:p-5">
-            <GraficoDeColunas
+            <GraficoDeBarras
               serie={serie}
-              campo="diasDeAtestado"
-              cor="#DBBFFF"
+              series={[{ campo: 'diasDeAtestado', nome: 'Dias de atestado', cor: '#DBBFFF' }]}
               descricao="Dias de atestado por mês"
             />
           </div>
@@ -284,7 +297,14 @@ export default async function Indicadores({ searchParams }) {
           <CabecalhoDeCartao apoio="Pessoas ativas por área">
             Distribuição do quadro
           </CabecalhoDeCartao>
-          <ListaProporcional itens={porArea} vazio="Nenhuma área informada." />
+          <Rosca
+            itens={porArea.map((item, indice) => ({
+              ...item,
+              cor: PALETA[indice % PALETA.length],
+            }))}
+            total={resumo.quadroAtual}
+            rotuloCentral="pessoas ativas"
+          />
         </Cartao>
 
         <Cartao>
