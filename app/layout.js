@@ -1,19 +1,4 @@
-import { Archivo, IBM_Plex_Mono } from 'next/font/google';
 import './globals.css';
-
-const sans = Archivo({
-  subsets: ['latin'],
-  axes: ['wdth'],
-  variable: '--fonte-sans',
-  display: 'swap',
-});
-
-const mono = IBM_Plex_Mono({
-  subsets: ['latin'],
-  weight: ['400', '500', '600'],
-  variable: '--fonte-mono',
-  display: 'swap',
-});
 
 export const metadata = {
   title: {
@@ -25,13 +10,13 @@ export const metadata = {
 };
 
 export const viewport = {
-  themeColor: '#16283C',
+  themeColor: '#1E1E1E',
 };
 
 export default function LayoutRaiz({ children }) {
   return (
-    <html lang="pt-BR" className={`${sans.variable} ${mono.variable}`}>
-      <body className="font-sans antialiased">{children}</body>
+    <html lang="pt-BR">
+      <body className="antialiased">{children}</body>
     </html>
   );
 }

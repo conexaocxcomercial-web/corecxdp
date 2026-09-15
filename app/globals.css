@@ -3,11 +3,13 @@
 @tailwind utilities;
 
 :root {
-  --papel: #e9edf0;
+  --grafite: #1e1e1e;
+  --papel: #f4f4f4;
   --folha: #ffffff;
-  --tinta: #16283c;
-  --linha: #d5dce2;
-  --carimbo: #5a2d9c;
+  --violeta: #7371ff;
+  --lima: #bef533;
+  --rosa: #ff43c0;
+  --linha: #dcdcdc;
 }
 
 html,
@@ -17,60 +19,57 @@ body {
 
 body {
   background: var(--papel);
-  color: var(--tinta);
+  color: var(--grafite);
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
 }
 
-/* Títulos usam o eixo de largura do Archivo: cara de impresso oficial. */
-.expandido {
-  font-variation-settings: 'wdth' 112;
-  letter-spacing: -0.012em;
+/* Títulos com o aperto de tracking da marca. */
+.marcante {
+  letter-spacing: -0.025em;
 }
 
+/* Helvetica já tem algarismos de largura fixa: as colunas de número
+   alinham sem precisar de uma segunda família. */
 .numero {
   font-variant-numeric: tabular-nums;
   font-feature-settings: 'tnum' 1;
 }
 
-/* Pauta do livro de registro, só na tela de entrada. */
-.pautado {
-  background-image: repeating-linear-gradient(
-    to bottom,
-    transparent 0 31px,
-    rgba(255, 255, 255, 0.05) 31px 32px
-  );
+.codigo {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
 }
 
 *:focus-visible {
-  outline: 2px solid var(--carimbo);
+  outline: 2px solid var(--violeta);
   outline-offset: 2px;
   border-radius: 2px;
 }
 
 .sobre-escuro *:focus-visible {
-  outline-color: #b79bf5;
+  outline-color: var(--lima);
 }
 
 input,
 select,
 textarea {
-  color: var(--tinta);
+  color: var(--grafite);
+  font-family: inherit;
 }
 
 input::placeholder,
 textarea::placeholder {
-  color: #9ba8b3;
+  color: #a3a3a3;
 }
 
-/* Some com o X nativo dos campos de busca. */
 input[type='search']::-webkit-search-cancel-button {
   appearance: none;
 }
 
 ::selection {
-  background: #ddd0f7;
-  color: var(--tinta);
+  background: var(--lavanda, #dbbfff);
+  color: var(--grafite);
 }
 
 @media (prefers-reduced-motion: reduce) {

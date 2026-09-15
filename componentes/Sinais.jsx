@@ -1,20 +1,24 @@
+/**
+ * Lima é o que está resolvido, rosa é o que pede ação, violeta é o que está
+ * em curso e cinza é o que já encerrou. A cor mora na barra; o texto fica
+ * em grafite, que lê bem em qualquer fundo.
+ */
 const CORES = {
-  Ativo: '#1C6B4C',
-  Inativo: '#8A97A3',
-  Afastado: '#9A5A0B',
-  Férias: '#2B6CB0',
-  Aprovado: '#1C6B4C',
-  Pendente: '#9A5A0B',
-  Rejeitado: '#9E2A2B',
-  Concluído: '#1C6B4C',
-  'Em andamento': '#2B6CB0',
-  Sim: '#1C6B4C',
-  Não: '#9E2A2B',
+  Ativo: '#BEF533',
+  Aprovado: '#BEF533',
+  Concluído: '#BEF533',
+  Sim: '#BEF533',
+  Pendente: '#FF43C0',
+  Não: '#FF43C0',
+  'Em andamento': '#7371FF',
+  Afastado: '#7371FF',
+  Férias: '#7371FF',
+  Rejeitado: '#1E1E1E',
+  Inativo: '#A3A3A3',
 };
 
-/** Barra de tinta na altura da linha: o status é lido como marginália, não como enfeite. */
 export function Status({ children, tamanho = 'normal' }) {
-  const cor = CORES[children] || '#6F7F8E';
+  const cor = CORES[children] || '#A3A3A3';
   const altura = tamanho === 'grande' ? 'h-4' : 'h-3.5';
 
   return (
@@ -24,9 +28,7 @@ export function Status({ children, tamanho = 'normal' }) {
         className={`${altura} w-[3px] shrink-0 rounded-full`}
         style={{ background: cor }}
       />
-      <span className="text-campo" style={{ color: cor }}>
-        {children}
-      </span>
+      <span className="text-campo text-grafite">{children}</span>
     </span>
   );
 }
@@ -34,8 +36,8 @@ export function Status({ children, tamanho = 'normal' }) {
 export function Vazio({ titulo, descricao, acao }) {
   return (
     <div className="px-6 py-14 text-center">
-      <p className="expandido text-[17px] font-semibold">{titulo}</p>
-      <p className="mx-auto mt-1.5 max-w-[46ch] text-campo leading-relaxed text-tinta-50">
+      <p className="marcante text-[17px] font-bold">{titulo}</p>
+      <p className="mx-auto mt-1.5 max-w-[46ch] text-campo leading-relaxed text-grafite-45">
         {descricao}
       </p>
       {acao ? <div className="mt-5 flex justify-center">{acao}</div> : null}
@@ -45,9 +47,9 @@ export function Vazio({ titulo, descricao, acao }) {
 
 export function Aviso({ titulo, children }) {
   return (
-    <div className="border-l-[3px] border-recusa bg-folha px-5 py-4">
-      <p className="text-[14px] font-semibold">{titulo}</p>
-      <div className="mt-1 max-w-[70ch] text-campo leading-relaxed text-tinta-70">{children}</div>
+    <div className="border-l-[3px] border-rosa bg-folha px-5 py-4">
+      <p className="text-[14px] font-bold">{titulo}</p>
+      <div className="mt-1 max-w-[70ch] text-campo leading-relaxed text-grafite-60">{children}</div>
     </div>
   );
 }

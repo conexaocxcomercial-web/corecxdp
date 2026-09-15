@@ -200,6 +200,23 @@ lib/
 
 ---
 
+## Identidade
+
+Paleta da conexão: grafite `#1E1E1E`, papel `#F4F4F4`, violeta `#7371FF`, lima `#BEF533`,
+lavanda `#DBBFFF` e rosa `#FF43C0`. Tipografia em Helvetica, uma família só, com o tracking
+apertado da marca nos títulos.
+
+Os marcadores de status seguem uma regra: lima é o que está resolvido, rosa é o que pede ação,
+violeta é o que está em curso, cinza é o que encerrou. A cor mora na barrinha ao lado do texto,
+nunca no texto, que fica sempre em grafite — assim o contraste se mantém legível.
+
+O violeta da marca não tem contraste suficiente para texto pequeno sobre branco, então links e
+botões usam `#4B49E8`, uma versão escurecida dele. O `#7371FF` fica onde é só cor: marcador da
+seção ativa, barras e chips.
+
+Os logos estão em `public/marca/`, nas versões positiva e negativa. A navegação mostra a marca do
+produto no topo e a assinatura cx RH Estratégico no pé.
+
 ## Decisões que valem conhecer
 
 **Datas.** A leitura pede número de série ao Google e converte aqui. Assim as datas não quebram

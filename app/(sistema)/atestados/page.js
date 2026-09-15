@@ -146,23 +146,23 @@ export default async function Atestados({ searchParams }) {
               {filtrados.map((item) => (
                 <Linha key={item.id}>
                   <Celula className="w-[108px]">
-                    <span className="numero font-mono text-[12.5px] text-tinta-70">
+                    <span className="numero codigo text-[12.5px] text-grafite-60">
                       {formatarData(item.inicio)}
                     </span>
                   </Celula>
                   <Celula className="w-[208px]">
                     <Link
                       href={`/colaboradores/${item.matricula}`}
-                      className="font-medium underline-offset-4 hover:text-carimbo hover:underline"
+                      className="font-medium underline-offset-4 hover:text-violeta-forte hover:underline"
                     >
                       {porMatricula.get(item.matricula)?.nome || item.matricula}
                     </Link>
                   </Celula>
                   <Celula className="w-[72px]">
-                    <span className="numero font-mono text-[12.5px]">{item.dias}</span>
+                    <span className="numero codigo text-[12.5px]">{item.dias}</span>
                   </Celula>
                   <Celula className="w-[92px]">
-                    <span className="numero font-mono text-[12.5px] text-tinta-70">
+                    <span className="numero codigo text-[12.5px] text-grafite-60">
                       {item.cid || '—'}
                     </span>
                   </Celula>
@@ -172,12 +172,12 @@ export default async function Atestados({ searchParams }) {
                         href={item.anexo}
                         target="_blank"
                         rel="noreferrer"
-                        className="text-carimbo underline-offset-4 hover:underline"
+                        className="text-violeta-forte underline-offset-4 hover:underline"
                       >
                         Abrir anexo
                       </a>
                     ) : (
-                      <span className="text-tinta-50">Sem anexo</span>
+                      <span className="text-grafite-45">Sem anexo</span>
                     )}
                   </Celula>
                   <Celula className="w-[188px]">
@@ -187,7 +187,7 @@ export default async function Atestados({ searchParams }) {
               ))}
             </Tabela>
 
-            <p className="border-t border-linha px-5 py-3 text-[12.5px] text-tinta-50">
+            <p className="border-t border-linha px-5 py-3 text-[12.5px] text-grafite-45">
               {filtrados.length} {plural(filtrados.length, 'atestado', 'atestados')} de{' '}
               {atestados.length} no livro.
             </p>

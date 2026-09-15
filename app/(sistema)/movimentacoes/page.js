@@ -131,20 +131,20 @@ export default async function Movimentacoes({ searchParams }) {
               {filtradas.map((item) => (
                 <Linha key={item.id}>
                   <Celula className="w-[116px]">
-                    <span className="numero font-mono text-[12.5px] text-tinta-70">
+                    <span className="numero codigo text-[12.5px] text-grafite-60">
                       {formatarData(item.efetiva)}
                     </span>
                   </Celula>
                   <Celula className="w-[204px]">
                     <Link
                       href={`/colaboradores/${item.matricula}`}
-                      className="font-medium underline-offset-4 hover:text-carimbo hover:underline"
+                      className="font-medium underline-offset-4 hover:text-violeta-forte hover:underline"
                     >
                       {porMatricula.get(item.matricula)?.nome || item.matricula}
                     </Link>
                   </Celula>
-                  <Celula className="w-[172px] text-tinta-70">{item.tipo}</Celula>
-                  <Celula className="text-tinta-70">{item.motivo || '—'}</Celula>
+                  <Celula className="w-[172px] text-grafite-60">{item.tipo}</Celula>
+                  <Celula className="text-grafite-60">{item.motivo || '—'}</Celula>
                   <Celula className="w-[196px]">
                     <Checklist item={item} />
                   </Celula>
@@ -152,7 +152,7 @@ export default async function Movimentacoes({ searchParams }) {
               ))}
             </Tabela>
 
-            <p className="border-t border-linha px-5 py-3 text-[12.5px] text-tinta-50">
+            <p className="border-t border-linha px-5 py-3 text-[12.5px] text-grafite-45">
               {filtradas.length} {plural(filtradas.length, 'movimentação', 'movimentações')} de{' '}
               {movimentacoes.length} no livro.
             </p>

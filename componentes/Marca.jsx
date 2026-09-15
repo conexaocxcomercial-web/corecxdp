@@ -1,69 +1,58 @@
+/**
+ * O sorriso da marca, redesenhado em vetor para escalar sem borrar e
+ * herdar a cor de onde estiver.
+ */
+export function Sorriso({ className = '' }) {
+  return (
+    <svg viewBox="0 0 120 84" aria-hidden="true" className={className}>
+      <circle cx="17" cy="17" r="13" fill="none" stroke="currentColor" strokeWidth="9" />
+      <path d="M17 8h12" stroke="currentColor" strokeWidth="9" strokeLinecap="butt" />
+      <path
+        d="M86 5 116 34M116 5 86 34"
+        stroke="currentColor"
+        strokeWidth="9"
+        strokeLinecap="butt"
+      />
+      <path
+        d="M6 42a56 56 0 0 0 108 0"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="9"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+/** Marca do produto: core.cx, e o módulo em que a pessoa está. */
 export function Marca({ tom = 'claro' }) {
-  const corTexto = tom === 'claro' ? 'text-folha' : 'text-tinta';
+  const corTexto = tom === 'claro' ? 'text-folha' : 'text-grafite';
+  const corChip = tom === 'claro' ? 'bg-lima text-grafite' : 'bg-violeta text-folha';
 
   return (
     <span className="inline-flex items-center gap-2">
-      <span className={`expandido text-[17px] font-semibold tracking-tight ${corTexto}`}>
-        core.cx
-      </span>
-      <span className="rounded-[3px] bg-carimbo px-1.5 py-[3px] text-[10px] font-semibold leading-none text-folha">
+      <span className={`marcante text-[18px] font-bold ${corTexto}`}>core.cx</span>
+      <span className={`rounded-[3px] px-1.5 py-[3px] text-[10px] font-bold leading-none ${corChip}`}>
         dp
       </span>
     </span>
   );
 }
 
-export function Carimbo({ pressionado = false, className = '' }) {
+/** Assinatura da casa, no pé da navegação. */
+export function AssinaturaCX({ tom = 'claro', className = '' }) {
+  const arquivo =
+    tom === 'claro'
+      ? '/marca/cx-rh-estrategico-branco.png'
+      : '/marca/cx-rh-estrategico-preto.png';
+
   return (
-    <svg
-      viewBox="0 0 120 120"
-      aria-hidden="true"
-      className={`transition-transform duration-300 ease-out ${
-        pressionado ? 'scale-[0.93] -rotate-3' : ''
-      } ${className}`}
-    >
-      <defs>
-        <path
-          id="anel-do-carimbo"
-          fill="none"
-          d="M60,60 m-43,0 a43,43 0 1,1 86,0 a43,43 0 1,1 -86,0"
-        />
-      </defs>
-
-      <circle cx="60" cy="60" r="52" fill="none" stroke="currentColor" strokeWidth="2.5" />
-      <circle cx="60" cy="60" r="33" fill="none" stroke="currentColor" strokeWidth="1" />
-
-      <text fill="currentColor" fontSize="8.4" fontWeight="600" letterSpacing="2.6">
-        <textPath href="#anel-do-carimbo" startOffset="50%" textAnchor="middle">
-          DEPARTAMENTO PESSOAL · CORE.CX ·
-        </textPath>
-      </text>
-
-      <text
-        x="60"
-        y="57"
-        textAnchor="middle"
-        fill="currentColor"
-        fontSize="19"
-        fontWeight="700"
-        letterSpacing="1"
-      >
-        DP
-      </text>
-
-      <line x1="44" y1="64" x2="76" y2="64" stroke="currentColor" strokeWidth="1.4" />
-
-      <text
-        x="60"
-        y="77"
-        textAnchor="middle"
-        fill="currentColor"
-        fontSize="7.4"
-        fontWeight="600"
-        letterSpacing="1.8"
-      >
-        REGISTRO
-      </text>
-    </svg>
+    <img
+      src={arquivo}
+      alt="cx RH Estratégico"
+      width={1709}
+      height={372}
+      className={className}
+    />
   );
 }

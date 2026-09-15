@@ -33,8 +33,8 @@ export async function generateMetadata({ params }) {
 function Dado({ rotulo, children, mono }) {
   return (
     <div>
-      <dt className="text-[12px] text-tinta-50">{rotulo}</dt>
-      <dd className={`mt-1 text-campo ${mono ? 'numero font-mono' : ''}`}>{children || '—'}</dd>
+      <dt className="text-[12px] text-grafite-45">{rotulo}</dt>
+      <dd className={`mt-1 text-campo ${mono ? 'numero codigo' : ''}`}>{children || '—'}</dd>
     </div>
   );
 }
@@ -79,18 +79,18 @@ export default async function Ficha({ params }) {
     <>
       <Link
         href="/colaboradores"
-        className="text-[12.5px] text-tinta-50 underline-offset-4 transition-colors hover:text-carimbo hover:underline"
+        className="text-[12.5px] text-grafite-45 underline-offset-4 transition-colors hover:text-violeta-forte hover:underline"
       >
         Voltar para colaboradores
       </Link>
 
-      <header className="mb-6 mt-4 flex flex-wrap items-start justify-between gap-5 border-b-2 border-tinta pb-5">
+      <header className="mb-6 mt-4 flex flex-wrap items-start justify-between gap-5 border-b-2 border-grafite pb-5">
         <div>
-          <p className="numero font-mono text-[12.5px] text-tinta-50">{pessoa.matricula}</p>
-          <h1 className="expandido mt-1 text-[28px] font-semibold leading-tight sm:text-[32px]">
+          <p className="numero codigo text-[12.5px] text-grafite-45">{pessoa.matricula}</p>
+          <h1 className="marcante mt-1 text-[28px] font-bold leading-tight sm:text-[32px]">
             {pessoa.nome}
           </h1>
-          <p className="mt-1.5 text-[14px] text-tinta-70">
+          <p className="mt-1.5 text-[14px] text-grafite-60">
             {pessoa.cargo || 'Cargo não informado'}
             {pessoa.departamento ? ` em ${pessoa.departamento}` : ''}
           </p>
@@ -100,14 +100,14 @@ export default async function Ficha({ params }) {
           <input type="hidden" name="linha" value={pessoa.linha} />
           <input type="hidden" name="matricula" value={pessoa.matricula} />
           <div>
-            <label htmlFor="status" className="mb-1.5 block text-[12px] text-tinta-50">
+            <label htmlFor="status" className="mb-1.5 block text-[12px] text-grafite-45">
               Situação
             </label>
             <select
               id="status"
               name="status"
               defaultValue={pessoa.status}
-              className="h-8 rounded-md border border-[#C7D0D9] bg-folha px-2.5 text-campo transition-colors hover:border-tinta-30 focus:border-carimbo"
+              className="h-8 rounded-md border border-[#C7D0D9] bg-folha px-2.5 text-campo transition-colors hover:border-grafite-30 focus:border-violeta"
             >
               {OPCOES.statusColaborador.map((opcao) => (
                 <option key={opcao}>{opcao}</option>
@@ -154,7 +154,7 @@ export default async function Ficha({ params }) {
             {minhasOcorrencias.map((item) => (
               <Linha key={item.id}>
                 <Celula className="w-[108px]">
-                  <span className="numero font-mono text-[12.5px] text-tinta-70">
+                  <span className="numero codigo text-[12.5px] text-grafite-60">
                     {formatarData(item.data)}
                   </span>
                 </Celula>
@@ -162,7 +162,7 @@ export default async function Ficha({ params }) {
                 <Celula className="w-[124px]">
                   <Status>{item.justificada}</Status>
                 </Celula>
-                <Celula className="text-tinta-70">{item.motivo || '—'}</Celula>
+                <Celula className="text-grafite-60">{item.motivo || '—'}</Celula>
               </Linha>
             ))}
           </Tabela>
@@ -186,15 +186,15 @@ export default async function Ficha({ params }) {
             {meusAtestados.map((item) => (
               <Linha key={item.id}>
                 <Celula className="w-[108px]">
-                  <span className="numero font-mono text-[12.5px] text-tinta-70">
+                  <span className="numero codigo text-[12.5px] text-grafite-60">
                     {formatarData(item.inicio)}
                   </span>
                 </Celula>
                 <Celula className="w-[80px]">
-                  <span className="numero font-mono text-[12.5px]">{item.dias}</span>
+                  <span className="numero codigo text-[12.5px]">{item.dias}</span>
                 </Celula>
                 <Celula className="w-[100px]">
-                  <span className="numero font-mono text-[12.5px] text-tinta-70">
+                  <span className="numero codigo text-[12.5px] text-grafite-60">
                     {item.cid || '—'}
                   </span>
                 </Celula>
@@ -207,12 +207,12 @@ export default async function Ficha({ params }) {
                       href={item.anexo}
                       target="_blank"
                       rel="noreferrer"
-                      className="text-carimbo underline-offset-4 hover:underline"
+                      className="text-violeta-forte underline-offset-4 hover:underline"
                     >
                       Abrir anexo
                     </a>
                   ) : (
-                    <span className="text-tinta-50">Sem anexo</span>
+                    <span className="text-grafite-45">Sem anexo</span>
                   )}
                 </Celula>
               </Linha>
@@ -238,12 +238,12 @@ export default async function Ficha({ params }) {
             {minhasMovimentacoes.map((item) => (
               <Linha key={item.id}>
                 <Celula className="w-[116px]">
-                  <span className="numero font-mono text-[12.5px] text-tinta-70">
+                  <span className="numero codigo text-[12.5px] text-grafite-60">
                     {formatarData(item.efetiva)}
                   </span>
                 </Celula>
                 <Celula className="w-[188px]">{item.tipo}</Celula>
-                <Celula className="text-tinta-70">{item.motivo || '—'}</Celula>
+                <Celula className="text-grafite-60">{item.motivo || '—'}</Celula>
                 <Celula className="w-[148px]">
                   <Status>{item.checklist}</Status>
                 </Celula>

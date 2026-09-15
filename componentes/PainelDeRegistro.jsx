@@ -42,7 +42,7 @@ export function PainelDeRegistro({
       <button
         type="button"
         onClick={() => setAberto(true)}
-        className="inline-flex h-10 items-center justify-center rounded-md bg-carimbo px-4 text-[13px] font-semibold text-folha transition-colors hover:bg-carimbo-escuro"
+        className="inline-flex h-10 items-center justify-center rounded-md bg-violeta-forte px-4 text-[13px] font-bold text-folha transition-colors hover:bg-[#3A38C4]"
       >
         {abrir}
       </button>
@@ -53,7 +53,7 @@ export function PainelDeRegistro({
             type="button"
             aria-label="Fechar sem salvar"
             onClick={() => setAberto(false)}
-            className="absolute inset-0 animate-surgir bg-tinta/35"
+            className="absolute inset-0 animate-surgir bg-grafite/35"
           />
 
           <div
@@ -62,11 +62,11 @@ export function PainelDeRegistro({
             aria-label={titulo}
             className="relative flex h-full w-full animate-painel flex-col border-l border-linha bg-folha sm:w-[468px]"
           >
-            <header className="flex items-start justify-between gap-4 border-b-2 border-tinta px-6 pb-3.5 pt-6">
+            <header className="flex items-start justify-between gap-4 border-b-2 border-grafite px-6 pb-3.5 pt-6">
               <div>
-                <h2 className="expandido text-[18px] font-semibold">{titulo}</h2>
+                <h2 className="marcante text-[18px] font-bold">{titulo}</h2>
                 {descricao ? (
-                  <p className="mt-1 max-w-[46ch] text-campo leading-relaxed text-tinta-50">
+                  <p className="mt-1 max-w-[46ch] text-campo leading-relaxed text-grafite-45">
                     {descricao}
                   </p>
                 ) : null}
@@ -74,7 +74,7 @@ export function PainelDeRegistro({
               <button
                 type="button"
                 onClick={() => setAberto(false)}
-                className="-mr-1 -mt-1 rounded p-1 text-tinta-50 transition-colors hover:text-tinta"
+                className="-mr-1 -mt-1 rounded p-1 text-grafite-45 transition-colors hover:text-grafite"
                 aria-label="Fechar sem salvar"
               >
                 <svg viewBox="0 0 16 16" className="h-4 w-4" aria-hidden="true">
@@ -94,7 +94,7 @@ export function PainelDeRegistro({
               </div>
 
               {estado?.erro ? (
-                <p className="border-t border-linha bg-folha px-6 py-3 text-campo leading-relaxed text-recusa">
+                <p className="border-t border-linha bg-folha px-6 py-3 text-campo leading-relaxed text-rosa-escura">
                   {estado.erro}
                 </p>
               ) : null}
@@ -103,7 +103,7 @@ export function PainelDeRegistro({
                 <button
                   type="button"
                   onClick={() => setAberto(false)}
-                  className="h-10 rounded-md px-3 text-[13px] font-medium text-tinta-70 transition-colors hover:text-tinta"
+                  className="h-10 rounded-md px-3 text-[13px] font-medium text-grafite-60 transition-colors hover:text-grafite"
                 >
                   Cancelar
                 </button>

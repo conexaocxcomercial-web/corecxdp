@@ -116,22 +116,22 @@ export default async function Colaboradores({ searchParams }) {
               {filtradas.map((pessoa) => (
                 <Linha key={pessoa.matricula}>
                   <Celula className="w-[104px]">
-                    <span className="numero font-mono text-[12.5px] text-tinta-70">
+                    <span className="numero codigo text-[12.5px] text-grafite-60">
                       {pessoa.matricula}
                     </span>
                   </Celula>
                   <Celula>
                     <Link
                       href={`/colaboradores/${pessoa.matricula}`}
-                      className="font-medium underline-offset-4 hover:text-carimbo hover:underline"
+                      className="font-medium underline-offset-4 hover:text-violeta-forte hover:underline"
                     >
                       {pessoa.nome}
                     </Link>
                   </Celula>
-                  <Celula className="text-tinta-70">{pessoa.departamento || '—'}</Celula>
-                  <Celula className="text-tinta-70">{pessoa.cargo || '—'}</Celula>
+                  <Celula className="text-grafite-60">{pessoa.departamento || '—'}</Celula>
+                  <Celula className="text-grafite-60">{pessoa.cargo || '—'}</Celula>
                   <Celula className="w-[112px]">
-                    <span className="numero font-mono text-[12.5px] text-tinta-70">
+                    <span className="numero codigo text-[12.5px] text-grafite-60">
                       {formatarData(pessoa.admissao)}
                     </span>
                   </Celula>
@@ -142,7 +142,7 @@ export default async function Colaboradores({ searchParams }) {
               ))}
             </Tabela>
 
-            <p className="border-t border-linha px-5 py-3 text-[12.5px] text-tinta-50">
+            <p className="border-t border-linha px-5 py-3 text-[12.5px] text-grafite-45">
               {filtradas.length} {plural(filtradas.length, 'pessoa', 'pessoas')} de {pessoas.length}{' '}
               no registro.
             </p>

@@ -108,28 +108,28 @@ export default async function Ocorrencias({ searchParams }) {
               {filtradas.map((item) => (
                 <Linha key={item.id}>
                   <Celula className="w-[108px]">
-                    <span className="numero font-mono text-[12.5px] text-tinta-70">
+                    <span className="numero codigo text-[12.5px] text-grafite-60">
                       {formatarData(item.data)}
                     </span>
                   </Celula>
                   <Celula className="w-[216px]">
                     <Link
                       href={`/colaboradores/${item.matricula}`}
-                      className="font-medium underline-offset-4 hover:text-carimbo hover:underline"
+                      className="font-medium underline-offset-4 hover:text-violeta-forte hover:underline"
                     >
                       {porMatricula.get(item.matricula)?.nome || item.matricula}
                     </Link>
                   </Celula>
-                  <Celula className="w-[176px] text-tinta-70">{item.tipo}</Celula>
+                  <Celula className="w-[176px] text-grafite-60">{item.tipo}</Celula>
                   <Celula className="w-[112px]">
                     <Status>{item.justificada}</Status>
                   </Celula>
-                  <Celula className="text-tinta-70">{item.motivo || '—'}</Celula>
+                  <Celula className="text-grafite-60">{item.motivo || '—'}</Celula>
                 </Linha>
               ))}
             </Tabela>
 
-            <p className="border-t border-linha px-5 py-3 text-[12.5px] text-tinta-50">
+            <p className="border-t border-linha px-5 py-3 text-[12.5px] text-grafite-45">
               {filtradas.length} {plural(filtradas.length, 'ocorrência', 'ocorrências')} de{' '}
               {ocorrencias.length} no livro.
             </p>

@@ -1,13 +1,13 @@
 const CAMPO =
-  'h-10 w-full rounded-md border border-[#C7D0D9] bg-folha px-3 text-campo transition-colors hover:border-tinta-30 focus:border-carimbo';
+  'h-10 w-full rounded-md border border-[#C7D0D9] bg-folha px-3 text-campo transition-colors hover:border-grafite-30 focus:border-violeta';
 
 function Rotulo({ nome, children, dica }) {
   return (
     <span className="mb-1.5 flex items-baseline justify-between gap-3">
-      <label htmlFor={nome} className="text-[12.5px] font-medium text-tinta-70">
+      <label htmlFor={nome} className="text-[12.5px] font-medium text-grafite-60">
         {children}
       </label>
-      {dica ? <span className="text-[11.5px] text-tinta-30">{dica}</span> : null}
+      {dica ? <span className="text-[11.5px] text-grafite-30">{dica}</span> : null}
     </span>
   );
 }
@@ -33,7 +33,7 @@ export function Data({ rotulo, nome, dica, className = '', ...props }) {
         id={nome}
         name={nome}
         type="date"
-        className={`${CAMPO} font-mono text-[12.5px]`}
+        className={`${CAMPO} text-[12.5px]`}
         {...props}
       />
     </div>
@@ -66,7 +66,7 @@ export function Selecao({ rotulo, nome, opcoes, dica, className = '', ...props }
         <svg
           viewBox="0 0 12 12"
           aria-hidden="true"
-          className="pointer-events-none absolute right-3 top-1/2 h-3 w-3 -translate-y-1/2 text-tinta-50"
+          className="pointer-events-none absolute right-3 top-1/2 h-3 w-3 -translate-y-1/2 text-grafite-45"
         >
           <path d="M2 4.5 6 8.5 10 4.5" fill="none" stroke="currentColor" strokeWidth="1.6" />
         </svg>

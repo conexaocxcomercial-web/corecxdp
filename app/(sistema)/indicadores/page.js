@@ -38,7 +38,7 @@ function SeletorDePeriodo({ atual }) {
             href={`/indicadores?meses=${opcao.meses}`}
             aria-current={ativo ? 'true' : undefined}
             className={`rounded-[5px] px-3 py-1.5 text-[12.5px] transition-colors ${
-              ativo ? 'bg-tinta font-semibold text-folha' : 'text-tinta-70 hover:text-tinta'
+              ativo ? 'bg-grafite font-bold text-folha' : 'text-grafite-60 hover:text-grafite'
             }`}
           >
             {opcao.rotulo}
@@ -108,7 +108,7 @@ export default async function Indicadores({ searchParams }) {
       />
 
       {baseMagra ? (
-        <p className="mb-5 border-l-[3px] border-carimbo bg-folha px-4 py-3 text-campo leading-relaxed text-tinta-70">
+        <p className="mb-5 border-l-[3px] border-violeta bg-folha px-4 py-3 text-campo leading-relaxed text-grafite-60">
           A base tem {resumo.lancamentos} {plural(resumo.lancamentos, 'lançamento', 'lançamentos')}{' '}
           no período. As taxas já são calculadas, mas só começam a descrever a empresa depois de
           alguns meses de registro contínuo.
@@ -168,7 +168,7 @@ export default async function Indicadores({ searchParams }) {
           <div className="px-5 pb-6 pt-5">
             <GraficoDeEntradasESaidas serie={serie} />
             {resumo.semRegistroDeSaida > 0 ? (
-              <p className="mt-5 border-t border-linha pt-4 text-[12.5px] leading-relaxed text-tinta-50">
+              <p className="mt-5 border-t border-linha pt-4 text-[12.5px] leading-relaxed text-grafite-45">
                 {resumo.semRegistroDeSaida}{' '}
                 {plural(resumo.semRegistroDeSaida, 'pessoa inativa', 'pessoas inativas')} sem
                 movimentação de desligamento registrada. A saída foi contada no mês corrente;
@@ -211,7 +211,7 @@ export default async function Indicadores({ searchParams }) {
             Reincidência
           </TituloDaSecao>
           {reincidentes.length === 0 ? (
-            <p className="px-5 py-8 text-center text-campo text-tinta-50">
+            <p className="px-5 py-8 text-center text-campo text-grafite-45">
               Ninguém com ocorrências no período.
             </p>
           ) : (
@@ -222,10 +222,10 @@ export default async function Indicadores({ searchParams }) {
                     href={`/colaboradores/${pessoa.matricula}`}
                     className="group flex items-center justify-between gap-4 py-3.5"
                   >
-                    <span className="text-campo font-medium group-hover:text-carimbo">
+                    <span className="text-campo font-medium group-hover:text-violeta-forte">
                       {pessoa.rotulo}
                     </span>
-                    <span className="numero font-mono text-[13px] text-tinta-70">
+                    <span className="numero codigo text-[13px] text-grafite-60">
                       {pessoa.valor} {plural(pessoa.valor, 'registro', 'registros')}
                     </span>
                   </Link>
@@ -258,7 +258,7 @@ export default async function Indicadores({ searchParams }) {
         </Folha>
       </div>
 
-      <p className="mt-5 max-w-[78ch] text-[12.5px] leading-relaxed text-tinta-50">
+      <p className="mt-5 max-w-[78ch] text-[12.5px] leading-relaxed text-grafite-45">
         Como as contas são feitas: turnover é a média entre admissões e saídas do mês dividida pelo
         quadro médio. Absenteísmo é o total de dias perdidos, somando faltas e dias de atestado não
         rejeitado, sobre o quadro médio multiplicado pelos dias úteis do mês. Atestados que

@@ -125,10 +125,10 @@ export default async function Painel() {
           ) : (
             <div className="px-5 pb-6 pt-5">
               <p className="flex items-baseline gap-2.5">
-                <span className="numero expandido font-mono text-[42px] font-semibold leading-none">
+                <span className="numero marcante text-[42px] font-bold leading-none">
                   {ativos.length}
                 </span>
-                <span className="text-[14px] text-tinta-70">
+                <span className="text-[14px] text-grafite-60">
                   {plural(ativos.length, 'pessoa ativa', 'pessoas ativas')} em{' '}
                   {porArea.length} {plural(porArea.length, 'área', 'áreas')}
                 </span>
@@ -139,13 +139,13 @@ export default async function Painel() {
                   <li key={area}>
                     <div className="flex items-baseline justify-between gap-4">
                       <span className="text-campo">{area}</span>
-                      <span className="numero font-mono text-[12.5px] text-tinta-70">
+                      <span className="numero codigo text-[12.5px] text-grafite-60">
                         {quantidade}
                       </span>
                     </div>
                     <div className="mt-1.5 h-[6px] w-full rounded-[2px] bg-linha-clara">
                       <div
-                        className="h-full rounded-[2px] bg-tinta"
+                        className="h-full rounded-[2px] bg-grafite"
                         style={{ width: `${Math.max((quantidade / maiorArea) * 100, 6)}%` }}
                       />
                     </div>
@@ -154,7 +154,7 @@ export default async function Painel() {
               </ul>
 
               {foraDoQuadro > 0 ? (
-                <p className="mt-6 border-t border-linha pt-4 text-[12.5px] text-tinta-50">
+                <p className="mt-6 border-t border-linha pt-4 text-[12.5px] text-grafite-45">
                   {foraDoQuadro} {plural(foraDoQuadro, 'pessoa', 'pessoas')} fora do quadro ativo
                   (inativas, afastadas ou de férias).
                 </p>
@@ -179,10 +179,10 @@ export default async function Painel() {
                     href={pendencia.href}
                     className="group flex items-center gap-4 py-4 transition-colors"
                   >
-                    <span className="numero font-mono text-[26px] font-medium leading-none text-carimbo">
+                    <span className="numero codigo text-[26px] font-medium leading-none text-violeta-forte">
                       {pendencia.quantidade}
                     </span>
-                    <span className="text-campo leading-snug text-tinta-70 group-hover:text-tinta">
+                    <span className="text-campo leading-snug text-grafite-60 group-hover:text-grafite">
                       {pendencia.texto}
                     </span>
                   </Link>
@@ -208,20 +208,20 @@ export default async function Painel() {
             {lancamentos.map((item, indice) => (
               <Linha key={`${item.livro}-${item.matricula}-${indice}`}>
                 <Celula className="w-[108px]">
-                  <span className="numero font-mono text-[12.5px] text-tinta-70">
+                  <span className="numero codigo text-[12.5px] text-grafite-60">
                     {formatarData(item.data)}
                   </span>
                 </Celula>
-                <Celula className="w-[132px] text-tinta-70">{item.livro}</Celula>
+                <Celula className="w-[132px] text-grafite-60">{item.livro}</Celula>
                 <Celula className="w-[220px]">
                   <Link
                     href={`/colaboradores/${item.matricula}`}
-                    className="font-medium underline-offset-4 hover:text-carimbo hover:underline"
+                    className="font-medium underline-offset-4 hover:text-violeta-forte hover:underline"
                   >
                     {nomePorMatricula.get(item.matricula) || item.matricula}
                   </Link>
                 </Celula>
-                <Celula className="text-tinta-70">{item.descricao}</Celula>
+                <Celula className="text-grafite-60">{item.descricao}</Celula>
               </Linha>
             ))}
           </Tabela>
