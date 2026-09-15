@@ -200,22 +200,31 @@ lib/
 
 ---
 
-## Identidade
+## Identidade e interface
 
 Paleta da conexão: grafite `#1E1E1E`, papel `#F4F4F4`, violeta `#7371FF`, lima `#BEF533`,
-lavanda `#DBBFFF` e rosa `#FF43C0`. Tipografia em Helvetica, uma família só, com o tracking
-apertado da marca nos títulos.
+lavanda `#DBBFFF` e rosa `#FF43C0`. Tipografia em Helvetica, uma família só. Os logos estão em
+`public/marca/`, nas versões positiva e negativa.
 
-Os marcadores de status seguem uma regra: lima é o que está resolvido, rosa é o que pede ação,
-violeta é o que está em curso, cinza é o que encerrou. A cor mora na barrinha ao lado do texto,
-nunca no texto, que fica sempre em grafite — assim o contraste se mantém legível.
+**Claro e escuro.** As cores são tokens semânticos (`fundo`, `superficie`, `borda`, `texto`,
+`acao`) declarados como variáveis CSS em `app/globals.css`. Trocar de tema troca os valores; as
+classes dos componentes não mudam. O botão fica no rodapé da barra lateral, e no topo da tela no
+celular. A escolha é guardada no navegador e aplicada antes da primeira pintura, então a tela não
+pisca claro antes de virar escura. Na primeira visita, o tema segue a preferência do sistema.
 
-O violeta da marca não tem contraste suficiente para texto pequeno sobre branco, então links e
-botões usam `#4B49E8`, uma versão escurecida dele. O `#7371FF` fica onde é só cor: marcador da
-seção ativa, barras e chips.
+**Marcadores de status.** Lima é o que está resolvido, rosa é o que pede ação, violeta é o que
+está em curso, cinza é o que encerrou. A cor mora no ponto ao lado do texto, nunca no texto, que
+fica sempre na cor da interface — assim o contraste se mantém nos dois temas.
 
-Os logos estão em `public/marca/`, nas versões positiva e negativa. A navegação mostra a marca do
-produto no topo e a assinatura cx RH Estratégico no pé.
+**Contraste.** O violeta da marca não tem contraste suficiente para texto pequeno, então botões e
+links usam o token `acao`, que é um violeta escurecido no tema claro e clareado no escuro. O
+`#7371FF` original fica onde é só cor: ícone da seção ativa, barras e gráficos. A lima nunca vira
+texto, só preenchimento.
+
+**No celular.** Barra inferior com Painel, Indicadores, Colaboradores e um botão Mais que abre os
+outros registros. As tabelas viram cartões empilhados abaixo de 768px, com os campos em duas
+colunas. Os formulários sobem de baixo como folha, em vez de deslizar do lado. Alvos de toque de
+44px e respeito às áreas seguras do aparelho.
 
 ## Decisões que valem conhecer
 
