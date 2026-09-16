@@ -1,183 +1,141 @@
 import Link from 'next/link';
+import { Icone } from '@/componentes/Icones';
 
-/* ------------------------------------------------------------- superfícies */
+/* --------------------------------------------------------- estrutura */
 
-export function Cartao({ children, className = '' }) {
+export function Comando({ titulo, contador, children }) {
   return (
-    <section className={`rounded-folha border border-borda bg-superficie ${className}`}>
+    <div className="cmd">
+      <span className="cmd-tit">{titulo}</span>
+      {contador ? (
+        <>
+          <div className="cmd-sep" />
+          <span className="cmd-cont">{contador}</span>
+        </>
+      ) : null}
+      {children ? <div className="cmd-dir">{children}</div> : null}
+    </div>
+  );
+}
+
+export function Wrap({ children }) {
+  return <div className="wrap">{children}</div>;
+}
+
+export function Secao({ titulo, nota, children }) {
+  return (
+    <section className="sec">
+      <div className="sec-cab">
+        <span className="sec-tit">{titulo}</span>
+        <span className="sec-linha" />
+        {nota ? <span className="sec-nota">{nota}</span> : null}
+      </div>
       {children}
     </section>
   );
 }
 
-export function CabecalhoDeCartao({ children, apoio, acao }) {
+export function Cartao({ titulo, descricao, liso, className = '', children }) {
   return (
-    <header className="flex flex-wrap items-start justify-between gap-3 border-b border-borda px-4 py-3.5 sm:px-5">
-      <div>
-        <h2 className="marcante text-[15px] font-bold leading-tight">{children}</h2>
-        {apoio ? <p className="mt-1 text-[12.5px] text-texto-3">{apoio}</p> : null}
-      </div>
-      {acao}
-    </header>
+    <div className={`cartao ${liso ? 'cartao-liso' : ''} ${className}`}>
+      {titulo ? (
+        <div className={liso ? 'px-[19px] pt-[17px]' : ''}>
+          <div className="cartao-t">{titulo}</div>
+          {descricao ? <div className="cartao-d">{descricao}</div> : null}
+        </div>
+      ) : null}
+      {children}
+    </div>
   );
 }
 
-export function TituloDaPagina({ titulo, apoio, acao }) {
-  return (
-    <header className="mb-5 flex flex-wrap items-start justify-between gap-4 sm:mb-6">
-      <div>
-        <h1 className="marcante text-[24px] font-bold leading-tight sm:text-[30px]">{titulo}</h1>
-        {apoio ? (
-          <p className="mt-1.5 max-w-[64ch] text-[13.5px] leading-relaxed text-texto-2 sm:text-[14px]">
-            {apoio}
-          </p>
-        ) : null}
-      </div>
-      {acao ? <div className="shrink-0">{acao}</div> : null}
-    </header>
-  );
+/* ------------------------------------------------------------- KPIs */
+
+export function Kpis({ children }) {
+  return <div className="kpis">{children}</div>;
 }
 
-/* --------------------------------------------------------------- métricas */
-
-export function Metricas({ children }) {
-  return <div className="mb-5 grid grid-cols-2 gap-3 lg:grid-cols-4">{children}</div>;
-}
-
-export function Metrica({ rotulo, valor, unidade, apoio, cor, href, grafico }) {
+export function Kpi({ rotulo, valor, apoio, cor, href }) {
   const conteudo = (
     <>
-      <div className="flex items-center gap-2">
-        {cor ? (
-          <span
-            aria-hidden="true"
-            className="h-2.5 w-2.5 shrink-0 rounded-full"
-            style={{ background: cor }}
-          />
-        ) : null}
-        <p className="text-[12px] font-medium text-texto-2">{rotulo}</p>
-      </div>
-      <p className="numero marcante mt-2.5 text-[28px] font-bold leading-none sm:text-[32px]">
+      <div className="kpi-r">{rotulo}</div>
+      <div className="kpi-v num" style={cor ? { color: cor } : undefined}>
         {valor}
-        {unidade ? <span className="ml-0.5 text-[17px] font-bold">{unidade}</span> : null}
-      </p>
-      {apoio ? <p className="mt-2 text-[12px] leading-snug text-texto-3">{apoio}</p> : null}
-      {grafico}
+      </div>
+      {apoio ? <div className="kpi-p">{apoio}</div> : null}
     </>
   );
 
-  const estilo = 'rounded-folha border border-borda bg-superficie p-4 transition-colors sm:p-[18px]';
-
   if (href) {
     return (
-      <Link href={href} className={`${estilo} block hover:border-borda-forte`}>
+      <Link href={href} className="kpi block transition-shadow hover:shadow-[var(--e2)]">
         {conteudo}
       </Link>
     );
   }
 
-  return <div className={estilo}>{conteudo}</div>;
+  return <div className="kpi">{conteudo}</div>;
 }
 
-/* ---------------------------------------------------------------- tabelas */
+/* ---------------------------------------------------------- tabelas */
 
-/** Tabela é para telas largas; no celular cada registro vira cartão. */
-export function Tabela({ colunas, children }) {
+export function Tabela({ grade, colunas, children }) {
   return (
-    <div className="hidden overflow-x-auto md:block">
-      <table className="w-full border-collapse text-campo">
-        <thead>
-          <tr className="border-b border-borda">
-            {colunas.map((coluna) => (
-              <th
-                key={coluna}
-                scope="col"
-                className="whitespace-nowrap px-5 py-2.5 text-left text-[11.5px] font-medium uppercase tracking-wide text-texto-3"
-              >
-                {coluna}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>{children}</tbody>
-      </table>
+    <div className="tb">
+      <div className="tb-h" style={{ gridTemplateColumns: grade }}>
+        {colunas.map((coluna) => (
+          <span key={coluna.rotulo} className={coluna.alinha || ''}>
+            {coluna.rotulo}
+          </span>
+        ))}
+      </div>
+      {children}
     </div>
   );
 }
 
-export function Linha({ children }) {
+export function LinhaTabela({ grade, children }) {
   return (
-    <tr className="border-b border-borda/70 transition-colors last:border-b-0 hover:bg-superficie-2">
+    <div className="tb-l" style={{ gridTemplateColumns: grade }}>
       {children}
-    </tr>
+    </div>
   );
 }
 
-export function Celula({ children, className = '', ...props }) {
+export function Celula({ rotulo, alinha, children }) {
   return (
-    <td className={`px-5 py-3.5 align-middle ${className}`} {...props}>
+    <span className={alinha || ''} data-r={rotulo}>
       {children}
-    </td>
+    </span>
   );
-}
-
-export function Codigo({ children }) {
-  return <span className="codigo text-[12.5px] text-texto-2">{children}</span>;
 }
 
 export function Nome({ href, children }) {
   return (
-    <Link
-      href={href}
-      className="font-bold text-texto underline-offset-4 transition-colors hover:text-acao hover:underline"
-    >
+    <Link href={href} className="tb-nome hover:text-[var(--acao)]">
       {children}
     </Link>
   );
 }
 
-/* ------------------------------------------------------ cartões no celular */
+/* ----------------------------------------------------------- avisos */
 
-export function ListaNoCelular({ children }) {
-  return <ul className="divide-y divide-borda md:hidden">{children}</ul>;
-}
-
-export function CartaoDeRegistro({ titulo, href, etiqueta, campos = [], rodape }) {
-  const cabecalho = (
-    <div className="flex items-start justify-between gap-3">
-      <p className="marcante text-[14.5px] font-bold leading-snug">{titulo}</p>
-      {etiqueta ? <span className="shrink-0 pt-0.5">{etiqueta}</span> : null}
+export function Vazio({ icone = 'inbox', children, acao }) {
+  return (
+    <div className="vazio">
+      <Icone nome={icone} />
+      <p>{children}</p>
+      {acao ? <div className="mt-4 flex justify-center">{acao}</div> : null}
     </div>
   );
-
-  return (
-    <li className="px-4 py-3.5">
-      {href ? (
-        <Link href={href} className="block">
-          {cabecalho}
-        </Link>
-      ) : (
-        cabecalho
-      )}
-
-      {campos.length > 0 ? (
-        <dl className="mt-2.5 grid grid-cols-2 gap-x-4 gap-y-2">
-          {campos.map((campo) => (
-            <div key={campo.rotulo}>
-              <dt className="text-[11px] text-texto-3">{campo.rotulo}</dt>
-              <dd className="mt-0.5 text-[13px] leading-snug text-texto">{campo.valor || '—'}</dd>
-            </div>
-          ))}
-        </dl>
-      ) : null}
-
-      {rodape ? <div className="mt-3">{rodape}</div> : null}
-    </li>
-  );
 }
 
-export function Rodape({ children }) {
+export function Faixa({ tom = 'info', icone, children }) {
+  const padrao = { info: 'info', alerta: 'warning', erro: 'error' }[tom];
   return (
-    <p className="border-t border-borda px-4 py-3 text-[12.5px] text-texto-3 sm:px-5">{children}</p>
+    <div className={`faixa ${tom}`}>
+      <Icone nome={icone || padrao} />
+      <span>{children}</span>
+    </div>
   );
 }

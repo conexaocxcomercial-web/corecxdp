@@ -3,178 +3,170 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Marca } from '@/componentes/Marca';
-import { BotaoDeTema } from '@/componentes/Tema';
-import {
-  IconeAtestados,
-  IconeFechar,
-  IconeIndicadores,
-  IconeMais,
-  IconeMovimentacoes,
-  IconeOcorrencias,
-  IconePainel,
-  IconePessoas,
-} from '@/componentes/Icones';
+import { Icone } from '@/componentes/Icones';
 
-const VISAO = [
-  { href: '/painel', nome: 'Painel', Icone: IconePainel },
-  { href: '/indicadores', nome: 'Indicadores', Icone: IconeIndicadores },
+const GRUPOS = [
+  {
+    chave: 'visao',
+    rotulo: null,
+    itens: [
+      { href: '/painel', nome: 'Painel', icone: 'space_dashboard' },
+      { href: '/indicadores', nome: 'Indicadores', icone: 'monitoring' },
+    ],
+  },
+  {
+    chave: 'registros',
+    rotulo: 'Registros',
+    itens: [
+      { href: '/colaboradores', nome: 'Colaboradores', icone: 'group' },
+      { href: '/ocorrencias', nome: 'Ocorrências', icone: 'event_busy' },
+      { href: '/atestados', nome: 'Atestados', icone: 'clinical_notes' },
+      { href: '/movimentacoes', nome: 'Movimentações', icone: 'swap_horiz' },
+    ],
+  },
 ];
-
-const REGISTROS = [
-  { href: '/colaboradores', nome: 'Colaboradores', Icone: IconePessoas },
-  { href: '/ocorrencias', nome: 'Ocorrências', Icone: IconeOcorrencias },
-  { href: '/atestados', nome: 'Atestados', Icone: IconeAtestados },
-  { href: '/movimentacoes', nome: 'Movimentações', Icone: IconeMovimentacoes },
-];
-
-const NO_CELULAR = [VISAO[0], VISAO[1], REGISTROS[0]];
-const NO_MENU = REGISTROS.slice(1);
 
 function estaAtiva(caminho, href) {
   return caminho === href || caminho.startsWith(`${href}/`);
 }
 
-function ItemLateral({ item, ativa }) {
-  const { Icone } = item;
-
-  return (
-    <Link
-      href={item.href}
-      aria-current={ativa ? 'page' : undefined}
-      className={`flex h-10 items-center gap-2.5 rounded-lg px-3 text-[13.5px] transition-colors ${
-        ativa
-          ? 'bg-superficie-2 font-bold text-texto'
-          : 'text-texto-2 hover:bg-superficie-2 hover:text-texto'
-      }`}
-    >
-      <Icone className={`h-[18px] w-[18px] ${ativa ? 'text-marca' : ''}`} />
-      {item.nome}
-    </Link>
-  );
-}
-
 export function Navegacao({ empresa }) {
   const caminho = usePathname();
-  const [menuAberto, setMenuAberto] = useState(false);
+  const [fixa, setFixa] = useState(false);
+  const [gaveta, setGaveta] = useState(false);
+  const [fechados, setFechados] = useState({});
 
   useEffect(() => {
-    setMenuAberto(false);
+    let salvo = null;
+    try {
+      salvo = localStorage.getItem('cx_sb_fixa');
+    } catch {
+      salvo = null;
+    }
+    setFixa(salvo === null ? window.innerWidth >= 1600 : salvo === '1');
+
+    try {
+      setFechados(JSON.parse(localStorage.getItem('cx_sb_grupos_dp') || '{}') || {});
+    } catch {
+      setFechados({});
+    }
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.style.setProperty('--cx-sb-w', fixa ? '248px' : '60px');
+  }, [fixa]);
+
+  useEffect(() => {
+    setGaveta(false);
   }, [caminho]);
 
-  const emOutroRegistro = NO_MENU.some((item) => estaAtiva(caminho, item.href));
+  useEffect(() => {
+    const aoTeclar = (evento) => {
+      if (evento.key === 'Escape') setGaveta(false);
+    };
+    document.addEventListener('keydown', aoTeclar);
+    return () => document.removeEventListener('keydown', aoTeclar);
+  }, []);
+
+  function alternarFixa() {
+    const nova = !fixa;
+    setFixa(nova);
+    try {
+      localStorage.setItem('cx_sb_fixa', nova ? '1' : '0');
+    } catch {
+      // Armazenamento bloqueado: a preferência vale só nesta visita.
+    }
+  }
+
+  function alternarGrupo(chave) {
+    const novos = { ...fechados, [chave]: !fechados[chave] };
+    setFechados(novos);
+    try {
+      localStorage.setItem('cx_sb_grupos_dp', JSON.stringify(novos));
+    } catch {
+      // idem
+    }
+  }
 
   return (
     <>
-      {/* -------------------------------------------------- barra lateral */}
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-[248px] flex-col border-r border-borda bg-superficie lg:flex">
-        <div className="px-5 pb-6 pt-6">
-          <Link href="/painel" className="inline-block">
-            <Marca />
-          </Link>
-          <p className="mt-2 truncate text-[12.5px] text-texto-3">{empresa}</p>
-        </div>
+      <button className="cxsb-ham" onClick={() => setGaveta(true)} aria-label="Abrir menu">
+        <Icone nome="menu" />
+      </button>
 
-        <nav className="flex-1 space-y-1 px-3">
-          {VISAO.map((item) => (
-            <ItemLateral key={item.href} item={item} ativa={estaAtiva(caminho, item.href)} />
-          ))}
+      <div
+        className={`cxsb-veu ${gaveta ? 'on' : ''}`}
+        onClick={() => setGaveta(false)}
+        role="presentation"
+      />
 
-          <p className="px-3 pb-1 pt-5 text-[11.5px] font-medium text-texto-3">Registros</p>
-
-          {REGISTROS.map((item) => (
-            <ItemLateral key={item.href} item={item} ativa={estaAtiva(caminho, item.href)} />
-          ))}
-        </nav>
-
-        <div className="border-t border-borda p-3">
-          <BotaoDeTema />
-          <p className="px-3 pb-1 pt-3 text-[11px] leading-snug text-texto-3">
-            Uma solução cx de RH Estratégico
-          </p>
-        </div>
-      </aside>
-
-      {/* ------------------------------------------- topo no celular */}
-      <header className="sticky top-0 z-30 flex items-center justify-between gap-3 border-b border-borda bg-superficie/90 px-4 py-3 backdrop-blur lg:hidden">
-        <Link href="/painel" className="min-w-0">
-          <Marca tamanho="pequeno" />
-        </Link>
-        <BotaoDeTema compacto />
-      </header>
-
-      {/* --------------------------------------- barra inferior no celular */}
       <nav
-        aria-label="Seções"
-        className="barra-inferior fixed inset-x-0 bottom-0 z-30 flex border-t border-borda bg-superficie/95 backdrop-blur lg:hidden"
+        className={`cxsidebar ${fixa ? 'fixa' : ''} ${gaveta ? 'gaveta' : ''}`}
+        aria-label="Navegação principal"
       >
-        {NO_CELULAR.map((item) => {
-          const ativa = estaAtiva(caminho, item.href);
-          const { Icone } = item;
-
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              aria-current={ativa ? 'page' : undefined}
-              className={`flex flex-1 flex-col items-center gap-1 py-2.5 text-[10.5px] transition-colors ${
-                ativa ? 'font-bold text-texto' : 'text-texto-3'
-              }`}
-            >
-              <Icone className={`h-[21px] w-[21px] ${ativa ? 'text-marca' : ''}`} />
-              {item.nome}
-            </Link>
-          );
-        })}
-
-        <button
-          type="button"
-          onClick={() => setMenuAberto(true)}
-          aria-expanded={menuAberto}
-          className={`flex flex-1 flex-col items-center gap-1 py-2.5 text-[10.5px] transition-colors ${
-            emOutroRegistro ? 'font-bold text-texto' : 'text-texto-3'
-          }`}
-        >
-          <IconeMais className={`h-[21px] w-[21px] ${emOutroRegistro ? 'text-marca' : ''}`} />
-          Mais
-        </button>
-      </nav>
-
-      {/* ------------------------------------------ gaveta do botão "Mais" */}
-      {menuAberto ? (
-        <div className="fixed inset-0 z-40 flex items-end lg:hidden">
+        <div className="cxsb-head">
+          <Link href="/painel" className="cxsb-marca">
+            core<span>.cx</span>
+          </Link>
+          <span className="cxsb-sigla" aria-hidden="true">
+            cx
+          </span>
           <button
-            type="button"
-            aria-label="Fechar menu"
-            onClick={() => setMenuAberto(false)}
-            className="absolute inset-0 animate-surgir bg-grafite/50"
-          />
-
-          <div className="barra-inferior relative w-full animate-baixo rounded-t-[20px] border-t border-borda bg-superficie p-4">
-            <div className="mb-2 flex items-center justify-between">
-              <p className="marcante text-[15px] font-bold">Outros registros</p>
-              <button
-                type="button"
-                onClick={() => setMenuAberto(false)}
-                aria-label="Fechar menu"
-                className="grid h-9 w-9 place-items-center rounded-full text-texto-2 hover:bg-superficie-2"
-              >
-                <IconeFechar />
-              </button>
-            </div>
-
-            <div className="space-y-1 pb-2">
-              {NO_MENU.map((item) => (
-                <ItemLateral key={item.href} item={item} ativa={estaAtiva(caminho, item.href)} />
-              ))}
-            </div>
-
-            <p className="border-t border-borda pt-3 text-[11px] text-texto-3">
-              Uma solução cx de RH Estratégico
-            </p>
-          </div>
+            className="cxsb-toggle"
+            onClick={alternarFixa}
+            aria-pressed={fixa}
+            title={fixa ? 'Soltar menu' : 'Fixar menu aberto'}
+            aria-label={fixa ? 'Soltar menu' : 'Fixar menu aberto'}
+          >
+            <Icone nome={fixa ? 'left_panel_close' : 'keep'} />
+          </button>
         </div>
-      ) : null}
+
+        <div className="cxsb-body">
+          <p className="cxsb-empresa">{empresa}</p>
+
+          {GRUPOS.map((grupo) => {
+            const fechado = Boolean(fechados[grupo.chave]);
+
+            return (
+              <div key={grupo.chave}>
+                {grupo.rotulo ? (
+                  <>
+                    <div className="cxsb-sep" />
+                    <button
+                      type="button"
+                      className={`cxsb-grupo ${fechado ? 'fechado' : ''}`}
+                      onClick={() => alternarGrupo(grupo.chave)}
+                      aria-expanded={!fechado}
+                    >
+                      {grupo.rotulo}
+                      <Icone nome="expand_more" className="cxsb-grupo-caret" />
+                    </button>
+                  </>
+                ) : null}
+
+                <div className={`cxsb-lista ${fechado ? 'fechada' : ''}`}>
+                  {grupo.itens.map((item) => {
+                    const ativa = estaAtiva(caminho, item.href);
+                    return (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        data-tip={item.nome}
+                        aria-current={ativa ? 'page' : undefined}
+                        className={`cxsb-item ${ativa ? 'ativo' : ''}`}
+                      >
+                        <Icone nome={item.icone} />
+                        <span className="cxsb-item-txt">{item.nome}</span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </nav>
     </>
   );
 }

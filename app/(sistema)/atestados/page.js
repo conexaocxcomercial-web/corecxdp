@@ -2,54 +2,42 @@ import { OPCOES, listarAtestados, listarColaboradores } from '@/lib/registros';
 import { ErroDePlanilha } from '@/lib/planilha';
 import { formatarData, hojeISO, plural } from '@/lib/formato';
 import {
-  Cartao,
-  CartaoDeRegistro,
-  Celula,
-  Linha,
-  ListaNoCelular,
-  Nome,
-  Rodape,
-  Tabela,
-  TituloDaPagina,
+  Cartao, Celula, Comando, Faixa, LinhaTabela, Nome, Tabela, Vazio, Wrap,
 } from '@/componentes/Estrutura';
-import { Aviso, Status, Vazio } from '@/componentes/Sinais';
-import { Filtros } from '@/componentes/Filtros';
+import { Status } from '@/componentes/Sinais';
+import { Busca, Seletor } from '@/componentes/Filtros';
 import { PainelDeRegistro } from '@/componentes/PainelDeRegistro';
 import { Data, Paragrafo, Selecao, Texto } from '@/componentes/Campos';
-import { BotaoCompacto } from '@/componentes/Botao';
+import { BotaoMini } from '@/componentes/Botao';
 import { salvarAtestado, validarAtestado } from '@/app/acoes';
 
 export const metadata = { title: 'Atestados' };
+
+const GRADE = '1.5fr 104px 74px 84px 1fr 168px';
 
 function Validacao({ item }) {
   if (item.status !== 'Pendente') return <Status>{item.status}</Status>;
 
   return (
-    <span className="flex items-center gap-1.5">
+    <span className="flex flex-wrap items-center gap-1.5">
       <form action={validarAtestado}>
         <input type="hidden" name="linha" value={item.linha} />
         <input type="hidden" name="status" value="Aprovado" />
-        <BotaoCompacto>Aprovar</BotaoCompacto>
+        <BotaoMini>Aprovar</BotaoMini>
       </form>
       <form action={validarAtestado}>
         <input type="hidden" name="linha" value={item.linha} />
         <input type="hidden" name="status" value="Rejeitado" />
-        <BotaoCompacto>Rejeitar</BotaoCompacto>
+        <BotaoMini>Rejeitar</BotaoMini>
       </form>
     </span>
   );
 }
 
 function Anexo({ url }) {
-  if (!url) return <span className="text-texto-3">Sem anexo</span>;
-
+  if (!url) return <span className="text-[var(--tinta-3)]">Sem anexo</span>;
   return (
-    <a
-      href={url}
-      target="_blank"
-      rel="noreferrer"
-      className="text-acao underline-offset-4 hover:underline"
-    >
+    <a href={url} target="_blank" rel="noreferrer" className="text-[var(--acao)] hover:underline">
       Abrir anexo
     </a>
   );
@@ -68,28 +56,29 @@ export default async function Atestados({ searchParams }) {
   } catch (erro) {
     return (
       <>
-        <TituloDaPagina titulo="Atestados" />
-        <Aviso titulo="A planilha não respondeu">
-          {erro instanceof ErroDePlanilha
-            ? erro.message
-            : 'Não foi possível ler a aba Atestados agora. Confira as variáveis de ambiente e recarregue a página.'}
-        </Aviso>
+        <Comando titulo="Atestados" />
+        <Wrap>
+          <Faixa tom="erro">
+            {erro instanceof ErroDePlanilha
+              ? erro.message
+              : 'Não foi possível ler a aba Atestados agora. Recarregue a página em alguns segundos.'}
+          </Faixa>
+        </Wrap>
       </>
     );
   }
 
   const porMatricula = new Map(pessoas.map((pessoa) => [pessoa.matricula, pessoa]));
-  const ativos = pessoas.filter((pessoa) => pessoa.status !== 'Inativo');
   const nomeDe = (matricula) => porMatricula.get(matricula)?.nome || matricula;
+  const ativos = pessoas.filter((pessoa) => pessoa.status !== 'Inativo');
 
   const filtrados = atestados.filter((item) => {
-    const combinaTexto =
+    const combina =
       !busca ||
       nomeDe(item.matricula).toLowerCase().includes(busca) ||
       item.matricula.toLowerCase().includes(busca) ||
       item.cid.toLowerCase().includes(busca);
-
-    return combinaTexto && (!status || item.status === status);
+    return combina && (!status || item.status === status);
   });
 
   const pendentes = atestados.filter((item) => item.status === 'Pendente').length;
@@ -106,24 +95,26 @@ export default async function Atestados({ searchParams }) {
       <Selecao
         rotulo="Colaborador"
         nome="matricula"
-        opcoes={ativos.map((pessoa) => ({
-          valor: pessoa.matricula,
-          texto: `${pessoa.nome} (${pessoa.matricula})`,
-        }))}
+        opcoes={ativos.map((p) => ({ valor: p.matricula, texto: `${p.nome} (${p.matricula})` }))}
         required
       />
-      <Data rotulo="Primeiro dia de afastamento" nome="inicio" defaultValue={hojeISO()} required />
-      <Texto
-        rotulo="Dias de afastamento"
-        nome="dias"
-        type="number"
-        inputMode="numeric"
-        min="1"
-        max="365"
-        defaultValue="1"
-        required
-      />
-      <Texto rotulo="CID" nome="cid" dica="opcional" placeholder="J06.9" />
+      <div className="md-duas">
+        <Data rotulo="Primeiro dia" nome="inicio" defaultValue={hojeISO()} required />
+        <Texto
+          rotulo="Dias de afastamento"
+          nome="dias"
+          type="number"
+          inputMode="numeric"
+          min="1"
+          max="365"
+          defaultValue="1"
+          required
+        />
+      </div>
+      <div className="md-duas">
+        <Texto rotulo="CID" nome="cid" dica="opcional" placeholder="J06.9" />
+        <Selecao rotulo="Validação" nome="status" opcoes={OPCOES.statusAtestado} />
+      </div>
       <Paragrafo
         rotulo="Link do documento"
         nome="anexo"
@@ -131,97 +122,75 @@ export default async function Atestados({ searchParams }) {
         rows={2}
         placeholder="Cole o link do arquivo no Drive"
       />
-      <Selecao rotulo="Validação" nome="status" opcoes={OPCOES.statusAtestado} />
     </PainelDeRegistro>
   );
 
   return (
     <>
-      <TituloDaPagina
+      <Comando
         titulo="Atestados"
-        apoio={
-          pendentes > 0
-            ? `${pendentes} ${plural(pendentes, 'atestado espera', 'atestados esperam')} validação do DP.`
-            : 'Afastamentos médicos, dias cobertos e a conferência de cada documento.'
-        }
-        acao={registro}
-      />
+        contador={pendentes > 0 ? `${pendentes} ${plural(pendentes, 'pendente', 'pendentes')}` : `${atestados.length} no total`}
+      >
+        <Busca placeholder="Buscar por pessoa, matrícula ou CID" />
+        <Seletor chave="status" rotulo="Todas as validações" opcoes={OPCOES.statusAtestado} />
+        {registro}
+      </Comando>
 
-      <Cartao>
-        <Filtros
-          busca="Buscar por pessoa, matrícula ou CID"
-          seletores={[
-            { chave: 'status', rotulo: 'Todas as validações', opcoes: OPCOES.statusAtestado },
-          ]}
-        />
+      <Wrap>
+        {pendentes > 0 ? (
+          <Faixa tom="alerta">
+            <b>{pendentes}</b> {plural(pendentes, 'atestado espera', 'atestados esperam')} validação
+            do DP. Aprovar ou rejeitar muda o valor direto na planilha.
+          </Faixa>
+        ) : null}
 
-        {filtrados.length === 0 ? (
-          <Vazio
-            titulo={atestados.length === 0 ? 'Nenhum atestado registrado' : 'Nada encontrado'}
-            descricao={
-              atestados.length === 0
-                ? 'Registre o primeiro atestado para acompanhar afastamentos e dias cobertos.'
-                : 'Nenhum atestado corresponde à busca. Limpe os filtros ou tente outro termo.'
-            }
-            acao={atestados.length === 0 ? registro : null}
-          />
-        ) : (
-          <>
-            <Tabela colunas={['Início', 'Pessoa', 'Dias', 'CID', 'Documento', 'Validação']}>
-              {filtrados.map((item) => (
-                <Linha key={item.id}>
-                  <Celula className="w-[110px]">
-                    <span className="numero text-[12.5px] text-texto-2">
-                      {formatarData(item.inicio)}
-                    </span>
-                  </Celula>
-                  <Celula className="w-[206px]">
-                    <Nome href={`/colaboradores/${item.matricula}`}>{nomeDe(item.matricula)}</Nome>
-                  </Celula>
-                  <Celula className="w-[72px]">
-                    <span className="numero text-[12.5px]">{item.dias}</span>
-                  </Celula>
-                  <Celula className="w-[92px]">
-                    <span className="codigo text-[12.5px] text-texto-2">{item.cid || '—'}</span>
-                  </Celula>
-                  <Celula>
-                    <Anexo url={item.anexo} />
-                  </Celula>
-                  <Celula className="w-[192px]">
-                    <Validacao item={item} />
-                  </Celula>
-                </Linha>
-              ))}
-            </Tabela>
-
-            <ListaNoCelular>
-              {filtrados.map((item) => (
-                <CartaoDeRegistro
-                  key={item.id}
-                  titulo={nomeDe(item.matricula)}
-                  href={`/colaboradores/${item.matricula}`}
-                  etiqueta={item.status !== 'Pendente' ? <Status>{item.status}</Status> : null}
-                  campos={[
-                    { rotulo: 'Início', valor: formatarData(item.inicio) },
-                    {
-                      rotulo: 'Afastamento',
-                      valor: `${item.dias} ${plural(item.dias, 'dia', 'dias')}`,
-                    },
-                    { rotulo: 'CID', valor: item.cid },
-                    { rotulo: 'Documento', valor: <Anexo url={item.anexo} /> },
-                  ]}
-                  rodape={item.status === 'Pendente' ? <Validacao item={item} /> : null}
-                />
-              ))}
-            </ListaNoCelular>
-
-            <Rodape>
-              {filtrados.length} {plural(filtrados.length, 'atestado', 'atestados')} de{' '}
-              {atestados.length} no registro.
-            </Rodape>
-          </>
-        )}
-      </Cartao>
+        <Cartao liso>
+          {filtrados.length === 0 ? (
+            <Vazio icone={atestados.length === 0 ? 'clinical_notes' : 'search_off'} acao={atestados.length === 0 ? registro : null}>
+              {atestados.length === 0
+                ? 'Nenhum atestado registrado. Registre o primeiro para acompanhar afastamentos e dias cobertos.'
+                : 'Nenhum atestado corresponde à busca. Limpe os filtros ou tente outro termo.'}
+            </Vazio>
+          ) : (
+            <div className="p-[10px]">
+              <Tabela
+                grade={GRADE}
+                colunas={[
+                  { rotulo: 'Pessoa' },
+                  { rotulo: 'Início', alinha: 'd' },
+                  { rotulo: 'Dias', alinha: 'd' },
+                  { rotulo: 'CID', alinha: 'd' },
+                  { rotulo: 'Documento' },
+                  { rotulo: 'Validação' },
+                ]}
+              >
+                {filtrados.map((item) => (
+                  <LinhaTabela key={item.id} grade={GRADE}>
+                    <Celula>
+                      <Nome href={`/colaboradores/${item.matricula}`}>{nomeDe(item.matricula)}</Nome>
+                    </Celula>
+                    <Celula rotulo="Início" alinha="d">
+                      <span className="num">{formatarData(item.inicio)}</span>
+                    </Celula>
+                    <Celula rotulo="Dias" alinha="d">
+                      <span className="num">{item.dias}</span>
+                    </Celula>
+                    <Celula rotulo="CID" alinha="d">
+                      <span className="num text-[var(--tinta-2)]">{item.cid || '—'}</span>
+                    </Celula>
+                    <Celula rotulo="Documento" alinha="c">
+                      <Anexo url={item.anexo} />
+                    </Celula>
+                    <Celula rotulo="Validação" alinha="c">
+                      <Validacao item={item} />
+                    </Celula>
+                  </LinhaTabela>
+                ))}
+              </Tabela>
+            </div>
+          )}
+        </Cartao>
+      </Wrap>
     </>
   );
 }

@@ -10,26 +10,34 @@ import { calcularIndicadores } from '@/lib/indicadores';
 import { dataPorExtenso, diasAtras, formatarData, paraData, plural } from '@/lib/formato';
 import {
   Cartao,
-  CabecalhoDeCartao,
-  Metrica,
-  Metricas,
-  TituloDaPagina,
+  Celula,
+  Comando,
+  Faixa,
+  Kpi,
+  Kpis,
+  LinhaTabela,
+  Nome,
+  Secao,
+  Tabela,
+  Vazio,
+  Wrap,
 } from '@/componentes/Estrutura';
-import { Aviso, Vazio } from '@/componentes/Sinais';
 import { BotaoLink } from '@/componentes/Botao';
-import { GraficoDeArea, GraficoDeBarras, Miniatura, Rosca } from '@/componentes/Graficos';
-import { IconeSeta } from '@/componentes/Icones';
+import { Rosca, Serie, SerieDupla } from '@/componentes/Graficos';
+import { Icone } from '@/componentes/Icones';
 
 export const metadata = { title: 'Painel' };
 
-const PALETA = ['#7371FF', '#BEF533', '#FF43C0', '#DBBFFF', '#1E1E1E', '#8A8A8A', '#4B49E8'];
+const PALETA = ['#6C5CE7', '#0E9F6E', '#1A5FA0', '#C2660B', '#D42F2F', '#8B7BF0', '#7C7C88'];
 
 const CORES_DO_LIVRO = {
-  Admissão: '#BEF533',
-  Ocorrência: '#FF43C0',
-  Atestado: '#DBBFFF',
-  Movimentação: '#7371FF',
+  Admissão: 'var(--ok)',
+  Ocorrência: 'var(--atencao)',
+  Atestado: 'var(--azul)',
+  Movimentação: 'var(--acao)',
 };
+
+const GRADE = '1.4fr .8fr .8fr 2fr';
 
 export default async function Painel() {
   let pessoas;
@@ -47,12 +55,14 @@ export default async function Painel() {
   } catch (erro) {
     return (
       <>
-        <TituloDaPagina titulo="Painel" />
-        <Aviso titulo="A planilha não respondeu">
-          {erro instanceof ErroDePlanilha
-            ? erro.message
-            : 'Não foi possível ler a planilha agora. Confira as variáveis de ambiente e recarregue a página.'}
-        </Aviso>
+        <Comando titulo="Painel" />
+        <Wrap>
+          <Faixa tom="erro">
+            {erro instanceof ErroDePlanilha
+              ? erro.message
+              : 'Não foi possível ler a planilha agora. Confira as variáveis de ambiente e recarregue a página.'}
+          </Faixa>
+        </Wrap>
       </>
     );
   }
@@ -60,14 +70,18 @@ export default async function Painel() {
   if (pessoas.length === 0) {
     return (
       <>
-        <TituloDaPagina titulo="Painel" apoio={`Situação em ${dataPorExtenso(new Date())}.`} />
-        <Cartao>
-          <Vazio
-            titulo="Nenhum colaborador registrado"
-            descricao="Cadastre a primeira pessoa para o painel começar a mostrar o quadro, as pendências e o histórico."
-            acao={<BotaoLink href="/colaboradores">Cadastrar colaborador</BotaoLink>}
-          />
-        </Cartao>
+        <Comando titulo="Painel" />
+        <Wrap>
+          <Cartao>
+            <Vazio
+              icone="group_add"
+              acao={<BotaoLink href="/colaboradores" icone="add">Cadastrar colaborador</BotaoLink>}
+            >
+              Nenhum colaborador registrado. Cadastre a primeira pessoa para o painel mostrar o
+              quadro, as pendências e o histórico.
+            </Vazio>
+          </Cartao>
+        </Wrap>
       </>
     );
   }
@@ -92,21 +106,24 @@ export default async function Painel() {
   const pendencias = [
     {
       quantidade: atestadosPendentes.length,
+      icone: 'clinical_notes',
+      tom: 'at',
       texto: `${plural(atestadosPendentes.length, 'atestado esperando', 'atestados esperando')} validação`,
       href: '/atestados?status=Pendente',
-      cor: '#FF43C0',
     },
     {
       quantidade: checklistsAbertos.length,
+      icone: 'checklist',
+      tom: 'ac',
       texto: `${plural(checklistsAbertos.length, 'movimentação com checklist', 'movimentações com checklist')} em aberto`,
       href: '/movimentacoes',
-      cor: '#7371FF',
     },
     {
       quantidade: faltasDoMes.length,
+      icone: 'event_busy',
+      tom: 'cr',
       texto: `${plural(faltasDoMes.length, 'falta injustificada', 'faltas injustificadas')} nos últimos 30 dias`,
       href: '/ocorrencias?tipo=Falta+Injustificada',
-      cor: '#DBBFFF',
     },
   ].filter((item) => item.quantidade > 0);
 
@@ -119,7 +136,7 @@ export default async function Painel() {
     movimentacoes,
     meses: 6,
   });
-  const mesCorrente = serie[serie.length - 1];
+  const mes = serie[serie.length - 1];
   const decimal = (valor) => String(valor).replace('.', ',');
 
   const lancamentos = [
@@ -154,163 +171,147 @@ export default async function Painel() {
 
   return (
     <>
-      <TituloDaPagina titulo="Painel" apoio={`Situação em ${dataPorExtenso(new Date())}.`} />
+      <Comando titulo="Painel" contador={`${ativos.length} no quadro`}>
+        <BotaoLink href="/indicadores" variante="fant" icone="monitoring">
+          Ver indicadores
+        </BotaoLink>
+      </Comando>
 
-      <Metricas>
-        <Metrica
-          rotulo="Pessoas ativas"
-          valor={ativos.length}
-          apoio={`em ${porArea.length} ${plural(porArea.length, 'área', 'áreas')}`}
-          cor="#BEF533"
-          href="/colaboradores?status=Ativo"
-          grafico={<Miniatura valores={serie.map((mes) => mes.quadroFim)} cor="#BEF533" />}
-        />
-        <Metrica
-          rotulo="Pendências"
-          valor={totalPendente}
-          apoio={totalPendente === 0 ? 'nada esperando o DP' : 'esperando o DP hoje'}
-          cor="#FF43C0"
-        />
-        <Metrica
-          rotulo="Absenteísmo no mês"
-          valor={decimal(mesCorrente.absenteismo)}
-          unidade="%"
-          apoio={`${mesCorrente.diasPerdidos} ${plural(mesCorrente.diasPerdidos, 'dia perdido', 'dias perdidos')}`}
-          cor="#7371FF"
-          href="/indicadores"
-          grafico={<Miniatura valores={serie.map((mes) => mes.absenteismo)} cor="#7371FF" />}
-        />
-        <Metrica
-          rotulo="Turnover no mês"
-          valor={decimal(mesCorrente.turnover)}
-          unidade="%"
-          apoio={`${mesCorrente.admissoes} ${plural(mesCorrente.admissoes, 'entrada', 'entradas')}, ${mesCorrente.saidas} ${plural(mesCorrente.saidas, 'saída', 'saídas')}`}
-          cor="#DBBFFF"
-          href="/indicadores"
-          grafico={<Miniatura valores={serie.map((mes) => mes.turnover)} cor="#FF43C0" />}
-        />
-      </Metricas>
-
-      <div className="grid gap-4 lg:grid-cols-[1.45fr_1fr]">
-        <Cartao>
-          <CabecalhoDeCartao apoio="Pessoas ativas ao fim de cada mês">
-            Evolução do quadro
-          </CabecalhoDeCartao>
-          <div className="p-4 sm:p-5">
-            <GraficoDeArea
-              serie={serie}
-              campo="quadroFim"
-              cor="#7371FF"
-              descricao="Pessoas ativas ao fim de cada mês"
-            />
-          </div>
-        </Cartao>
-
-        <Cartao>
-          <CabecalhoDeCartao apoio="Quem está no quadro hoje">Distribuição por área</CabecalhoDeCartao>
-          <Rosca itens={porArea} total={ativos.length} rotuloCentral="pessoas ativas" />
-        </Cartao>
-
-        <Cartao>
-          <CabecalhoDeCartao apoio="O que depende do DP hoje">Precisa de você</CabecalhoDeCartao>
-
-          {pendencias.length === 0 ? (
-            <Vazio
-              titulo="Nada pendente"
-              descricao="Atestados validados, checklists concluídos e nenhuma falta injustificada no último mês."
-            />
-          ) : (
-            <ul className="divide-y divide-borda">
-              {pendencias.map((pendencia) => (
-                <li key={pendencia.href}>
-                  <Link
-                    href={pendencia.href}
-                    className="group flex items-center gap-3.5 px-4 py-4 transition-colors hover:bg-superficie-2 sm:px-5"
-                  >
-                    <span
-                      aria-hidden="true"
-                      className="grid h-9 w-9 shrink-0 place-items-center rounded-full text-[14px] font-bold text-grafite"
-                      style={{ background: pendencia.cor }}
-                    >
-                      {pendencia.quantidade}
-                    </span>
-                    <span className="flex-1 text-campo leading-snug text-texto-2">
-                      {pendencia.texto}
-                    </span>
-                    <IconeSeta className="h-4 w-4 shrink-0 text-texto-3 transition-colors group-hover:text-acao" />
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          )}
-        </Cartao>
-
-        <Cartao>
-          <CabecalhoDeCartao apoio="Entradas e saídas por mês">Movimento do quadro</CabecalhoDeCartao>
-          <div className="p-4 sm:p-5">
-            <GraficoDeBarras
-              serie={serie}
-              series={[
-                { campo: 'admissoes', nome: 'Admissões', cor: '#BEF533' },
-                { campo: 'saidas', nome: 'Saídas', cor: '#FF43C0' },
-              ]}
-              descricao="Admissões e saídas por mês"
-            />
-          </div>
-        </Cartao>
-      </div>
-
-      <Cartao className="mt-4">
-        <CabecalhoDeCartao apoio="Tudo o que entrou nos registros, em ordem">
-          Últimos lançamentos
-        </CabecalhoDeCartao>
-
-        {lancamentos.length === 0 ? (
-          <Vazio
-            titulo="Nenhum lançamento ainda"
-            descricao="Assim que você registrar uma ocorrência, um atestado ou uma movimentação, o histórico aparece aqui."
+      <Wrap>
+        <Kpis>
+          <Kpi
+            rotulo="Pessoas ativas"
+            valor={ativos.length}
+            apoio={`em ${porArea.length} ${plural(porArea.length, 'área', 'áreas')}`}
+            href="/colaboradores?status=Ativo"
           />
-        ) : (
-          <ul className="px-4 py-2 sm:px-5">
-            {lancamentos.map((item, indice) => (
-              <li
-                key={`${item.livro}-${item.matricula}-${indice}`}
-                className="relative flex gap-3.5 py-3.5"
-              >
-                <span className="relative flex w-3 shrink-0 justify-center">
-                  <span
-                    aria-hidden="true"
-                    className="z-10 mt-[5px] h-3 w-3 rounded-full ring-4 ring-superficie"
-                    style={{ background: CORES_DO_LIVRO[item.livro] || '#8A8A8A' }}
-                  />
-                  {indice < lancamentos.length - 1 ? (
-                    <span
-                      aria-hidden="true"
-                      className="absolute top-[14px] h-full w-px bg-borda"
-                    />
-                  ) : null}
-                </span>
+          <Kpi
+            rotulo="Pendências"
+            valor={totalPendente}
+            cor={totalPendente ? 'var(--atencao)' : undefined}
+            apoio={totalPendente === 0 ? 'nada esperando o DP' : 'esperando o DP hoje'}
+          />
+          <Kpi
+            rotulo="Absenteísmo no mês"
+            valor={`${decimal(mes.absenteismo)}%`}
+            apoio={`${mes.diasPerdidos} ${plural(mes.diasPerdidos, 'dia perdido', 'dias perdidos')}`}
+            href="/indicadores"
+          />
+          <Kpi
+            rotulo="Turnover no mês"
+            valor={`${decimal(mes.turnover)}%`}
+            apoio={`${mes.admissoes} ${plural(mes.admissoes, 'entrada', 'entradas')}, ${mes.saidas} ${plural(mes.saidas, 'saída', 'saídas')}`}
+            href="/indicadores"
+          />
+        </Kpis>
 
-                <div className="min-w-0 flex-1">
-                  <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-                    <Link
-                      href={`/colaboradores/${item.matricula}`}
-                      className="marcante text-[14px] font-bold underline-offset-4 hover:text-acao hover:underline"
-                    >
-                      {nomePorMatricula.get(item.matricula) || item.matricula}
-                    </Link>
-                    <span className="text-[12px] text-texto-3">{item.livro}</span>
-                    <span className="numero ml-auto text-[12px] text-texto-3">
-                      {formatarData(item.data)}
-                    </span>
-                  </div>
-                  <p className="mt-1 text-[12.5px] leading-snug text-texto-2">{item.descricao}</p>
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
-      </Cartao>
+        <Secao titulo="O que depende de você" nota={`situação em ${dataPorExtenso(new Date())}`}>
+          <div className="duas">
+            <Cartao liso>
+              {pendencias.length === 0 ? (
+                <Vazio icone="task_alt">
+                  Nada pendente. Atestados validados, checklists concluídos e nenhuma falta
+                  injustificada no último mês.
+                </Vazio>
+              ) : (
+                <ul>
+                  {pendencias.map((pendencia) => (
+                    <li key={pendencia.href} className="border-b border-[var(--papel-2)] last:border-0">
+                      <Link
+                        href={pendencia.href}
+                        className="group flex items-center gap-3.5 px-[19px] py-[15px] transition-colors hover:bg-[var(--papel-2)]"
+                      >
+                        <span className={`pil ${pendencia.tom} h-8 w-8 justify-center p-0`}>
+                          <Icone nome={pendencia.icone} tamanho={17} />
+                        </span>
+                        <span className="num text-[17px] font-bold">{pendencia.quantidade}</span>
+                        <span className="flex-1 text-[12.5px] leading-snug text-[var(--tinta-2)]">
+                          {pendencia.texto}
+                        </span>
+                        <Icone
+                          nome="arrow_forward"
+                          tamanho={17}
+                          className="text-[var(--tinta-3)] transition-colors group-hover:text-[var(--acao)]"
+                        />
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </Cartao>
+
+            <Cartao titulo="Distribuição do quadro" descricao="Pessoas ativas por área, hoje.">
+              <Rosca itens={porArea} total={ativos.length} rotulo="ativas" />
+            </Cartao>
+          </div>
+        </Secao>
+
+        <Secao titulo="Movimento do quadro" nota="últimos 6 meses">
+          <div className="duas">
+            <Cartao titulo="Pessoas ativas" descricao="Quadro ao fim de cada mês.">
+              <Serie itens={serie.map((m) => ({ rotulo: m.rotulo, valor: m.quadroFim }))} />
+            </Cartao>
+
+            <Cartao titulo="Entradas e saídas" descricao="Quem entrou e quem saiu, mês a mês.">
+              <SerieDupla
+                itens={serie}
+                series={[
+                  { campo: 'admissoes', nome: 'Admissões', cor: 'var(--ok)' },
+                  { campo: 'saidas', nome: 'Saídas', cor: 'var(--critico)' },
+                ]}
+              />
+            </Cartao>
+          </div>
+        </Secao>
+
+        <Secao titulo="Últimos lançamentos" nota="tudo o que entrou nos registros, em ordem">
+          <Cartao liso>
+            {lancamentos.length === 0 ? (
+              <Vazio icone="history">
+                Nenhum lançamento ainda. Assim que você registrar uma ocorrência, um atestado ou uma
+                movimentação, o histórico aparece aqui.
+              </Vazio>
+            ) : (
+              <div className="p-[10px]">
+                <Tabela
+                  grade={GRADE}
+                  colunas={[
+                    { rotulo: 'Pessoa' },
+                    { rotulo: 'Tipo' },
+                    { rotulo: 'Data', alinha: 'd' },
+                    { rotulo: 'Registro' },
+                  ]}
+                >
+                  {lancamentos.map((item, indice) => (
+                    <LinhaTabela key={`${item.livro}-${item.matricula}-${indice}`} grade={GRADE}>
+                      <Celula>
+                        <Nome href={`/colaboradores/${item.matricula}`}>
+                          {nomePorMatricula.get(item.matricula) || item.matricula}
+                        </Nome>
+                      </Celula>
+                      <Celula rotulo="Tipo" alinha="c">
+                        <span className="inline-flex items-center gap-1.5 text-[var(--tinta-2)]">
+                          <span
+                            className="h-2 w-2 shrink-0 rounded-full"
+                            style={{ background: CORES_DO_LIVRO[item.livro] }}
+                          />
+                          {item.livro}
+                        </span>
+                      </Celula>
+                      <Celula rotulo="Data" alinha="d">
+                        <span className="num">{formatarData(item.data)}</span>
+                      </Celula>
+                      <Celula rotulo="Registro" alinha="c">
+                        <span className="text-[var(--tinta-2)]">{item.descricao}</span>
+                      </Celula>
+                    </LinhaTabela>
+                  ))}
+                </Tabela>
+              </div>
+            )}
+          </Cartao>
+        </Secao>
+      </Wrap>
     </>
   );
 }

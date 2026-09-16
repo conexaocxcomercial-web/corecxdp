@@ -202,37 +202,39 @@ lib/
 
 ## Identidade e interface
 
-Paleta da conexão: grafite `#1E1E1E`, papel `#F4F4F4`, violeta `#7371FF`, lima `#BEF533`,
-lavanda `#DBBFFF` e rosa `#FF43C0`. Tipografia em Helvetica, uma família só.
+O módulo segue o sistema visual do core.cx, os mesmos tokens das telas de Quadros e do painel
+Comercial:
 
-A marca é tipográfica, sem imagem: `core` na cor do texto, `.cx` no violeta, e `módulo dp` ao
-lado em tom secundário. Os PNG continuam guardados em `public/marca/` caso um dia você queira
-usá-los em outro lugar.
+| | Valor |
+| --- | --- |
+| Mesa | `#EFEFF3` |
+| Papel | `#FFFFFF` / `#F7F7F9` |
+| Linhas | `#E4E4EA` / `#D3D3DC` |
+| Tinta | `#17171A` / `#56565F` / `#7C7C88` |
+| Ação | `#6C5CE7`, fraco `#F1EFFE` |
+| Estados | ok `#0E9F6E`, atenção `#C2660B`, crítico `#D42F2F`, azul `#1A5FA0` |
+| Raios | card 12px, controle 9px, pílula 999px |
+| Elevação | `e1`, `e2`, `e-pop`, sempre com anel de borda |
 
-**Gráficos.** São SVG e HTML escritos à mão, sem biblioteca externa. O desenho vai no SVG com
-escala livre; grade, eixo e rótulos ficam em HTML por cima. Assim o gráfico estica em qualquer
-largura sem deformar o texto, e funciona igual no celular. O eixo escolhe sozinho um passo
-redondo, com o topo sempre em quatro passos, para as linhas caírem em números inteiros.
+Tipografia Inter, com IBM Plex Mono em tudo que é número (classe `.num`, com algarismos de largura
+fixa). Ícones em Material Symbols Rounded.
 
-**Claro e escuro.** As cores são tokens semânticos (`fundo`, `superficie`, `borda`, `texto`,
-`acao`) declarados como variáveis CSS em `app/globals.css`. Trocar de tema troca os valores; as
-classes dos componentes não mudam. O botão fica no rodapé da barra lateral, e no topo da tela no
-celular. A escolha é guardada no navegador e aplicada antes da primeira pintura, então a tela não
-pisca claro antes de virar escura. Na primeira visita, o tema segue a preferência do sistema.
+**Estrutura de tela.** Barra do topo de 56px com a marca, barra de comando de 56px com o título da
+página, contador e ações à direita, e o conteúdo num `wrap` de 1280px. Seções levam rótulo em caixa
+alta com fio ao lado, como nas outras telas.
 
-**Marcadores de status.** Lima é o que está resolvido, rosa é o que pede ação, violeta é o que
-está em curso, cinza é o que encerrou. A cor mora no ponto ao lado do texto, nunca no texto, que
-fica sempre na cor da interface — assim o contraste se mantém nos dois temas.
+**Sidebar.** Rail de 60px que expande sobrepondo no hover e fixa no botão, empurrando o conteúdo
+via `--cx-sb-w`. O que some no estreito usa `display:none`, nunca `opacity:0`. No toque vira gaveta
+com hambúrguer e véu.
 
-**Contraste.** O violeta da marca não tem contraste suficiente para texto pequeno, então botões e
-links usam o token `acao`, que é um violeta escurecido no tema claro e clareado no escuro. O
-`#7371FF` original fica onde é só cor: ícone da seção ativa, barras e gráficos. A lima nunca vira
-texto, só preenchimento.
+**No celular.** As tabelas viram cartões pelo mesmo mecanismo do core.cx: cada célula carrega
+`data-r` com o rótulo da coluna, que reaparece acima do valor. Os KPIs ficam dois por linha, o
+gráfico de série rola na horizontal e o valor vem impresso acima da barra, porque num toque não
+existe passar o mouse.
 
-**No celular.** Barra inferior com Painel, Indicadores, Colaboradores e um botão Mais que abre os
-outros registros. As tabelas viram cartões empilhados abaixo de 768px, com os campos em duas
-colunas. Os formulários sobem de baixo como folha, em vez de deslizar do lado. Alvos de toque de
-44px e respeito às áreas seguras do aparelho.
+**Claro e escuro.** As cores são variáveis CSS. O tema claro é exatamente o do core.cx; o escuro
+reescreve os mesmos tokens. Nenhuma classe de componente muda entre os dois. A escolha é guardada
+no navegador e aplicada antes da primeira pintura.
 
 ## Decisões que valem conhecer
 

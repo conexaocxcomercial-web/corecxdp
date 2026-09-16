@@ -2,137 +2,1259 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================================
+   TOKENS — os mesmos do core.cx. O tema escuro troca os valores;
+   nenhuma classe de componente muda.
+   ============================================================ */
 :root,
 [data-tema='claro'] {
-  --fundo: 244 244 244;
-  --superficie: 255 255 255;
-  --superficie-2: 248 248 248;
-  --borda: 228 228 228;
-  --borda-forte: 30 30 30;
-  --texto: 30 30 30;
-  --texto-2: 91 91 91;
-  --texto-3: 138 138 138;
-  --acao: 75 73 232;
-  --acao-hover: 58 56 196;
-  --acao-texto: 255 255 255;
-  --sombra: 0 0 0;
+  --mesa: #efeff3;
+  --papel: #ffffff;
+  --papel-2: #f7f7f9;
+  --linha: #e4e4ea;
+  --linha-2: #d3d3dc;
+  --tinta: #17171a;
+  --tinta-2: #56565f;
+  --tinta-3: #7c7c88;
+  --acao: #6c5ce7;
+  --acao-forte: #5a4bd4;
+  --acao-fraco: #f1effe;
+  --lime: #bef533;
+  --ok: #0e9f6e;
+  --ok-fraco: #e6f7f0;
+  --atencao: #c2660b;
+  --at-fundo: #fff0d6;
+  --at-borda: #e5be7f;
+  --critico: #d42f2f;
+  --cr-fundo: #fbe3e3;
+  --cr-borda: #e9a9a9;
+  --azul: #1a5fa0;
+  --azul-fraco: #e9f2fb;
+
+  --r-card: 12px;
+  --r-ctrl: 9px;
+  --r-pill: 999px;
+  --e1: 0 1px 2px rgba(23, 23, 26, 0.05), 0 0 0 1px var(--linha);
+  --e2: 0 4px 14px rgba(23, 23, 26, 0.07), 0 0 0 1px var(--linha);
+  --e-pop: 0 12px 34px rgba(23, 23, 26, 0.16), 0 0 0 1px var(--linha);
+
+  --cx-rail: 60px;
+  --cx-aberta: 248px;
+  --cx-sb-w: 60px;
 }
 
 [data-tema='escuro'] {
-  --fundo: 18 18 18;
-  --superficie: 27 27 27;
-  --superficie-2: 35 35 35;
-  --borda: 47 47 47;
-  --borda-forte: 92 92 92;
-  --texto: 244 244 244;
-  --texto-2: 168 168 168;
-  --texto-3: 122 122 122;
-  --acao: 157 155 255;
-  --acao-hover: 180 178 255;
-  --acao-texto: 20 20 24;
-  --sombra: 0 0 0;
+  --mesa: #121215;
+  --papel: #1a1a1e;
+  --papel-2: #232328;
+  --linha: #2e2e35;
+  --linha-2: #3d3d46;
+  --tinta: #f2f2f4;
+  --tinta-2: #a8a8b3;
+  --tinta-3: #7c7c88;
+  --acao: #8b7bf0;
+  --acao-forte: #a396f5;
+  --acao-fraco: #26224a;
+  --ok: #34c795;
+  --ok-fraco: #16302a;
+  --atencao: #e0913b;
+  --at-fundo: #3a2c15;
+  --at-borda: #6b5222;
+  --critico: #f06a6a;
+  --cr-fundo: #3a1e1e;
+  --cr-borda: #6b3232;
+  --azul: #5fa0e0;
+  --azul-fraco: #16253a;
+  --e1: 0 1px 2px rgba(0, 0, 0, 0.3), 0 0 0 1px var(--linha);
+  --e2: 0 4px 14px rgba(0, 0, 0, 0.35), 0 0 0 1px var(--linha);
+  --e-pop: 0 12px 34px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--linha);
 }
 
-html,
-body {
-  height: 100%;
+* {
+  box-sizing: border-box;
 }
 
 body {
-  background: rgb(var(--fundo));
-  color: rgb(var(--texto));
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  background: var(--mesa);
+  color: var(--tinta);
+  min-height: 100vh;
   -webkit-font-smoothing: antialiased;
+  padding-left: var(--cx-sb-w);
+  transition: padding-left 0.22s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* A troca de tema não deve piscar elemento por elemento. */
-html.trocando-tema *,
-html.trocando-tema *::before,
-html.trocando-tema *::after {
-  transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease;
-}
-
-.marcante {
-  letter-spacing: -0.025em;
-}
-
-/* Helvetica já tem algarismos de largura fixa: as colunas de número
-   alinham sem precisar de uma segunda família. */
-.numero {
+.num {
+  font-family: var(--fonte-mono), ui-monospace, monospace;
   font-variant-numeric: tabular-nums;
-  font-feature-settings: 'tnum' 1;
+  letter-spacing: -0.2px;
 }
 
-.codigo {
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.04em;
-}
-
-*:focus-visible {
-  outline: 2px solid rgb(var(--acao));
+:focus-visible {
+  outline: 2px solid var(--acao);
   outline-offset: 2px;
-  border-radius: 3px;
+  border-radius: 5px;
 }
 
-.sobre-escuro *:focus-visible {
-  outline-color: #bef533;
-}
-
-input,
-select,
-textarea {
-  color: rgb(var(--texto));
-  font-family: inherit;
-}
-
-input::placeholder,
-textarea::placeholder {
-  color: rgb(var(--texto-3));
-}
-
-input[type='search']::-webkit-search-cancel-button {
-  appearance: none;
-}
-
-[data-tema='escuro'] input[type='date'] {
-  color-scheme: dark;
-}
-
-::selection {
-  background: #dbbfff;
-  color: #1e1e1e;
-}
-
-/* Os logos têm versão positiva e negativa: cada tema mostra a sua. */
-[data-tema='claro'] .so-no-escuro,
-[data-tema='escuro'] .so-no-claro {
-  display: none;
-}
-
-/* Espaço para a barra inferior do celular e para o recorte da tela. */
-.recuo-seguro {
-  padding-bottom: calc(76px + env(safe-area-inset-bottom));
-}
-
-.barra-inferior {
-  padding-bottom: env(safe-area-inset-bottom);
-}
-
-/* Barra de rolagem discreta nos painéis. */
-.rolagem-fina::-webkit-scrollbar {
+::-webkit-scrollbar {
   width: 8px;
+  height: 8px;
 }
-.rolagem-fina::-webkit-scrollbar-thumb {
-  background: rgb(var(--borda));
-  border-radius: 8px;
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--linha-2);
+  border-radius: 99px;
+}
+
+.material-symbols-rounded {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+  user-select: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
-    animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+@layer components {
+  /* ------------------------------------------------ barra do topo */
+  .top-bar {
+    background: var(--papel);
+    height: 56px;
+    padding: 0 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--linha);
+    position: sticky;
+    top: 0;
+    z-index: 20;
+  }
+  .top-bar-logo {
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.4px;
+    color: var(--tinta);
+  }
+  .top-bar-logo span {
+    color: var(--acao);
+  }
+  .top-bar-mod {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--tinta-3);
+    margin-left: 7px;
+    letter-spacing: 0;
+  }
+
+  /* --------------------------------------------- barra de comando */
+  .cmd {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 0 22px;
+    min-height: 56px;
+    row-gap: 8px;
+    background: var(--papel);
+    border-bottom: 1px solid var(--linha);
+    flex-wrap: wrap;
+    position: sticky;
+    top: 56px;
+    z-index: 15;
+  }
+  .cmd-tit {
+    font-size: 16px;
+    font-weight: 650;
+    letter-spacing: -0.35px;
+    white-space: nowrap;
+  }
+  .cmd-sep {
+    width: 1px;
+    height: 22px;
+    background: var(--linha);
+  }
+  .cmd-cont {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--tinta-2);
+    background: var(--papel-2);
+    padding: 4px 10px;
+    border-radius: var(--r-pill);
+    white-space: nowrap;
+  }
+  .cmd-dir {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    flex-wrap: wrap;
+  }
+
+  /* ---------------------------------------------------- controles */
+  .segm {
+    display: flex;
+    background: var(--papel-2);
+    border-radius: var(--r-ctrl);
+    padding: 3px;
+    gap: 2px;
+  }
+  .segm-btn {
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--tinta-2);
+    cursor: pointer;
+    padding: 6px 14px;
+    border-radius: 6px;
+    white-space: nowrap;
+    transition: 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .segm-btn:hover {
+    color: var(--tinta);
+  }
+  .segm-btn.on {
+    background: var(--papel);
+    color: var(--tinta);
+    font-weight: 600;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.07);
+  }
+
+  .btn {
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 13px;
+    border-radius: var(--r-ctrl);
+    white-space: nowrap;
+    transition: 0.14s;
+    border: none;
+    font-family: inherit;
+  }
+  .btn .material-symbols-rounded {
+    font-size: 17px;
+  }
+  .btn-fant {
+    background: var(--papel-2);
+    color: var(--tinta-2);
+  }
+  .btn-fant:hover {
+    background: var(--linha);
+    color: var(--tinta);
+  }
+  .btn-acao {
+    background: var(--acao);
+    color: #fff;
+  }
+  .btn-acao:hover {
+    background: var(--acao-forte);
+  }
+  .btn-acao:disabled {
+    background: var(--tinta-3);
+    cursor: wait;
+  }
+  .btn-mini {
+    font-size: 11.5px;
+    padding: 6px 10px;
+  }
+
+  .sel,
+  .campo {
+    font-size: 12.5px;
+    font-weight: 500;
+    padding: 8px 11px;
+    background: var(--papel-2);
+    border: 1px solid transparent;
+    border-radius: var(--r-ctrl);
+    color: var(--tinta);
+    outline: none;
+    font-family: inherit;
+    width: 100%;
+  }
+  .sel {
+    cursor: pointer;
+    max-width: 250px;
+    width: auto;
+  }
+  .sel:focus,
+  .campo:focus {
+    background: var(--papel);
+    border-color: var(--acao);
+    box-shadow: 0 0 0 3px var(--acao-fraco);
+  }
+  .campo::placeholder {
+    color: var(--tinta-3);
+  }
+
+  /* ------------------------------------------------------- página */
+  .wrap {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 18px 22px 80px;
+  }
+
+  .sec {
+    margin-bottom: 22px;
+  }
+  .sec-cab {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 11px;
+  }
+  .sec-tit {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--tinta-3);
+    white-space: nowrap;
+  }
+  .sec-linha {
+    flex: 1;
+    height: 1px;
+    background: var(--linha);
+  }
+  .sec-nota {
+    font-size: 11.5px;
+    color: var(--tinta-3);
+    font-weight: 500;
+  }
+
+  /* ---------------------------------------------------------- KPI */
+  .kpis {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(158px, 1fr));
+    gap: 11px;
+    margin-bottom: 22px;
+  }
+  .kpi {
+    background: var(--papel);
+    border-radius: var(--r-card);
+    box-shadow: var(--e1);
+    padding: 15px 17px;
+  }
+  .kpi-r {
+    font-size: 10.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--tinta-3);
+    margin-bottom: 7px;
+  }
+  .kpi-v {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.9px;
+    line-height: 1;
+  }
+  .kpi-p {
+    font-size: 11.5px;
+    color: var(--tinta-3);
+    font-weight: 500;
+    margin-top: 6px;
+    line-height: 1.4;
+  }
+
+  /* ------------------------------------------------------- cartão */
+  .cartao {
+    background: var(--papel);
+    border-radius: var(--r-card);
+    box-shadow: var(--e1);
+    padding: 17px 19px;
+    overflow: hidden;
+    max-width: 100%;
+  }
+  .cartao-t {
+    font-size: 13px;
+    font-weight: 650;
+    letter-spacing: -0.15px;
+    margin-bottom: 3px;
+  }
+  .cartao-d {
+    font-size: 11.5px;
+    color: var(--tinta-3);
+    line-height: 1.5;
+    margin-bottom: 15px;
+  }
+  .cartao-liso {
+    padding: 0;
+  }
+
+  .duas {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 11px;
+  }
+  .tres {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 11px;
+  }
+
+  /* ------------------------------------------------------- tabela */
+  .tb {
+    border: 1px solid var(--linha);
+    border-radius: var(--r-ctrl);
+    overflow: hidden;
+    max-width: 100%;
+  }
+  .tb-h,
+  .tb-l {
+    display: grid;
+    gap: 11px;
+    padding: 10px 13px;
+    align-items: center;
+    font-size: 12.5px;
+  }
+  .tb-h {
+    background: var(--papel-2);
+    border-bottom: 1px solid var(--linha);
+    font-size: 10.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--tinta-3);
+  }
+  .tb-l {
+    border-bottom: 1px solid var(--papel-2);
+    transition: background 0.14s;
+  }
+  .tb-l:last-child {
+    border: none;
+  }
+  .tb-l:hover {
+    background: var(--papel-2);
+  }
+  .tb-l > span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .tb-h .d,
+  .tb-l .d {
+    text-align: right;
+  }
+  .tb-nome {
+    font-weight: 550;
+  }
+
+  /* -------------------------------------------------------- avisos */
+  .vazio {
+    text-align: center;
+    padding: 38px 20px;
+    color: var(--tinta-3);
+  }
+  .vazio .material-symbols-rounded {
+    font-size: 32px;
+    opacity: 0.3;
+    display: block;
+    margin-bottom: 9px;
+  }
+  .vazio p {
+    font-size: 12.5px;
+    line-height: 1.6;
+    max-width: 360px;
+    margin: 0 auto;
+  }
+
+  .faixa {
+    border-radius: var(--r-card);
+    padding: 13px 16px;
+    display: flex;
+    gap: 11px;
+    align-items: flex-start;
+    margin-bottom: 14px;
+    font-size: 12.5px;
+    line-height: 1.55;
+  }
+  .faixa .material-symbols-rounded {
+    font-size: 18px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .faixa.info {
+    background: var(--acao-fraco);
+    color: var(--acao);
+  }
+  .faixa.alerta {
+    background: var(--at-fundo);
+    color: var(--atencao);
+  }
+  .faixa.erro {
+    background: var(--cr-fundo);
+    color: var(--critico);
+  }
+  .faixa b {
+    font-weight: 650;
+  }
+
+  /* ------------------------------------------------ pílula de estado */
+  .pil {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px;
+    font-weight: 550;
+    padding: 4px 10px;
+    border-radius: var(--r-pill);
+    background: var(--papel-2);
+    color: var(--tinta-2);
+    white-space: nowrap;
+  }
+  .pil-pt {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .pil.ok {
+    background: var(--ok-fraco);
+    color: var(--ok);
+  }
+  .pil.at {
+    background: var(--at-fundo);
+    color: var(--atencao);
+  }
+  .pil.cr {
+    background: var(--cr-fundo);
+    color: var(--critico);
+  }
+  .pil.ac {
+    background: var(--acao-fraco);
+    color: var(--acao);
+  }
+  .pil.az {
+    background: var(--azul-fraco);
+    color: var(--azul);
+  }
+
+  /* ------------------------------------------- barras horizontais */
+  .bh {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+  }
+  .bh-l {
+    display: grid;
+    grid-template-columns: 1fr 76px;
+    gap: 11px;
+    align-items: center;
+  }
+  .bh-c {
+    display: block;
+    min-width: 0;
+  }
+  .bh-t {
+    display: block;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--tinta-2);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-bottom: 5px;
+  }
+  .bh-b {
+    display: block;
+    height: 7px;
+    background: var(--papel-2);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .bh-f {
+    display: block;
+    height: 100%;
+    border-radius: 99px;
+    background: var(--acao);
+  }
+  .bh-v {
+    display: block;
+    font-size: 12.5px;
+    font-weight: 650;
+    text-align: right;
+  }
+  .bh-v small {
+    display: block;
+    font-size: 10.5px;
+    font-weight: 500;
+    color: var(--tinta-3);
+  }
+
+  /* ----------------------------------------------- série temporal */
+  .serie {
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+    height: 168px;
+    padding-top: 22px;
+  }
+  .sb {
+    flex: 1 1 0;
+    min-width: 5px;
+    max-width: 76px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 5px;
+  }
+  .sb-b {
+    width: 100%;
+    background: var(--acao);
+    border-radius: 4px 4px 0 0;
+    min-height: 2px;
+  }
+  .sb-n {
+    font-size: 10.5px;
+    font-weight: 650;
+    color: var(--tinta-2);
+    white-space: nowrap;
+    margin-bottom: 3px;
+  }
+  .sb-x {
+    font-size: 9.5px;
+    color: var(--tinta-3);
+    white-space: nowrap;
+  }
+  .serie-rolagem {
+    overflow: visible;
+  }
+  .serie-dica {
+    display: none;
+    font-size: 11px;
+    color: var(--tinta-3);
+    margin-top: 9px;
+    text-align: center;
+  }
+  .sb-dupla {
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    width: 100%;
+  }
+
+  /* ------------------------------------------------------ formulário */
+  .fg {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .fg > label {
+    font-size: 10.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--tinta-3);
+  }
+  .fg-dica {
+    font-size: 11px;
+    color: var(--tinta-3);
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+}
+
+/* ============================================================
+   TOQUE — mesma régua das outras telas do core.cx
+   ============================================================ */
+@media (max-width: 900px) {
+  body {
+    padding-left: 0 !important;
+  }
+  .top-bar {
+    padding: 0 16px 0 60px;
+    height: 52px;
+  }
+  .cmd {
+    padding: 9px 14px;
+    top: 52px;
+    gap: 8px;
+  }
+  .cmd-sep {
+    display: none;
+  }
+  .cmd-dir {
+    width: 100%;
+    margin-left: 0;
+    gap: 7px;
+  }
+  .cmd-dir .sel {
+    flex: 1 1 calc(50% - 4px);
+    max-width: none;
+    min-width: 0;
+  }
+  .cmd-dir .btn-acao {
+    flex: 1 1 100%;
+    justify-content: center;
+  }
+
+  .wrap {
+    padding: 12px 14px 64px;
+  }
+  .kpis {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .kpi {
+    padding: 12px 13px;
+    min-width: 0;
+  }
+  .kpi-r {
+    font-size: 9.5px;
+    margin-bottom: 5px;
+  }
+  .kpi-v {
+    font-size: 19px;
+    letter-spacing: -0.5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .kpi-p {
+    font-size: 10px;
+    margin-top: 4px;
+    line-height: 1.35;
+  }
+
+  .cartao {
+    padding: 14px 15px;
+  }
+  .cartao-liso {
+    padding: 0;
+  }
+  .sec {
+    margin-bottom: 16px;
+  }
+  .duas,
+  .tres {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  /* tabela vira cartão */
+  .tb {
+    border: none;
+    border-radius: 0;
+    background: transparent;
+  }
+  .tb-h {
+    display: none;
+  }
+  .tb-l {
+    display: block !important;
+    background: var(--papel-2);
+    border-radius: var(--r-ctrl);
+    border: none;
+    padding: 12px 13px;
+    margin-bottom: 7px;
+  }
+  .tb-l:last-child {
+    margin-bottom: 0;
+  }
+  .tb-l > span {
+    white-space: normal;
+  }
+  .tb-nome {
+    display: block;
+    font-size: 13px;
+    font-weight: 650;
+    margin-bottom: 9px;
+  }
+  .tb-l .d,
+  .tb-l .c {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    margin-right: 16px;
+    margin-top: 2px;
+    font-size: 13px;
+  }
+  .tb-l .d::before,
+  .tb-l .c::before {
+    content: attr(data-r);
+    display: block;
+    font-size: 9.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--tinta-3);
+    margin-bottom: 2px;
+    font-family: var(--fonte-sans);
+    letter-spacing: 0.5px;
+  }
+
+  .serie-rolagem {
+    overflow-x: auto;
+    overflow-y: hidden;
+    margin: 0 -15px;
+    padding: 0 15px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .serie {
+    height: 172px;
+    gap: 6px;
+    min-width: min-content;
+  }
+  .sb {
+    max-width: none;
+    flex: 0 0 48px;
+  }
+  .serie-dica {
+    display: block;
+  }
+
+  .bh-l {
+    grid-template-columns: 1fr 66px;
+  }
+  .faixa {
+    padding: 11px 12px;
+    font-size: 11.5px;
+  }
+  .vazio {
+    padding: 26px 14px;
+  }
+}
+
+/* ============================================================
+   SIDEBAR — mesma mecânica do _sidebar.html do core.cx:
+   rail de 60px, expande sobrepondo no hover, fixa empurrando.
+   O que some no estreito usa display:none, nunca opacity:0.
+   ============================================================ */
+.cxsidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: var(--cx-aberta);
+  background: var(--papel);
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: inset -1px 0 0 var(--linha);
+  transition: width 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.cxsb-head {
+  height: 56px;
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 11px;
+  border-bottom: 1px solid var(--linha);
+}
+.cxsb-marca {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+  color: var(--tinta);
+  white-space: nowrap;
+}
+.cxsb-marca span {
+  color: var(--acao);
+}
+.cxsb-sigla {
+  display: none;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+  color: var(--acao);
+}
+.cxsb-toggle {
+  margin-left: auto;
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  border: none;
+  background: transparent;
+  border-radius: 7px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--tinta-3);
+  transition: 0.15s;
+}
+.cxsb-toggle:hover {
+  background: var(--papel-2);
+  color: var(--tinta);
+}
+.cxsb-toggle .material-symbols-rounded {
+  font-size: 19px;
+}
+
+.cxsb-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+/* Filho de flex column encolhe por padrão: sem isto o container
+   espreme os itens em vez de rolar, e os últimos links somem. */
+.cxsb-body > *,
+.cxsb-lista > * {
+  flex-shrink: 0;
+}
+.cxsb-lista,
+.cxsb-item,
+.cxsb-grupo,
+.cxsb-empresa {
+  flex-shrink: 0;
+}
+.cxsb-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.cxsb-empresa {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--tinta-3);
+  padding: 4px 12px 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cxsb-grupo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 10px 7px;
+  cursor: pointer;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+  color: var(--tinta-3);
+  border-radius: 7px;
+  transition: 0.15s;
+  white-space: nowrap;
+}
+.cxsb-grupo:hover {
+  background: var(--papel-2);
+  color: var(--tinta-2);
+}
+.cxsb-grupo-caret {
+  font-size: 15px !important;
+  min-width: 15px;
+  margin-left: auto;
+  transition: transform 0.2s;
+}
+.cxsb-grupo.fechado .cxsb-grupo-caret {
+  transform: rotate(-90deg);
+}
+
+.cxsb-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  overflow: hidden;
+  transition: max-height 0.24s ease;
+  max-height: 420px;
+}
+.cxsb-lista.fechada {
+  max-height: 0;
+}
+
+.cxsb-item {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 0 14px;
+  height: 38px;
+  min-height: 38px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: var(--tinta-2);
+  white-space: nowrap;
+  transition: 0.14s;
+  position: relative;
+}
+.cxsb-item:hover {
+  background: var(--papel-2);
+  color: var(--tinta);
+}
+.cxsb-item.ativo {
+  background: var(--acao);
+  color: #fff;
+}
+.cxsb-item.ativo .material-symbols-rounded {
+  color: #fff;
+}
+.cxsb-item .material-symbols-rounded {
+  font-size: 19px;
+  min-width: 19px;
+  flex-shrink: 0;
+  color: var(--tinta-3);
+  transition: color 0.14s;
+  display: none;
+}
+.cxsb-item:hover .material-symbols-rounded {
+  color: var(--tinta);
+}
+.cxsb-item-txt {
+  font-size: 13px;
+  font-weight: 500;
+}
+.cxsb-item.ativo .cxsb-item-txt {
+  font-weight: 600;
+}
+
+.cxsb-sep {
+  height: 1px;
+  background: var(--linha);
+  margin: 7px 4px;
+  display: none;
+}
+
+/* ---- modo estreito: exceção dentro do desktop ---- */
+@media (min-width: 901px) {
+  .cxsidebar:not(:hover):not(.fixa) {
+    width: var(--cx-rail);
+  }
+  .cxsidebar:not(:hover):not(.fixa) .cxsb-head {
+    padding: 0;
+    justify-content: center;
+  }
+  .cxsidebar:not(:hover):not(.fixa) .cxsb-marca,
+  .cxsidebar:not(:hover):not(.fixa) .cxsb-toggle,
+  .cxsidebar:not(:hover):not(.fixa) .cxsb-item-txt,
+  .cxsidebar:not(:hover):not(.fixa) .cxsb-grupo,
+  .cxsidebar:not(:hover):not(.fixa) .cxsb-empresa {
+    display: none;
+  }
+  .cxsidebar:not(:hover):not(.fixa) .cxsb-sigla {
+    display: block;
+  }
+  .cxsidebar:not(:hover):not(.fixa) .cxsb-sep {
+    display: block;
+  }
+  /* No rail o ícone é a única coisa que resta para navegar. */
+  .cxsidebar:not(:hover):not(.fixa) .cxsb-item .material-symbols-rounded {
+    display: block;
+  }
+  .cxsidebar:not(:hover):not(.fixa) .cxsb-item {
+    justify-content: center;
+    padding: 0;
+  }
+  .cxsidebar:hover:not(.fixa) {
+    box-shadow: 14px 0 44px rgba(23, 23, 26, 0.13), inset -1px 0 0 var(--linha);
+  }
+  .cxsidebar:not(:hover):not(.fixa) .cxsb-item[data-tip]:hover::after {
+    content: attr(data-tip);
+    position: absolute;
+    left: calc(100% + 8px);
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--tinta);
+    color: var(--papel);
+    font-size: 11.5px;
+    font-weight: 500;
+    padding: 5px 9px;
+    border-radius: 6px;
+    white-space: nowrap;
+    z-index: 300;
+    pointer-events: none;
+  }
+}
+
+/* ---- gaveta no toque ---- */
+.cxsb-ham {
+  display: none;
+  position: fixed;
+  top: 9px;
+  left: 12px;
+  z-index: 190;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: none;
+  background: var(--papel);
+  color: var(--tinta);
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 10px rgba(23, 23, 26, 0.12), 0 0 0 1px var(--linha);
+}
+.cxsb-veu {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 199;
+  background: rgba(23, 23, 26, 0.45);
+}
+
+@media (max-width: 900px) {
+  .cxsb-ham {
+    display: flex;
+  }
+  .cxsb-veu.on {
+    display: block;
+  }
+  .cxsidebar {
+    width: var(--cx-aberta);
+    transform: translateX(-100%);
+    transition: transform 0.24s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: none;
+  }
+  .cxsidebar.gaveta {
+    transform: translateX(0);
+    box-shadow: 14px 0 44px rgba(23, 23, 26, 0.2);
+  }
+  .cxsb-toggle {
+    display: none;
+  }
+  .cxsb-item {
+    height: 46px;
+    min-height: 46px;
+  }
+  .cxsb-lista {
+    transition: none;
+  }
+}
+
+/* ============================================================
+   JANELAS — mesmo sistema dos modais do quadro
+   ============================================================ */
+.md-veu {
+  position: fixed;
+  inset: 0;
+  background: rgba(23, 23, 26, 0.45);
+  backdrop-filter: blur(3px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.md {
+  background: var(--papel);
+  border-radius: 16px;
+  box-shadow: 0 24px 70px rgba(23, 23, 26, 0.24);
+  width: 100%;
+  max-width: 520px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: mdIn 0.18s cubic-bezier(0.34, 1.06, 0.64, 1);
+}
+@keyframes mdIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.md-head {
+  padding: 20px 24px 17px;
+  border-bottom: 1px solid var(--linha);
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  flex-shrink: 0;
+}
+.md-head-txt {
+  min-width: 0;
+  flex: 1;
+}
+.md-titulo {
+  font-size: 18px;
+  font-weight: 650;
+  letter-spacing: -0.4px;
+  line-height: 1.25;
+}
+.md-sub {
+  font-size: 12.5px;
+  color: var(--tinta-3);
+  margin-top: 5px;
+  line-height: 1.5;
+}
+.md-fechar {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  border-radius: 9px;
+  border: none;
+  background: var(--papel-2);
+  color: var(--tinta-3);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.15s;
+}
+.md-fechar:hover {
+  background: var(--linha);
+  color: var(--tinta);
+}
+.md-corpo {
+  padding: 20px 24px 24px;
+  overflow-y: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.md-pe {
+  padding: 14px 24px;
+  border-top: 1px solid var(--linha);
+  background: var(--papel-2);
+  display: flex;
+  gap: 9px;
+  justify-content: flex-end;
+  flex-shrink: 0;
+}
+.md-duas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+@media (max-width: 900px) {
+  .md-veu {
+    padding: 0;
+    align-items: flex-end;
+  }
+  .md {
+    max-width: none;
+    max-height: 92vh;
+    border-radius: 18px 18px 0 0;
+  }
+  .md-duas {
+    grid-template-columns: 1fr;
+  }
+  .md-pe {
+    padding-bottom: calc(14px + env(safe-area-inset-bottom));
+  }
+  .md-pe .btn {
+    flex: 1;
+    justify-content: center;
   }
 }

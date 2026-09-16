@@ -1,24 +1,18 @@
 import { OPCOES, listarColaboradores, listarOcorrencias } from '@/lib/registros';
 import { ErroDePlanilha } from '@/lib/planilha';
-import { formatarData, hojeISO, plural } from '@/lib/formato';
+import { formatarData, hojeISO } from '@/lib/formato';
 import {
-  Cartao,
-  CartaoDeRegistro,
-  Celula,
-  Linha,
-  ListaNoCelular,
-  Nome,
-  Rodape,
-  Tabela,
-  TituloDaPagina,
+  Cartao, Celula, Comando, Faixa, LinhaTabela, Nome, Tabela, Vazio, Wrap,
 } from '@/componentes/Estrutura';
-import { Aviso, Status, Vazio } from '@/componentes/Sinais';
-import { Filtros } from '@/componentes/Filtros';
+import { Status } from '@/componentes/Sinais';
+import { Busca, Seletor } from '@/componentes/Filtros';
 import { PainelDeRegistro } from '@/componentes/PainelDeRegistro';
 import { Data, Paragrafo, Selecao } from '@/componentes/Campos';
 import { salvarOcorrencia } from '@/app/acoes';
 
 export const metadata = { title: 'Ocorrências' };
+
+const GRADE = '1.5fr 1fr 104px 118px 2fr';
 
 export default async function Ocorrencias({ searchParams }) {
   const parametros = await searchParams;
@@ -33,28 +27,29 @@ export default async function Ocorrencias({ searchParams }) {
   } catch (erro) {
     return (
       <>
-        <TituloDaPagina titulo="Ocorrências e faltas" />
-        <Aviso titulo="A planilha não respondeu">
-          {erro instanceof ErroDePlanilha
-            ? erro.message
-            : 'Não foi possível ler a aba Ocorrencias_Faltas agora. Confira as variáveis de ambiente e recarregue a página.'}
-        </Aviso>
+        <Comando titulo="Ocorrências" />
+        <Wrap>
+          <Faixa tom="erro">
+            {erro instanceof ErroDePlanilha
+              ? erro.message
+              : 'Não foi possível ler a aba Ocorrencias_Faltas agora. Recarregue a página em alguns segundos.'}
+          </Faixa>
+        </Wrap>
       </>
     );
   }
 
   const porMatricula = new Map(pessoas.map((pessoa) => [pessoa.matricula, pessoa]));
-  const ativos = pessoas.filter((pessoa) => pessoa.status !== 'Inativo');
   const nomeDe = (matricula) => porMatricula.get(matricula)?.nome || matricula;
+  const ativos = pessoas.filter((pessoa) => pessoa.status !== 'Inativo');
 
   const filtradas = ocorrencias.filter((item) => {
-    const combinaTexto =
+    const combina =
       !busca ||
       nomeDe(item.matricula).toLowerCase().includes(busca) ||
       item.matricula.toLowerCase().includes(busca) ||
       item.motivo.toLowerCase().includes(busca);
-
-    return combinaTexto && (!tipo || item.tipo === tipo);
+    return combina && (!tipo || item.tipo === tipo);
   });
 
   const registro = (
@@ -69,14 +64,13 @@ export default async function Ocorrencias({ searchParams }) {
       <Selecao
         rotulo="Colaborador"
         nome="matricula"
-        opcoes={ativos.map((pessoa) => ({
-          valor: pessoa.matricula,
-          texto: `${pessoa.nome} (${pessoa.matricula})`,
-        }))}
+        opcoes={ativos.map((p) => ({ valor: p.matricula, texto: `${p.nome} (${p.matricula})` }))}
         required
       />
-      <Data rotulo="Data da ocorrência" nome="data" defaultValue={hojeISO()} required />
-      <Selecao rotulo="Tipo" nome="tipo" opcoes={OPCOES.tiposDeOcorrencia} />
+      <div className="md-duas">
+        <Data rotulo="Data da ocorrência" nome="data" defaultValue={hojeISO()} required />
+        <Selecao rotulo="Tipo" nome="tipo" opcoes={OPCOES.tiposDeOcorrencia} />
+      </div>
       <Selecao rotulo="Houve justificativa aceita" nome="justificada" opcoes={OPCOES.justificada} />
       <Paragrafo
         rotulo="Motivo"
@@ -89,77 +83,56 @@ export default async function Ocorrencias({ searchParams }) {
 
   return (
     <>
-      <TituloDaPagina
-        titulo="Ocorrências e faltas"
-        apoio="Cada falta, atraso ou medida disciplinar com data, motivo e justificativa."
-        acao={registro}
-      />
+      <Comando titulo="Ocorrências e faltas" contador={`${filtradas.length} de ${ocorrencias.length}`}>
+        <Busca placeholder="Buscar por pessoa, matrícula ou motivo" />
+        <Seletor chave="tipo" rotulo="Todos os tipos" opcoes={OPCOES.tiposDeOcorrencia} />
+        {registro}
+      </Comando>
 
-      <Cartao>
-        <Filtros
-          busca="Buscar por pessoa, matrícula ou motivo"
-          seletores={[{ chave: 'tipo', rotulo: 'Todos os tipos', opcoes: OPCOES.tiposDeOcorrencia }]}
-        />
-
-        {filtradas.length === 0 ? (
-          <Vazio
-            titulo={ocorrencias.length === 0 ? 'Nenhuma ocorrência registrada' : 'Nada encontrado'}
-            descricao={
-              ocorrencias.length === 0
-                ? 'Registre a primeira ocorrência para começar o histórico de ausências da empresa.'
-                : 'Nenhuma ocorrência corresponde à busca. Limpe os filtros ou tente outro termo.'
-            }
-            acao={ocorrencias.length === 0 ? registro : null}
-          />
-        ) : (
-          <>
-            <Tabela colunas={['Data', 'Pessoa', 'Tipo', 'Justificada', 'Motivo']}>
-              {filtradas.map((item) => (
-                <Linha key={item.id}>
-                  <Celula className="w-[110px]">
-                    <span className="numero text-[12.5px] text-texto-2">
-                      {formatarData(item.data)}
-                    </span>
-                  </Celula>
-                  <Celula className="w-[214px]">
-                    <Nome href={`/colaboradores/${item.matricula}`}>{nomeDe(item.matricula)}</Nome>
-                  </Celula>
-                  <Celula className="w-[176px] text-texto-2">{item.tipo}</Celula>
-                  <Celula className="w-[124px]">
-                    <Status>{item.justificada}</Status>
-                  </Celula>
-                  <Celula className="text-texto-2">{item.motivo || '—'}</Celula>
-                </Linha>
-              ))}
-            </Tabela>
-
-            <ListaNoCelular>
-              {filtradas.map((item) => (
-                <CartaoDeRegistro
-                  key={item.id}
-                  titulo={nomeDe(item.matricula)}
-                  href={`/colaboradores/${item.matricula}`}
-                  etiqueta={<Status>{item.justificada}</Status>}
-                  campos={[
-                    { rotulo: 'Data', valor: formatarData(item.data) },
-                    { rotulo: 'Tipo', valor: item.tipo },
-                  ]}
-                  rodape={
-                    item.motivo ? (
-                      <p className="text-[12.5px] leading-snug text-texto-2">{item.motivo}</p>
-                    ) : null
-                  }
-                />
-              ))}
-            </ListaNoCelular>
-
-            <Rodape>
-              {filtradas.length} {plural(filtradas.length, 'ocorrência', 'ocorrências')} de{' '}
-              {ocorrencias.length} no registro.
-            </Rodape>
-          </>
-        )}
-      </Cartao>
+      <Wrap>
+        <Cartao liso>
+          {filtradas.length === 0 ? (
+            <Vazio icone={ocorrencias.length === 0 ? 'event_available' : 'search_off'} acao={ocorrencias.length === 0 ? registro : null}>
+              {ocorrencias.length === 0
+                ? 'Nenhuma ocorrência registrada. Registre a primeira para começar o histórico de ausências da empresa.'
+                : 'Nenhuma ocorrência corresponde à busca. Limpe os filtros ou tente outro termo.'}
+            </Vazio>
+          ) : (
+            <div className="p-[10px]">
+              <Tabela
+                grade={GRADE}
+                colunas={[
+                  { rotulo: 'Pessoa' },
+                  { rotulo: 'Tipo' },
+                  { rotulo: 'Data', alinha: 'd' },
+                  { rotulo: 'Justificada' },
+                  { rotulo: 'Motivo' },
+                ]}
+              >
+                {filtradas.map((item) => (
+                  <LinhaTabela key={item.id} grade={GRADE}>
+                    <Celula>
+                      <Nome href={`/colaboradores/${item.matricula}`}>{nomeDe(item.matricula)}</Nome>
+                    </Celula>
+                    <Celula rotulo="Tipo" alinha="c">
+                      <span className="text-[var(--tinta-2)]">{item.tipo}</span>
+                    </Celula>
+                    <Celula rotulo="Data" alinha="d">
+                      <span className="num">{formatarData(item.data)}</span>
+                    </Celula>
+                    <Celula rotulo="Justificada" alinha="c">
+                      <Status>{item.justificada}</Status>
+                    </Celula>
+                    <Celula rotulo="Motivo" alinha="c">
+                      <span className="text-[var(--tinta-2)]">{item.motivo || '—'}</span>
+                    </Celula>
+                  </LinhaTabela>
+                ))}
+              </Tabela>
+            </div>
+          )}
+        </Cartao>
+      </Wrap>
     </>
   );
 }

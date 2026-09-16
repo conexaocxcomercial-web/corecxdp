@@ -1,25 +1,16 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import {
-  OPCOES,
-  buscarColaborador,
-  listarAtestados,
-  listarMovimentacoes,
-  listarOcorrencias,
+  OPCOES, buscarColaborador, listarAtestados, listarMovimentacoes, listarOcorrencias,
 } from '@/lib/registros';
 import { ErroDePlanilha } from '@/lib/planilha';
 import { formatarData, iniciais, plural, tempoDeCasa } from '@/lib/formato';
 import {
-  Cartao,
-  CabecalhoDeCartao,
-  CartaoDeRegistro,
-  Celula,
-  Linha,
-  ListaNoCelular,
-  Tabela,
+  Cartao, Celula, Comando, Faixa, LinhaTabela, Secao, Tabela, Vazio, Wrap,
 } from '@/componentes/Estrutura';
-import { Aviso, Status, Vazio } from '@/componentes/Sinais';
-import { BotaoCompacto } from '@/componentes/Botao';
+import { Status } from '@/componentes/Sinais';
+import { BotaoMini } from '@/componentes/Botao';
+import { Icone } from '@/componentes/Icones';
 import { alterarStatusDoColaborador } from '@/app/acoes';
 
 export async function generateMetadata({ params }) {
@@ -32,12 +23,17 @@ export async function generateMetadata({ params }) {
   }
 }
 
-function Dado({ rotulo, children }) {
+const G_OCO = '104px 1fr 118px 2fr';
+const G_ATE = '104px 74px 84px 150px 1fr';
+const G_MOV = '110px 1fr 2fr 140px';
+
+function Chip({ icone, rotulo, children }) {
   return (
-    <div>
-      <dt className="text-[11.5px] text-texto-3">{rotulo}</dt>
-      <dd className="mt-1 text-campo text-texto">{children || '—'}</dd>
-    </div>
+    <span className="pil">
+      <Icone nome={icone} tamanho={14} />
+      {rotulo}
+      <b className="font-semibold text-[var(--tinta)]">{children || '—'}</b>
+    </span>
   );
 }
 
@@ -58,11 +54,16 @@ export default async function Ficha({ params }) {
     ]);
   } catch (erro) {
     return (
-      <Aviso titulo="A planilha não respondeu">
-        {erro instanceof ErroDePlanilha
-          ? erro.message
-          : 'Não foi possível abrir esta ficha agora. Recarregue a página em alguns segundos.'}
-      </Aviso>
+      <>
+        <Comando titulo="Ficha" />
+        <Wrap>
+          <Faixa tom="erro">
+            {erro instanceof ErroDePlanilha
+              ? erro.message
+              : 'Não foi possível abrir esta ficha agora. Recarregue a página em alguns segundos.'}
+          </Faixa>
+        </Wrap>
+      </>
     );
   }
 
@@ -79,243 +80,216 @@ export default async function Ficha({ params }) {
 
   return (
     <>
-      <Link
-        href="/colaboradores"
-        className="text-[12.5px] text-texto-3 underline-offset-4 transition-colors hover:text-acao hover:underline"
-      >
-        Voltar para colaboradores
-      </Link>
+      <Comando titulo={pessoa.nome} contador={pessoa.matricula}>
+        <Link href="/colaboradores" className="btn btn-fant">
+          <Icone nome="arrow_back" />
+          Voltar
+        </Link>
+      </Comando>
 
-      <Cartao className="mb-4 mt-3">
-        <div className="flex flex-wrap items-start gap-4 p-4 sm:p-5">
-          <span
-            aria-hidden="true"
-            className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-lavanda text-[16px] font-bold text-grafite"
-          >
-            {iniciais(pessoa.nome)}
-          </span>
+      <Wrap>
+        <div className="cartao mb-[22px]">
+          <div className="flex flex-wrap items-start gap-4">
+            <span
+              aria-hidden="true"
+              className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-[var(--acao-fraco)] text-[14px] font-bold text-[var(--acao)]"
+            >
+              {iniciais(pessoa.nome)}
+            </span>
 
-          <div className="min-w-0 flex-1">
-            <p className="codigo text-[12px] text-texto-3">{pessoa.matricula}</p>
-            <h1 className="marcante mt-0.5 text-[22px] font-bold leading-tight sm:text-[27px]">
-              {pessoa.nome}
-            </h1>
-            <p className="mt-1 text-[13.5px] text-texto-2">
-              {pessoa.cargo || 'Cargo não informado'}
-              {pessoa.departamento ? ` em ${pessoa.departamento}` : ''}
-            </p>
-          </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-[17px] font-[650] leading-tight tracking-[-0.35px]">
+                {pessoa.nome}
+              </p>
+              <p className="mt-1 text-[12.5px] text-[var(--tinta-2)]">
+                {pessoa.cargo || 'Cargo não informado'}
+                {pessoa.departamento ? ` em ${pessoa.departamento}` : ''}
+              </p>
 
-          <form
-            action={alterarStatusDoColaborador}
-            className="flex w-full items-end gap-2 sm:w-auto"
-          >
-            <input type="hidden" name="linha" value={pessoa.linha} />
-            <input type="hidden" name="matricula" value={pessoa.matricula} />
-            <div className="flex-1 sm:flex-none">
-              <label htmlFor="status" className="mb-1.5 block text-[11.5px] text-texto-3">
-                Situação
-              </label>
-              <select
-                id="status"
-                name="status"
-                defaultValue={pessoa.status}
-                className="h-8 w-full rounded-lg border border-borda bg-superficie px-2.5 text-campo transition-colors hover:border-texto-3 focus:border-acao sm:w-auto"
-              >
-                {OPCOES.statusColaborador.map((opcao) => (
-                  <option key={opcao}>{opcao}</option>
-                ))}
-              </select>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <Chip icone="badge" rotulo="CPF">
+                  <span className="num">{pessoa.cpf}</span>
+                </Chip>
+                <Chip icone="event" rotulo="Admissão">
+                  <span className="num">{formatarData(pessoa.admissao)}</span>
+                </Chip>
+                <Chip icone="schedule" rotulo="Casa">
+                  {tempoDeCasa(pessoa.admissao)}
+                </Chip>
+                <Chip icone="supervisor_account" rotulo="Gestor">
+                  {pessoa.gestor}
+                </Chip>
+                <Chip icone="healing" rotulo="Dias afastado">
+                  <span className="num">{diasAfastado}</span>
+                </Chip>
+              </div>
             </div>
-            <BotaoCompacto>Salvar</BotaoCompacto>
-          </form>
+
+            <form
+              action={alterarStatusDoColaborador}
+              className="flex w-full items-end gap-2 sm:w-auto"
+            >
+              <input type="hidden" name="linha" value={pessoa.linha} />
+              <input type="hidden" name="matricula" value={pessoa.matricula} />
+              <div className="fg flex-1 sm:flex-none">
+                <label htmlFor="status">Situação</label>
+                <select
+                  id="status"
+                  name="status"
+                  defaultValue={pessoa.status}
+                  className="campo cursor-pointer"
+                >
+                  {OPCOES.statusColaborador.map((opcao) => (
+                    <option key={opcao}>{opcao}</option>
+                  ))}
+                </select>
+              </div>
+              <BotaoMini>Salvar</BotaoMini>
+            </form>
+          </div>
         </div>
 
-        <dl className="grid grid-cols-2 gap-x-5 gap-y-4 border-t border-borda p-4 sm:grid-cols-3 sm:p-5 lg:grid-cols-6">
-          <Dado rotulo="CPF">
-            <span className="codigo">{pessoa.cpf}</span>
-          </Dado>
-          <Dado rotulo="Admissão">
-            <span className="numero">{formatarData(pessoa.admissao)}</span>
-          </Dado>
-          <Dado rotulo="Tempo de casa">{tempoDeCasa(pessoa.admissao)}</Dado>
-          <Dado rotulo="Gestor imediato">{pessoa.gestor}</Dado>
-          <Dado rotulo="Situação">
-            <Status>{pessoa.status}</Status>
-          </Dado>
-          <Dado rotulo="Dias afastados">
-            <span className="numero">{diasAfastado}</span>
-          </Dado>
-        </dl>
-      </Cartao>
+        <Secao
+          titulo="Ocorrências e faltas"
+          nota={`${minhasOcorrencias.length} ${plural(minhasOcorrencias.length, 'registro', 'registros')}`}
+        >
+          <Cartao liso>
+            {minhasOcorrencias.length === 0 ? (
+              <Vazio icone="event_available">
+                Nenhuma ocorrência. Faltas, atrasos e advertências desta pessoa aparecem aqui.
+              </Vazio>
+            ) : (
+              <div className="p-[10px]">
+                <Tabela
+                  grade={G_OCO}
+                  colunas={[
+                    { rotulo: 'Data', alinha: 'd' },
+                    { rotulo: 'Tipo' },
+                    { rotulo: 'Justificada' },
+                    { rotulo: 'Motivo' },
+                  ]}
+                >
+                  {minhasOcorrencias.map((item) => (
+                    <LinhaTabela key={item.id} grade={G_OCO}>
+                      <Celula alinha="d">
+                        <span className="num">{formatarData(item.data)}</span>
+                      </Celula>
+                      <Celula rotulo="Tipo" alinha="c">
+                        <span className="tb-nome">{item.tipo}</span>
+                      </Celula>
+                      <Celula rotulo="Justificada" alinha="c">
+                        <Status>{item.justificada}</Status>
+                      </Celula>
+                      <Celula rotulo="Motivo" alinha="c">
+                        <span className="text-[var(--tinta-2)]">{item.motivo || '—'}</span>
+                      </Celula>
+                    </LinhaTabela>
+                  ))}
+                </Tabela>
+              </div>
+            )}
+          </Cartao>
+        </Secao>
 
-      <div className="space-y-4">
-        <Cartao>
-          <CabecalhoDeCartao
-            apoio={`${minhasOcorrencias.length} ${plural(minhasOcorrencias.length, 'registro', 'registros')}`}
-          >
-            Ocorrências e faltas
-          </CabecalhoDeCartao>
+        <Secao
+          titulo="Atestados"
+          nota={`${meusAtestados.length} ${plural(meusAtestados.length, 'registro', 'registros')}`}
+        >
+          <Cartao liso>
+            {meusAtestados.length === 0 ? (
+              <Vazio icone="clinical_notes">
+                Nenhum atestado. Afastamentos médicos desta pessoa aparecem aqui.
+              </Vazio>
+            ) : (
+              <div className="p-[10px]">
+                <Tabela
+                  grade={G_ATE}
+                  colunas={[
+                    { rotulo: 'Início', alinha: 'd' },
+                    { rotulo: 'Dias', alinha: 'd' },
+                    { rotulo: 'CID', alinha: 'd' },
+                    { rotulo: 'Validação' },
+                    { rotulo: 'Documento' },
+                  ]}
+                >
+                  {meusAtestados.map((item) => (
+                    <LinhaTabela key={item.id} grade={G_ATE}>
+                      <Celula alinha="d">
+                        <span className="num tb-nome">{formatarData(item.inicio)}</span>
+                      </Celula>
+                      <Celula rotulo="Dias" alinha="d">
+                        <span className="num">{item.dias}</span>
+                      </Celula>
+                      <Celula rotulo="CID" alinha="d">
+                        <span className="num text-[var(--tinta-2)]">{item.cid || '—'}</span>
+                      </Celula>
+                      <Celula rotulo="Validação" alinha="c">
+                        <Status>{item.status}</Status>
+                      </Celula>
+                      <Celula rotulo="Documento" alinha="c">
+                        {item.anexo ? (
+                          <a
+                            href={item.anexo}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-[var(--acao)] hover:underline"
+                          >
+                            Abrir anexo
+                          </a>
+                        ) : (
+                          <span className="text-[var(--tinta-3)]">Sem anexo</span>
+                        )}
+                      </Celula>
+                    </LinhaTabela>
+                  ))}
+                </Tabela>
+              </div>
+            )}
+          </Cartao>
+        </Secao>
 
-          {minhasOcorrencias.length === 0 ? (
-            <Vazio
-              titulo="Nenhuma ocorrência"
-              descricao="Faltas, atrasos e advertências desta pessoa aparecem aqui."
-            />
-          ) : (
-            <>
-              <Tabela colunas={['Data', 'Tipo', 'Justificada', 'Motivo']}>
-                {minhasOcorrencias.map((item) => (
-                  <Linha key={item.id}>
-                    <Celula className="w-[110px]">
-                      <span className="numero text-[12.5px] text-texto-2">
-                        {formatarData(item.data)}
-                      </span>
-                    </Celula>
-                    <Celula className="w-[188px]">{item.tipo}</Celula>
-                    <Celula className="w-[124px]">
-                      <Status>{item.justificada}</Status>
-                    </Celula>
-                    <Celula className="text-texto-2">{item.motivo || '—'}</Celula>
-                  </Linha>
-                ))}
-              </Tabela>
-
-              <ListaNoCelular>
-                {minhasOcorrencias.map((item) => (
-                  <CartaoDeRegistro
-                    key={item.id}
-                    titulo={item.tipo}
-                    etiqueta={<Status>{item.justificada}</Status>}
-                    campos={[{ rotulo: 'Data', valor: formatarData(item.data) }]}
-                    rodape={
-                      item.motivo ? (
-                        <p className="text-[12.5px] leading-snug text-texto-2">{item.motivo}</p>
-                      ) : null
-                    }
-                  />
-                ))}
-              </ListaNoCelular>
-            </>
-          )}
-        </Cartao>
-
-        <Cartao>
-          <CabecalhoDeCartao
-            apoio={`${meusAtestados.length} ${plural(meusAtestados.length, 'registro', 'registros')}`}
-          >
-            Atestados
-          </CabecalhoDeCartao>
-
-          {meusAtestados.length === 0 ? (
-            <Vazio
-              titulo="Nenhum atestado"
-              descricao="Atestados médicos e dias de afastamento desta pessoa aparecem aqui."
-            />
-          ) : (
-            <>
-              <Tabela colunas={['Início', 'Dias', 'CID', 'Validação', 'Documento']}>
-                {meusAtestados.map((item) => (
-                  <Linha key={item.id}>
-                    <Celula className="w-[110px]">
-                      <span className="numero text-[12.5px] text-texto-2">
-                        {formatarData(item.inicio)}
-                      </span>
-                    </Celula>
-                    <Celula className="w-[80px]">
-                      <span className="numero text-[12.5px]">{item.dias}</span>
-                    </Celula>
-                    <Celula className="w-[100px]">
-                      <span className="codigo text-[12.5px] text-texto-2">{item.cid || '—'}</span>
-                    </Celula>
-                    <Celula className="w-[140px]">
-                      <Status>{item.status}</Status>
-                    </Celula>
-                    <Celula>
-                      {item.anexo ? (
-                        <a
-                          href={item.anexo}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="text-acao underline-offset-4 hover:underline"
-                        >
-                          Abrir anexo
-                        </a>
-                      ) : (
-                        <span className="text-texto-3">Sem anexo</span>
-                      )}
-                    </Celula>
-                  </Linha>
-                ))}
-              </Tabela>
-
-              <ListaNoCelular>
-                {meusAtestados.map((item) => (
-                  <CartaoDeRegistro
-                    key={item.id}
-                    titulo={`${item.dias} ${plural(item.dias, 'dia', 'dias')} de afastamento`}
-                    etiqueta={<Status>{item.status}</Status>}
-                    campos={[
-                      { rotulo: 'Início', valor: formatarData(item.inicio) },
-                      { rotulo: 'CID', valor: item.cid },
-                    ]}
-                  />
-                ))}
-              </ListaNoCelular>
-            </>
-          )}
-        </Cartao>
-
-        <Cartao>
-          <CabecalhoDeCartao
-            apoio={`${minhasMovimentacoes.length} ${plural(minhasMovimentacoes.length, 'registro', 'registros')}`}
-          >
-            Movimentações
-          </CabecalhoDeCartao>
-
-          {minhasMovimentacoes.length === 0 ? (
-            <Vazio
-              titulo="Nenhuma movimentação"
-              descricao="Promoções, transferências, afastamentos e desligamentos aparecem aqui."
-            />
-          ) : (
-            <>
-              <Tabela colunas={['Efetiva em', 'Tipo', 'Motivo', 'Checklist']}>
-                {minhasMovimentacoes.map((item) => (
-                  <Linha key={item.id}>
-                    <Celula className="w-[118px]">
-                      <span className="numero text-[12.5px] text-texto-2">
-                        {formatarData(item.efetiva)}
-                      </span>
-                    </Celula>
-                    <Celula className="w-[188px]">{item.tipo}</Celula>
-                    <Celula className="text-texto-2">{item.motivo || '—'}</Celula>
-                    <Celula className="w-[150px]">
-                      <Status>{item.checklist}</Status>
-                    </Celula>
-                  </Linha>
-                ))}
-              </Tabela>
-
-              <ListaNoCelular>
-                {minhasMovimentacoes.map((item) => (
-                  <CartaoDeRegistro
-                    key={item.id}
-                    titulo={item.tipo}
-                    etiqueta={<Status>{item.checklist}</Status>}
-                    campos={[{ rotulo: 'Passa a valer', valor: formatarData(item.efetiva) }]}
-                    rodape={
-                      item.motivo ? (
-                        <p className="text-[12.5px] leading-snug text-texto-2">{item.motivo}</p>
-                      ) : null
-                    }
-                  />
-                ))}
-              </ListaNoCelular>
-            </>
-          )}
-        </Cartao>
-      </div>
+        <Secao
+          titulo="Movimentações"
+          nota={`${minhasMovimentacoes.length} ${plural(minhasMovimentacoes.length, 'registro', 'registros')}`}
+        >
+          <Cartao liso>
+            {minhasMovimentacoes.length === 0 ? (
+              <Vazio icone="swap_horiz">
+                Nenhuma movimentação. Promoções, transferências e desligamentos aparecem aqui.
+              </Vazio>
+            ) : (
+              <div className="p-[10px]">
+                <Tabela
+                  grade={G_MOV}
+                  colunas={[
+                    { rotulo: 'Passa a valer', alinha: 'd' },
+                    { rotulo: 'Tipo' },
+                    { rotulo: 'Motivo' },
+                    { rotulo: 'Checklist' },
+                  ]}
+                >
+                  {minhasMovimentacoes.map((item) => (
+                    <LinhaTabela key={item.id} grade={G_MOV}>
+                      <Celula alinha="d">
+                        <span className="num">{formatarData(item.efetiva)}</span>
+                      </Celula>
+                      <Celula rotulo="Tipo" alinha="c">
+                        <span className="tb-nome">{item.tipo}</span>
+                      </Celula>
+                      <Celula rotulo="Motivo" alinha="c">
+                        <span className="text-[var(--tinta-2)]">{item.motivo || '—'}</span>
+                      </Celula>
+                      <Celula rotulo="Checklist" alinha="c">
+                        <Status>{item.checklist}</Status>
+                      </Celula>
+                    </LinhaTabela>
+                  ))}
+                </Tabela>
+              </div>
+            )}
+          </Cartao>
+        </Secao>
+      </Wrap>
     </>
   );
 }

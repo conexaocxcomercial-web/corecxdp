@@ -2,44 +2,45 @@
 
 import Link from 'next/link';
 import { useFormStatus } from 'react-dom';
+import { Icone } from '@/componentes/Icones';
 
-const ESTILOS = {
-  principal: 'bg-acao text-acao-texto hover:bg-acao-hover disabled:opacity-55',
-  secundario: 'border border-borda bg-superficie text-texto hover:border-borda-forte',
-  discreto: 'text-texto-2 hover:text-acao underline-offset-4 hover:underline',
-};
-
-const BASE =
-  'inline-flex h-10 items-center justify-center gap-2 rounded-lg px-4 text-[13px] font-bold transition-colors disabled:cursor-not-allowed';
-
-export function Botao({ variante = 'principal', className = '', ...props }) {
-  const estilo = variante === 'discreto' ? '' : BASE;
-  return <button className={`${estilo} ${ESTILOS[variante]} ${className}`} {...props} />;
+export function Botao({ variante = 'acao', icone, children, className = '', ...props }) {
+  return (
+    <button className={`btn btn-${variante} ${className}`} {...props}>
+      {icone ? <Icone nome={icone} /> : null}
+      {children}
+    </button>
+  );
 }
 
-export function BotaoLink({ variante = 'principal', className = '', ...props }) {
-  const estilo = variante === 'discreto' ? '' : BASE;
-  return <Link className={`${estilo} ${ESTILOS[variante]} ${className}`} {...props} />;
+export function BotaoLink({ variante = 'acao', icone, children, className = '', ...props }) {
+  return (
+    <Link className={`btn btn-${variante} ${className}`} {...props}>
+      {icone ? <Icone nome={icone} /> : null}
+      {children}
+    </Link>
+  );
 }
 
-export function BotaoEnviar({ children, enviando, variante = 'principal', className = '' }) {
+export function BotaoEnviar({ children, enviando, icone = 'check', className = '' }) {
   const { pending } = useFormStatus();
 
   return (
-    <button type="submit" disabled={pending} className={`${BASE} ${ESTILOS[variante]} ${className}`}>
+    <button type="submit" disabled={pending} className={`btn btn-acao ${className}`}>
+      <Icone nome={pending ? 'hourglass_empty' : icone} />
       {pending ? enviando || 'Salvando…' : children}
     </button>
   );
 }
 
-export function BotaoCompacto({ children, className = '', ...props }) {
+export function BotaoMini({ children, className = '', ...props }) {
   const { pending } = useFormStatus();
 
   return (
     <button
       type="submit"
       disabled={pending}
-      className={`h-8 rounded-lg border border-borda bg-superficie px-3 text-[12px] font-medium text-texto-2 transition-colors hover:border-borda-forte hover:text-texto disabled:opacity-50 ${className}`}
+      className={`btn btn-fant btn-mini ${className}`}
       {...props}
     >
       {pending ? '…' : children}
