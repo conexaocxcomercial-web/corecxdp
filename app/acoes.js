@@ -1,6 +1,9 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
+import { abrirSessao, fecharSessao } from '@/lib/sessao';
+import { autenticar } from '@/lib/usuarios';
 import {
   cadastrarColaborador,
   mudarChecklist,
@@ -21,6 +24,43 @@ function mensagemDeFalha(erro) {
   if (erro instanceof ErroDePlanilha) return erro.message;
   console.error(erro);
   return 'O registro não foi gravado na planilha. Tente de novo em alguns segundos.';
+}
+
+/* ------------------------------------------------------------------ acesso */
+
+const RECADOS = {
+  credenciais: 'E-mail ou senha não conferem. Confira os dados e tente de novo.',
+  inativo: 'Este acesso está marcado como inativo na planilha. Fale com quem administra.',
+  'sem-cliente': 'Este usuário não está ligado a nenhuma empresa. Preencha a coluna Cliente na aba Usuarios.',
+};
+
+export async function entrar(_estado, dados) {
+  const email = ler(dados, 'email');
+  const senha = ler(dados, 'senha');
+  const destino = ler(dados, 'destino');
+
+  if (!email || !senha) {
+    return { erro: 'Preencha e-mail e senha para entrar.' };
+  }
+
+  let resultado;
+  try {
+    resultado = await autenticar(email, senha);
+  } catch (erro) {
+    return { erro: mensagemDeFalha(erro) };
+  }
+
+  if (resultado.erro) {
+    return { erro: RECADOS[resultado.erro] || RECADOS.credenciais };
+  }
+
+  await abrirSessao(resultado.usuario);
+  redirect(destino.startsWith('/') && destino !== '/entrar' ? destino : '/painel');
+}
+
+export async function sair() {
+  await fecharSessao();
+  redirect('/entrar');
 }
 
 /* ----------------------------------------------------------- colaboradores */

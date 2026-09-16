@@ -11,6 +11,7 @@ Feito em Next.js 15 (App Router), Tailwind CSS e API do Google Sheets. Publica n
 
 | Tela | Endereço | Para que serve |
 | --- | --- | --- |
+| Entrada | `/entrar` | Acesso com e-mail e senha, conferidos na aba Usuarios |
 | Painel | `/painel` | Quadro de pessoas ativas por área, pendências do dia e últimos lançamentos |
 | Indicadores | `/indicadores` | Turnover, absenteísmo, evolução do quadro, reincidência e tempo de casa |
 | Colaboradores | `/colaboradores` | Lista com busca e filtros, e cadastro de novas pessoas |
@@ -25,27 +26,16 @@ cada cliente tem o próprio `MAT001`.
 
 ## Uma planilha, vários clientes
 
-Esta versão está **sem tela de login**, para você testar. A plataforma abre direto no painel.
+Todos os clientes vivem na mesma planilha. Cada aba de registro tem uma coluna `Cliente`, e a aba
+`Usuarios` liga cada pessoa a um cliente. Ao entrar, ela só enxerga as linhas cujo `Cliente` bate
+com o dela — na lista, na busca, na ficha, no painel e nos indicadores. Toda linha gravada recebe
+o código da empresa automaticamente, e alterações em linhas de outra empresa são recusadas.
 
-O recorte por cliente continua no código, só que agora vem de variável de ambiente em vez de
-sessão. Cada aba da planilha pode ter uma coluna `Cliente`, e o `CLIENTE_PADRAO` diz de quem são
-os dados desta instalação:
+O recorte não é um parâmetro que alguma tela possa esquecer de passar: vem da sessão, dentro da
+camada de leitura. Para atender um cliente novo, basta uma linha a mais em `Usuarios` com um
+`Cliente` novo e as linhas dele nas abas de registro. Nenhuma mudança de código.
 
-```ini
-CLIENTE_PADRAO=          # vazio: mostra a planilha inteira
-CLIENTE_PADRAO=conexao   # mostra só as linhas com Cliente igual a "conexao"
-```
-
-Para testar agora, deixe vazio: a coluna `Cliente` nem precisa existir e a planilha original
-funciona como está.
-
-Para atender vários clientes em produção, há dois caminhos. Um deploy por cliente no Vercel, cada
-um com seu `CLIENTE_PADRAO` apontando para a mesma planilha — funciona hoje, sem código novo. Ou
-devolver o login, com cada usuário carregando seu código de cliente, e um só deploy atende todos.
-Me peça o login de volta quando terminar de testar.
-
-Quando o `CLIENTE_PADRAO` está preenchido, toda linha gravada recebe o código da empresa
-automaticamente, e a sequência de matrícula é por empresa: cada cliente tem o próprio `MAT001`.
+A sequência de códigos é por empresa: cada cliente tem o próprio `MAT001`.
 
 ---
 
@@ -77,6 +67,20 @@ Cliente | ID_Atestado | Data_Registro | Matricula | Data_Inicio | Dias_Afastamen
 ```
 Cliente | ID_Movimentacao | Data_Registro | Matricula | Tipo_Movimentacao | Data_Efetiva | Motivo | Status_Checklist
 ```
+
+**Usuarios**
+
+```
+Cliente | Empresa | Nome | Email | Senha | Perfil | Ativo
+```
+
+É a aba dos acessos. `Cliente` é o código que define o que a pessoa enxerga; `Empresa` é o nome que
+aparece na tela; `Ativo` igual a `Não` bloqueia o acesso sem apagar a linha.
+
+Sobre a senha: em texto puro funciona, e é o suficiente para protótipo com dados fictícios. Para
+uso real, gere o hash com `npm run senha "minhaSenhaForte"` e cole o valor `scrypt$...` na célula.
+O sistema aceita os dois formatos. Enquanto a senha estiver em texto puro, quem abrir a planilha lê
+a senha de todo mundo.
 
 A coluna `Cliente` guarda um código curto, sem espaço nem acento: `conexao`, `super-show`. É esse
 código que liga a linha ao `CLIENTE_PADRAO`. Se você já tem dados na planilha, acrescente a coluna e preencha
@@ -130,9 +134,16 @@ GOOGLE_SHEET_ID=id_da_sua_planilha
 GOOGLE_CLIENT_EMAIL=core-cx-dp@seu-projeto.iam.gserviceaccount.com
 GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nMIIEv...\n-----END PRIVATE KEY-----\n"
 
-CLIENTE_PADRAO=
-EMPRESA_PADRAO=Conexão
+AUTH_SECRET=gere_com_openssl_rand_base64_32
 ```
+
+Para gerar o `AUTH_SECRET`:
+
+```bash
+openssl rand -base64 32
+```
+
+É a chave que assina o cookie de sessão. Trocá-la derruba todo mundo na próxima página.
 
 Sobre a chave privada: copie o valor de `private_key` do JSON exatamente como está, entre aspas
 duplas, com os `\n` literais. O sistema converte para quebras de linha sozinho.
@@ -192,7 +203,9 @@ app/
 componentes/                    marca, carimbo, tabelas, campos, filtros, painel lateral
 lib/
   planilha.js                   conversa com a API do Google Sheets
-  contexto.js                   de qual cliente são os dados desta instalação
+  contexto.js                   de qual cliente é a sessão
+  sessao.js                     cookie de sessão assinado
+  usuarios.js                   lê a aba Usuarios e confere a senha
   registros.js                  leitura e escrita dos quatro livros, já filtrados
   indicadores.js                cálculo de turnover, absenteísmo e séries mensais
   formato.js                    datas, CPF, tempo de casa
@@ -245,8 +258,10 @@ data — o sistema continua lendo certo.
 
 **Colunas.** São encontradas pelo nome no cabeçalho. Reordenar não quebra; renomear sim.
 
-**Acesso.** Esta versão não tem login: serve para testar. Antes de qualquer uso real, é preciso
-devolver a autenticação.
+**Acesso.** Login por e-mail e senha, conferidos na aba `Usuarios` da própria planilha. A sessão é
+um cookie assinado, válido por dez horas, que carrega o cliente da pessoa. Serve bem para protótipo
+e para uma equipe pequena de DP. Se o time crescer ou se for preciso trilha de auditoria por
+pessoa, o próximo passo é um provedor de identidade.
 
 **Dados sensíveis.** CPF e CID ficam na planilha, sob as permissões que você definir no Drive.
 Quem tem acesso à planilha vê tudo, independentemente do que a plataforma mostra.
@@ -260,6 +275,9 @@ Quem tem acesso à planilha vê tudo, independentemente do que a plataforma most
 | "A conta de serviço não tem acesso à planilha" | Compartilhe a planilha com o `client_email` como Editor |
 | "Uma das abas não foi encontrada" | Confira os nomes das abas, sem acento e com underline |
 | "A conexão com a planilha não está configurada" | Falta `GOOGLE_CLIENT_EMAIL` ou `GOOGLE_PRIVATE_KEY` |
-| "A aba X ainda não tem a coluna Cliente" | Acrescente a coluna, ou deixe `CLIENTE_PADRAO` vazio |
-| Abre e não mostra nada | O código em `CLIENTE_PADRAO` não bate com o da coluna `Cliente` |
+| "A aba X ainda não tem a coluna Cliente" | Acrescente a coluna `Cliente` no cabeçalho daquela aba |
+| "A planilha ainda não tem a aba Usuarios" | Crie a aba com as sete colunas de acesso |
+| "E-mail ou senha não conferem" | Confira e-mail e senha na aba `Usuarios` |
+| Entra e não vê nada | O código em `Cliente` do usuário não bate com o das linhas de registro |
+| Volta para a tela de entrada sozinho | Falta `AUTH_SECRET`, ou ele mudou depois do último deploy |
 | Erro de chave inválida no deploy | A `GOOGLE_PRIVATE_KEY` perdeu os `\n`. Cole de novo entre aspas |
