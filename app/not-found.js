@@ -6,7 +6,7 @@ export default function NaoEncontrado() {
       <div className="cartao max-w-[44ch] text-center">
         <div className="cartao-t">Esta página não existe</div>
         <div className="cartao-d">
-          O endereço pode ter mudado, ou a matrícula que você abriu não está mais na planilha.
+          O endereço pode ter mudado, ou a matrícula que você abriu não está mais nos registros.
         </div>
         <Link href="/painel" className="btn btn-acao">
           Voltar para o painel

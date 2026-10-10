@@ -1,5 +1,6 @@
-import { OPCOES, listarColaboradores, listarOcorrencias } from '@/lib/registros';
-import { ErroDePlanilha } from '@/lib/planilha';
+import {
+  OPCOES, listarColaboradores, listarOcorrencias, mensagemParaTela,
+} from '@/lib/registros';
 import { formatarData, hojeISO } from '@/lib/formato';
 import {
   Cartao, Celula, Comando, Faixa, LinhaTabela, Nome, Tabela, Vazio, Wrap,
@@ -30,9 +31,10 @@ export default async function Ocorrencias({ searchParams }) {
         <Comando titulo="Ocorrências" />
         <Wrap>
           <Faixa tom="erro">
-            {erro instanceof ErroDePlanilha
-              ? erro.message
-              : 'Não foi possível ler a aba Ocorrencias_Faltas agora. Recarregue a página em alguns segundos.'}
+            {mensagemParaTela(
+              erro,
+              'Não foi possível carregar as ocorrências agora. Recarregue a página em alguns segundos.'
+            )}
           </Faixa>
         </Wrap>
       </>

@@ -1,5 +1,6 @@
 import { FormularioDeEntrada } from './formulario';
 import { BotaoDeTema } from '@/componentes/Tema';
+import { Assinatura, Marca } from '@/componentes/Marca';
 
 export const metadata = { title: 'Entrar' };
 
@@ -15,8 +16,7 @@ export default async function Entrar({ searchParams }) {
 
       <div className="entrada-cx">
         <div className="entrada-marca">
-          core<span>.cx</span>
-          <span className="entrada-mod">módulo dp</span>
+          <Marca grande />
         </div>
 
         <div className="cartao entrada-cartao">
@@ -29,7 +29,9 @@ export default async function Entrar({ searchParams }) {
           <FormularioDeEntrada destino={destino} />
         </div>
 
-        <p className="entrada-pe">Uma solução cx de RH Estratégico</p>
+        <div className="entrada-pe">
+          <Assinatura />
+        </div>
       </div>
     </div>
   );

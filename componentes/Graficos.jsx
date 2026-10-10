@@ -1,3 +1,8 @@
+/* ----------------------------------------------------------- paleta */
+
+/** Cores por categoria (rosca). Os valores ficam em --graf-* no globals.css. */
+export const PALETA = [1, 2, 3, 4, 5, 6, 7].map((n) => `var(--graf-${n})`);
+
 /* ------------------------------------------------------------ escala */
 
 function escala(maximo, casas = 0) {
@@ -61,7 +66,7 @@ export function SerieDupla({ itens, series }) {
       <div className="mb-3 flex flex-wrap gap-4">
         {series.map((s) => (
           <span key={s.campo} className="flex items-center gap-1.5 text-[12px] text-[var(--tinta-2)]">
-            <span className="h-2.5 w-2.5 rounded-full" style={{ background: s.cor }} />
+            <span className="graf-ponto h-2.5 w-2.5 rounded-full" style={{ background: s.cor }} />
             {s.nome}
           </span>
         ))}
@@ -159,11 +164,23 @@ export function Rosca({ itens, total, rotulo = 'pessoas' }) {
               <title>{`${fatia.rotulo}: ${fatia.valor}`}</title>
             </circle>
           ))}
+          {/* Contorno do anel (borda interna e externa), como nas barras. */}
+          {[13.415, 18.415].map((raio) => (
+            <circle
+              key={raio}
+              cx="21"
+              cy="21"
+              r={raio}
+              fill="none"
+              stroke="var(--graf-contorno)"
+              strokeWidth="0.28"
+            />
+          ))}
         </svg>
         <div className="pointer-events-none absolute inset-0 grid place-items-center text-center">
           <div>
             <p className="num text-[26px] font-bold leading-none tracking-[-0.9px]">{soma}</p>
-            <p className="mt-1 text-[10.5px] font-medium uppercase tracking-[0.5px] text-[var(--tinta-3)]">
+            <p className="mt-1 text-[12px] font-medium uppercase tracking-[0.3px] text-[var(--tinta-3)]">
               {rotulo}
             </p>
           </div>
@@ -173,10 +190,10 @@ export function Rosca({ itens, total, rotulo = 'pessoas' }) {
       <ul className="w-full flex-1 space-y-2">
         {fatias.map((fatia) => (
           <li key={fatia.rotulo} className="flex items-center gap-2.5 text-[12.5px]">
-            <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: fatia.cor }} />
+            <span className="graf-ponto h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: fatia.cor }} />
             <span className="flex-1 truncate text-[var(--tinta-2)]">{fatia.rotulo}</span>
             <span className="num font-semibold">{fatia.valor}</span>
-            <span className="num w-10 text-right text-[11px] text-[var(--tinta-3)]">
+            <span className="num w-10 text-right text-[12px] text-[var(--tinta-3)]">
               {Math.round(fatia.fracao)}%
             </span>
           </li>

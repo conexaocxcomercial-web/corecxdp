@@ -4,8 +4,8 @@ import {
   listarColaboradores,
   listarMovimentacoes,
   listarOcorrencias,
+  mensagemParaTela,
 } from '@/lib/registros';
-import { ErroDePlanilha } from '@/lib/planilha';
 import { calcularIndicadores } from '@/lib/indicadores';
 import { dataPorExtenso, diasAtras, formatarData, paraData, plural } from '@/lib/formato';
 import {
@@ -23,12 +23,10 @@ import {
   Wrap,
 } from '@/componentes/Estrutura';
 import { BotaoLink } from '@/componentes/Botao';
-import { Rosca, Serie, SerieDupla } from '@/componentes/Graficos';
+import { PALETA, Rosca, Serie, SerieDupla } from '@/componentes/Graficos';
 import { Icone } from '@/componentes/Icones';
 
 export const metadata = { title: 'Painel' };
-
-const PALETA = ['#6C5CE7', '#0E9F6E', '#1A5FA0', '#C2660B', '#D42F2F', '#8B7BF0', '#7C7C88'];
 
 const CORES_DO_LIVRO = {
   Admissão: 'var(--ok)',
@@ -58,9 +56,10 @@ export default async function Painel() {
         <Comando titulo="Painel" />
         <Wrap>
           <Faixa tom="erro">
-            {erro instanceof ErroDePlanilha
-              ? erro.message
-              : 'Não foi possível ler a planilha agora. Confira as variáveis de ambiente e recarregue a página.'}
+            {mensagemParaTela(
+              erro,
+              'Não foi possível carregar o painel agora. Recarregue a página em alguns segundos.'
+            )}
           </Faixa>
         </Wrap>
       </>
@@ -231,7 +230,7 @@ export default async function Painel() {
                         <Icone
                           nome="arrow_forward"
                           tamanho={17}
-                          className="text-[var(--tinta-3)] transition-colors group-hover:text-[var(--acao)]"
+                          className="text-[var(--tinta-3)] transition-colors group-hover:text-[var(--acao-texto)]"
                         />
                       </Link>
                     </li>
@@ -292,7 +291,7 @@ export default async function Painel() {
                       <Celula rotulo="Tipo" alinha="c">
                         <span className="inline-flex items-center gap-1.5 text-[var(--tinta-2)]">
                           <span
-                            className="h-2 w-2 shrink-0 rounded-full"
+                            className="graf-ponto h-2 w-2 shrink-0 rounded-full"
                             style={{ background: CORES_DO_LIVRO[item.livro] }}
                           />
                           {item.livro}

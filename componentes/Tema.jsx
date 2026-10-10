@@ -29,7 +29,7 @@ export function BotaoDeTema() {
       onClick={alternar}
       title={`Mudar para o tema ${tema === 'escuro' ? 'claro' : 'escuro'}`}
       aria-label={`Mudar para o tema ${tema === 'escuro' ? 'claro' : 'escuro'}`}
-      className="grid h-9 w-9 place-items-center rounded-full bg-[var(--papel-2)] text-[var(--tinta-3)] transition-colors hover:bg-[var(--linha)] hover:text-[var(--tinta)]"
+      className="grid h-11 w-11 place-items-center rounded-full min-[901px]:h-9 min-[901px]:w-9 bg-[var(--papel-2)] text-[var(--tinta-3)] transition-colors hover:bg-[var(--linha)] hover:text-[var(--tinta)]"
     >
       <Icone nome={tema === 'escuro' ? 'light_mode' : 'dark_mode'} tamanho={20} />
     </button>

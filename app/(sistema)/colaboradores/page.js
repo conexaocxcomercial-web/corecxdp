@@ -1,5 +1,4 @@
-import { OPCOES, listarColaboradores } from '@/lib/registros';
-import { ErroDePlanilha } from '@/lib/planilha';
+import { OPCOES, listarColaboradores, mensagemParaTela } from '@/lib/registros';
 import { apenasDigitos, formatarData, hojeISO, plural } from '@/lib/formato';
 import {
   Cartao,
@@ -37,9 +36,10 @@ export default async function Colaboradores({ searchParams }) {
         <Comando titulo="Colaboradores" />
         <Wrap>
           <Faixa tom="erro">
-            {erro instanceof ErroDePlanilha
-              ? erro.message
-              : 'Não foi possível ler a aba Colaboradores agora. Confira as variáveis de ambiente e recarregue a página.'}
+            {mensagemParaTela(
+              erro,
+              'Não foi possível carregar os colaboradores agora. Recarregue a página em alguns segundos.'
+            )}
           </Faixa>
         </Wrap>
       </>
@@ -70,7 +70,7 @@ export default async function Colaboradores({ searchParams }) {
     <PainelDeRegistro
       abrir="Cadastrar"
       titulo="Cadastrar colaborador"
-      descricao="A matrícula é gerada automaticamente na sequência da planilha."
+      descricao="A matrícula é gerada automaticamente, na sequência das já cadastradas."
       acao={salvarColaborador}
       enviar="Cadastrar colaborador"
       enviando="Cadastrando…"

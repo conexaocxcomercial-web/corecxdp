@@ -1,19 +1,17 @@
 import Link from 'next/link';
 import {
-  listarAtestados, listarColaboradores, listarMovimentacoes, listarOcorrencias,
+  listarAtestados, listarColaboradores, listarMovimentacoes, listarOcorrencias, mensagemParaTela,
 } from '@/lib/registros';
-import { ErroDePlanilha } from '@/lib/planilha';
 import { calcularIndicadores } from '@/lib/indicadores';
 import { plural } from '@/lib/formato';
 import {
   Cartao, Comando, Faixa, Kpi, Kpis, Secao, Vazio, Wrap,
 } from '@/componentes/Estrutura';
 import { BotaoLink } from '@/componentes/Botao';
-import { BarrasH, Rosca, Serie, SerieDupla } from '@/componentes/Graficos';
+import { BarrasH, PALETA, Rosca, Serie, SerieDupla } from '@/componentes/Graficos';
 
 export const metadata = { title: 'Indicadores' };
 
-const PALETA = ['#6C5CE7', '#0E9F6E', '#1A5FA0', '#C2660B', '#D42F2F', '#8B7BF0', '#7C7C88'];
 const PERIODOS = [3, 6, 12];
 
 export default async function Indicadores({ searchParams }) {
@@ -36,9 +34,10 @@ export default async function Indicadores({ searchParams }) {
         <Comando titulo="Indicadores" />
         <Wrap>
           <Faixa tom="erro">
-            {erro instanceof ErroDePlanilha
-              ? erro.message
-              : 'Não foi possível calcular os indicadores agora. Recarregue a página em alguns segundos.'}
+            {mensagemParaTela(
+              erro,
+              'Não foi possível calcular os indicadores agora. Recarregue a página em alguns segundos.'
+            )}
           </Faixa>
         </Wrap>
       </>
@@ -155,7 +154,7 @@ export default async function Indicadores({ searchParams }) {
                 ]}
               />
               {resumo.semRegistroDeSaida > 0 ? (
-                <p className="mt-4 border-t border-[var(--linha)] pt-3 text-[11.5px] leading-relaxed text-[var(--tinta-3)]">
+                <p className="nota mt-4 border-t border-[var(--linha)] pt-3">
                   {resumo.semRegistroDeSaida}{' '}
                   {plural(resumo.semRegistroDeSaida, 'pessoa inativa', 'pessoas inativas')} sem
                   movimentação de desligamento registrada. A saída foi contada no mês corrente.
@@ -229,7 +228,7 @@ export default async function Indicadores({ searchParams }) {
           </div>
         </Secao>
 
-        <p className="max-w-[78ch] text-[11.5px] leading-relaxed text-[var(--tinta-3)]">
+        <p className="nota max-w-[78ch]">
           Como as contas são feitas: turnover é a média entre admissões e saídas do mês dividida
           pelo quadro médio. Absenteísmo é o total de dias perdidos, somando faltas e dias de
           atestado não rejeitado, sobre o quadro médio multiplicado pelos dias úteis do mês.

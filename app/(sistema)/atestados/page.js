@@ -1,5 +1,4 @@
-import { OPCOES, listarAtestados, listarColaboradores } from '@/lib/registros';
-import { ErroDePlanilha } from '@/lib/planilha';
+import { OPCOES, listarAtestados, listarColaboradores, mensagemParaTela } from '@/lib/registros';
 import { formatarData, hojeISO, plural } from '@/lib/formato';
 import {
   Cartao, Celula, Comando, Faixa, LinhaTabela, Nome, Tabela, Vazio, Wrap,
@@ -37,7 +36,7 @@ function Validacao({ item }) {
 function Anexo({ url }) {
   if (!url) return <span className="text-[var(--tinta-3)]">Sem anexo</span>;
   return (
-    <a href={url} target="_blank" rel="noreferrer" className="text-[var(--acao)] hover:underline">
+    <a href={url} target="_blank" rel="noreferrer" className="text-[var(--acao-texto)] hover:underline">
       Abrir anexo
     </a>
   );
@@ -59,9 +58,10 @@ export default async function Atestados({ searchParams }) {
         <Comando titulo="Atestados" />
         <Wrap>
           <Faixa tom="erro">
-            {erro instanceof ErroDePlanilha
-              ? erro.message
-              : 'Não foi possível ler a aba Atestados agora. Recarregue a página em alguns segundos.'}
+            {mensagemParaTela(
+              erro,
+              'Não foi possível carregar os atestados agora. Recarregue a página em alguns segundos.'
+            )}
           </Faixa>
         </Wrap>
       </>
@@ -140,7 +140,7 @@ export default async function Atestados({ searchParams }) {
         {pendentes > 0 ? (
           <Faixa tom="alerta">
             <b>{pendentes}</b> {plural(pendentes, 'atestado espera', 'atestados esperam')} validação
-            do DP. Aprovar ou rejeitar muda o valor direto na planilha.
+            do DP. Aprovar ou rejeitar atualiza o registro do colaborador.
           </Faixa>
         ) : null}
 

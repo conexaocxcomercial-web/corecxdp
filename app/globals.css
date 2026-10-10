@@ -3,71 +3,108 @@
 @tailwind utilities;
 
 /* ============================================================
-   TOKENS — os mesmos do core.cx. O tema escuro troca os valores;
-   nenhuma classe de componente muda.
+   MARCA — as 8 cores e a fonte obrigatórias (PRODUCT.md › Brand
+   Commitments). São os únicos hex do sistema: todo o resto sai
+   destas variáveis, puras ou misturadas com color-mix().
    ============================================================ */
-:root,
-[data-tema='claro'] {
-  --mesa: #efeff3;
-  --papel: #ffffff;
-  --papel-2: #f7f7f9;
-  --linha: #e4e4ea;
-  --linha-2: #d3d3dc;
-  --tinta: #17171a;
-  --tinta-2: #56565f;
-  --tinta-3: #7c7c88;
-  --acao: #6c5ce7;
-  --acao-forte: #5a4bd4;
-  --acao-fraco: #f1effe;
-  --lime: #bef533;
-  --ok: #0e9f6e;
-  --ok-fraco: #e6f7f0;
-  --atencao: #c2660b;
-  --at-fundo: #fff0d6;
-  --at-borda: #e5be7f;
-  --critico: #d42f2f;
-  --cr-fundo: #fbe3e3;
-  --cr-borda: #e9a9a9;
-  --azul: #1a5fa0;
-  --azul-fraco: #e9f2fb;
+:root {
+  --marca-violeta: #7371ff;
+  --marca-lilas: #dbbfff;
+  --marca-lima: #bef533;
+  --marca-rosa: #ff43c0;
+  --marca-grafite: #1e1e1e;
+  --marca-preto: #000000;
+  --marca-branco: #ffffff;
+  --marca-gelo: #f4f4f4;
+
+  --fonte: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 
   --r-card: 12px;
   --r-ctrl: 9px;
   --r-pill: 999px;
-  --e1: 0 1px 2px rgba(23, 23, 26, 0.05), 0 0 0 1px var(--linha);
-  --e2: 0 4px 14px rgba(23, 23, 26, 0.07), 0 0 0 1px var(--linha);
-  --e-pop: 0 12px 34px rgba(23, 23, 26, 0.16), 0 0 0 1px var(--linha);
 
   --cx-rail: 60px;
   --cx-aberta: 248px;
   --cx-sb-w: 60px;
 }
 
+/* ============================================================
+   TOKENS — o tema escuro troca os valores; nenhuma classe de
+   componente muda.
+
+   Contraste: o violeta é fundo e destaque, não texto sobre claro
+   (3,8:1). Texto em botão violeta é preto (5,5:1); violeta como
+   texto usa --acao-texto. Lima, lilás e rosa são fundo com texto
+   grafite.
+   ============================================================ */
+:root,
+[data-tema='claro'] {
+  --mesa: var(--marca-gelo);
+  --papel: var(--marca-branco);
+  --papel-2: var(--marca-gelo);
+  --linha: color-mix(in srgb, var(--marca-grafite) 11%, var(--marca-branco));
+  --linha-2: color-mix(in srgb, var(--marca-grafite) 20%, var(--marca-branco));
+  --tinta: var(--marca-grafite);
+  --tinta-2: color-mix(in srgb, var(--marca-grafite) 80%, var(--marca-branco));
+  --tinta-3: color-mix(in srgb, var(--marca-grafite) 68%, var(--marca-branco));
+
+  --acao: var(--marca-violeta);
+  /* Hover clareia em vez de escurecer: com texto preto, escurecer
+     derrubaria o contraste para 3,9:1; assim fica em 6,9:1. */
+  --acao-forte: color-mix(in srgb, var(--marca-violeta) 75%, var(--marca-lilas));
+  --acao-fraco: color-mix(in srgb, var(--marca-lilas) 40%, var(--marca-branco));
+  --acao-texto: color-mix(in srgb, var(--marca-violeta) 70%, var(--marca-preto));
+  --sobre-acao: var(--marca-preto);
+
+  /* Tons de situação, para pontos, barras e marcas (não para texto). */
+  --ok: var(--marca-lima);
+  --atencao: var(--tinta);
+  --critico: var(--marca-rosa);
+  --azul: var(--marca-lilas); /* nome antigo: é o tom de férias e atestado */
+
+  /* Contorno das marcas de gráfico: grafite a 60% dá 4,4:1 sobre branco
+     e 4,0:1 sobre gelo, qualquer que seja a cor de dentro. */
+  --graf-contorno: color-mix(in srgb, var(--marca-grafite) 60%, transparent);
+
+  --e1: 0 1px 2px color-mix(in srgb, var(--marca-grafite) 5%, transparent), 0 0 0 1px var(--linha);
+  --e2: 0 4px 14px color-mix(in srgb, var(--marca-grafite) 7%, transparent), 0 0 0 1px var(--linha);
+  --e-pop: 0 12px 34px color-mix(in srgb, var(--marca-grafite) 16%, transparent), 0 0 0 1px var(--linha);
+  --veu: color-mix(in srgb, var(--marca-grafite) 45%, transparent);
+}
+
 [data-tema='escuro'] {
-  --mesa: #121215;
-  --papel: #1a1a1e;
-  --papel-2: #232328;
-  --linha: #2e2e35;
-  --linha-2: #3d3d46;
-  --tinta: #f2f2f4;
-  --tinta-2: #a8a8b3;
-  --tinta-3: #7c7c88;
-  --acao: #8b7bf0;
-  --acao-forte: #a396f5;
-  --acao-fraco: #26224a;
-  --ok: #34c795;
-  --ok-fraco: #16302a;
-  --atencao: #e0913b;
-  --at-fundo: #3a2c15;
-  --at-borda: #6b5222;
-  --critico: #f06a6a;
-  --cr-fundo: #3a1e1e;
-  --cr-borda: #6b3232;
-  --azul: #5fa0e0;
-  --azul-fraco: #16253a;
-  --e1: 0 1px 2px rgba(0, 0, 0, 0.3), 0 0 0 1px var(--linha);
-  --e2: 0 4px 14px rgba(0, 0, 0, 0.35), 0 0 0 1px var(--linha);
-  --e-pop: 0 12px 34px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--linha);
+  --mesa: var(--marca-preto);
+  --papel: var(--marca-grafite);
+  --papel-2: color-mix(in srgb, var(--marca-gelo) 7%, var(--marca-grafite));
+  --linha: color-mix(in srgb, var(--marca-gelo) 12%, var(--marca-grafite));
+  --linha-2: color-mix(in srgb, var(--marca-gelo) 20%, var(--marca-grafite));
+  --tinta: var(--marca-gelo);
+  --tinta-2: color-mix(in srgb, var(--marca-gelo) 72%, var(--marca-grafite));
+  --tinta-3: color-mix(in srgb, var(--marca-gelo) 58%, var(--marca-grafite));
+
+  --acao-fraco: color-mix(in srgb, var(--marca-violeta) 22%, var(--marca-grafite));
+  --acao-texto: var(--marca-lilas);
+
+  /* No escuro, toda cor da paleta já passa de 3:1 sozinha (o mínimo
+     para elemento gráfico), inclusive sobre o trilho das barras. */
+  --graf-contorno: transparent;
+
+  --e1: 0 1px 2px color-mix(in srgb, var(--marca-preto) 30%, transparent), 0 0 0 1px var(--linha);
+  --e2: 0 4px 14px color-mix(in srgb, var(--marca-preto) 35%, transparent), 0 0 0 1px var(--linha);
+  --e-pop: 0 12px 34px color-mix(in srgb, var(--marca-preto) 50%, transparent), 0 0 0 1px var(--linha);
+  --veu: color-mix(in srgb, var(--marca-preto) 60%, transparent);
+}
+
+/* Paleta dos gráficos por categoria (rosca). Ordem pensada para
+   fatias vizinhas não se confundirem. */
+:root {
+  --graf-1: var(--acao);
+  --graf-2: var(--marca-lima);
+  --graf-3: var(--tinta);
+  --graf-4: var(--marca-rosa);
+  --graf-5: var(--marca-lilas);
+  --graf-6: var(--tinta-3);
+  --graf-7: var(--acao-forte);
 }
 
 * {
@@ -77,16 +114,16 @@
 body {
   background: var(--mesa);
   color: var(--tinta);
+  font-family: var(--fonte);
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   padding-left: var(--cx-sb-w);
   transition: padding-left 0.22s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Números alinhados em coluna, na mesma Helvetica do resto. */
 .num {
-  font-family: var(--fonte-mono), ui-monospace, monospace;
   font-variant-numeric: tabular-nums;
-  letter-spacing: -0.2px;
 }
 
 :focus-visible {
@@ -135,21 +172,43 @@ body {
     top: 0;
     z-index: 20;
   }
-  .top-bar-logo {
+
+  /* ------------------------------------------------------- marca */
+  .marca {
+    display: inline-flex;
+    align-items: baseline;
     font-size: 17px;
     font-weight: 700;
     letter-spacing: -0.4px;
     color: var(--tinta);
+    white-space: nowrap;
   }
-  .top-bar-logo span {
+  .marca-cx {
     color: var(--acao);
   }
-  .top-bar-mod {
+  .marca-mod {
     font-size: 12px;
     font-weight: 500;
     color: var(--tinta-3);
     margin-left: 7px;
     letter-spacing: 0;
+  }
+  .marca-g {
+    font-size: 19px;
+  }
+  .marca-g .marca-mod {
+    font-size: 12.5px;
+    margin-left: 8px;
+  }
+
+  /* Logo em imagem: a versão preta no tema claro, a branca no escuro. */
+  .assinatura {
+    display: block;
+    width: auto;
+  }
+  [data-tema='escuro'] .assinatura-clara,
+  :root:not([data-tema='escuro']) .assinatura-escura {
+    display: none;
   }
 
   /* --------------------------------------------- barra de comando */
@@ -169,7 +228,7 @@ body {
   }
   .cmd-tit {
     font-size: 16px;
-    font-weight: 650;
+    font-weight: 700;
     letter-spacing: -0.35px;
     white-space: nowrap;
   }
@@ -222,13 +281,13 @@ body {
   .segm-btn.on {
     background: var(--papel);
     color: var(--tinta);
-    font-weight: 600;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.07);
+    font-weight: 700;
+    box-shadow: var(--e1);
   }
 
   .btn {
     font-size: 12.5px;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
@@ -253,17 +312,18 @@ body {
   }
   .btn-acao {
     background: var(--acao);
-    color: #fff;
+    color: var(--sobre-acao);
   }
   .btn-acao:hover {
     background: var(--acao-forte);
   }
   .btn-acao:disabled {
-    background: var(--tinta-3);
+    background: var(--linha-2);
+    color: var(--tinta-2);
     cursor: wait;
   }
   .btn-mini {
-    font-size: 11.5px;
+    font-size: 12px;
     padding: 6px 10px;
   }
 
@@ -312,7 +372,7 @@ body {
     margin-bottom: 11px;
   }
   .sec-tit {
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.6px;
@@ -325,7 +385,7 @@ body {
     background: var(--linha);
   }
   .sec-nota {
-    font-size: 11.5px;
+    font-size: 12px;
     color: var(--tinta-3);
     font-weight: 500;
   }
@@ -338,13 +398,25 @@ body {
     margin-bottom: 22px;
   }
   .kpi {
+    position: relative;
+    overflow: hidden;
     background: var(--papel);
     border-radius: var(--r-card);
     box-shadow: var(--e1);
     padding: 15px 17px;
   }
+  /* Tom do KPI (ex.: pendências) vira marca na borda, não cor do
+     número: lima e lilás não têm contraste como texto. */
+  .kpi-tom {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    box-shadow: inset -1px 0 0 var(--graf-contorno);
+  }
   .kpi-r {
-    font-size: 10.5px;
+    font-size: 12px;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -358,7 +430,7 @@ body {
     line-height: 1;
   }
   .kpi-p {
-    font-size: 11.5px;
+    font-size: 12px;
     color: var(--tinta-3);
     font-weight: 500;
     margin-top: 6px;
@@ -376,18 +448,25 @@ body {
   }
   .cartao-t {
     font-size: 13px;
-    font-weight: 650;
+    font-weight: 700;
     letter-spacing: -0.15px;
     margin-bottom: 3px;
   }
   .cartao-d {
-    font-size: 11.5px;
+    font-size: 12px;
     color: var(--tinta-3);
     line-height: 1.5;
     margin-bottom: 15px;
   }
   .cartao-liso {
     padding: 0;
+  }
+
+  /* Texto de apoio corrido: explicações, observações, rodapés. */
+  .nota {
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--tinta-3);
   }
 
   .duas {
@@ -419,7 +498,7 @@ body {
   .tb-h {
     background: var(--papel-2);
     border-bottom: 1px solid var(--linha);
-    font-size: 10.5px;
+    font-size: 12px;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.4px;
@@ -445,7 +524,7 @@ body {
     text-align: right;
   }
   .tb-nome {
-    font-weight: 550;
+    font-weight: 500;
   }
 
   /* -------------------------------------------------------- avisos */
@@ -484,18 +563,22 @@ body {
   }
   .faixa.info {
     background: var(--acao-fraco);
-    color: var(--acao);
+    color: var(--tinta);
   }
+  .faixa.info .material-symbols-rounded {
+    color: var(--acao-texto);
+  }
+  /* Alerta pede ação: faixa escura, como a pílula de pendente. */
   .faixa.alerta {
-    background: var(--at-fundo);
-    color: var(--atencao);
+    background: var(--tinta);
+    color: var(--papel);
   }
   .faixa.erro {
-    background: var(--cr-fundo);
-    color: var(--critico);
+    background: var(--marca-rosa);
+    color: var(--marca-grafite);
   }
   .faixa b {
-    font-weight: 650;
+    font-weight: 700;
   }
 
   /* ------------------------------------------------ pílula de estado */
@@ -503,8 +586,8 @@ body {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    font-size: 11.5px;
-    font-weight: 550;
+    font-size: 12px;
+    font-weight: 500;
     padding: 4px 10px;
     border-radius: var(--r-pill);
     background: var(--papel-2);
@@ -516,26 +599,29 @@ body {
     height: 6px;
     border-radius: 50%;
     flex-shrink: 0;
+    background: currentColor;
   }
+  /* Situação só com as cores da marca: lima resolve, escura espera,
+     rosa recusa, violeta em curso, lilás férias, cinza encerrado. */
   .pil.ok {
-    background: var(--ok-fraco);
-    color: var(--ok);
+    background: var(--marca-lima);
+    color: var(--marca-grafite);
   }
   .pil.at {
-    background: var(--at-fundo);
-    color: var(--atencao);
+    background: var(--tinta);
+    color: var(--papel);
   }
   .pil.cr {
-    background: var(--cr-fundo);
-    color: var(--critico);
+    background: var(--marca-rosa);
+    color: var(--marca-grafite);
   }
   .pil.ac {
-    background: var(--acao-fraco);
-    color: var(--acao);
+    background: var(--marca-violeta);
+    color: var(--marca-preto);
   }
   .pil.az {
-    background: var(--azul-fraco);
-    color: var(--azul);
+    background: var(--marca-lilas);
+    color: var(--marca-grafite);
   }
 
   /* ------------------------------------------- barras horizontais */
@@ -580,14 +666,24 @@ body {
   .bh-v {
     display: block;
     font-size: 12.5px;
-    font-weight: 650;
+    font-weight: 700;
     text-align: right;
   }
   .bh-v small {
     display: block;
-    font-size: 10.5px;
+    font-size: 12px;
     font-weight: 500;
     color: var(--tinta-3);
+  }
+
+  /* ------------------------------------------- marcas de gráfico */
+  /* Lima e lilás somem sobre branco (1,3:1 e 1,6:1). O contorno dá a
+     toda barra e ponto de legenda o mesmo limite visível, sem trocar
+     a cor da marca — e lembra o ".cx" vazado do logo. */
+  .sb-b,
+  .bh-f,
+  .graf-ponto {
+    box-shadow: inset 0 0 0 1px var(--graf-contorno);
   }
 
   /* ----------------------------------------------- série temporal */
@@ -598,9 +694,12 @@ body {
     height: 168px;
     padding-top: 22px;
   }
+  /* 40px cabe o rótulo "nov/25" em 12px: 12 meses cabem a partir de
+     ~1200px de janela; abaixo disso a série rola dentro do cartão em
+     vez de sobrepor os rótulos. */
   .sb {
     flex: 1 1 0;
-    min-width: 5px;
+    min-width: 40px;
     max-width: 76px;
     display: flex;
     flex-direction: column;
@@ -615,23 +714,24 @@ body {
     min-height: 2px;
   }
   .sb-n {
-    font-size: 10.5px;
-    font-weight: 650;
+    font-size: 12px;
+    font-weight: 700;
     color: var(--tinta-2);
     white-space: nowrap;
     margin-bottom: 3px;
   }
   .sb-x {
-    font-size: 9.5px;
+    font-size: 12px;
     color: var(--tinta-3);
     white-space: nowrap;
   }
   .serie-rolagem {
-    overflow: visible;
+    overflow-x: auto;
+    overflow-y: hidden;
   }
   .serie-dica {
     display: none;
-    font-size: 11px;
+    font-size: 12px;
     color: var(--tinta-3);
     margin-top: 9px;
     text-align: center;
@@ -650,14 +750,14 @@ body {
     gap: 6px;
   }
   .fg > label {
-    font-size: 10.5px;
+    font-size: 12px;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     color: var(--tinta-3);
   }
   .fg-dica {
-    font-size: 11px;
+    font-size: 12px;
     color: var(--tinta-3);
     font-weight: 500;
     text-transform: none;
@@ -673,7 +773,7 @@ body {
     padding-left: 0 !important;
   }
   .top-bar {
-    padding: 0 16px 0 60px;
+    padding: 0 16px 0 64px;
     height: 52px;
   }
   .cmd {
@@ -699,6 +799,22 @@ body {
     justify-content: center;
   }
 
+  /* Alvo de toque ≥ 44px e campo ≥ 16px (abaixo disso o iOS dá zoom). */
+  .btn,
+  .btn-mini,
+  .segm-btn {
+    min-height: 44px;
+    font-size: 13px;
+  }
+  .btn-mini {
+    padding: 6px 14px;
+  }
+  .sel,
+  .campo {
+    font-size: 16px;
+    min-height: 44px;
+  }
+
   .wrap {
     padding: 12px 14px 64px;
   }
@@ -712,8 +828,8 @@ body {
     min-width: 0;
   }
   .kpi-r {
-    font-size: 9.5px;
-    margin-bottom: 5px;
+    letter-spacing: 0.3px;
+    margin-bottom: 6px;
   }
   .kpi-v {
     font-size: 19px;
@@ -723,8 +839,7 @@ body {
     white-space: nowrap;
   }
   .kpi-p {
-    font-size: 10px;
-    margin-top: 4px;
+    margin-top: 5px;
     line-height: 1.35;
   }
 
@@ -766,10 +881,15 @@ body {
   .tb-l > span {
     white-space: normal;
   }
+  /* No cartão o fundo já é papel-2: o botão fantasma precisa contrastar. */
+  .tb-l .btn-fant {
+    background: var(--papel);
+    box-shadow: 0 0 0 1px var(--linha);
+  }
   .tb-nome {
     display: block;
     font-size: 13px;
-    font-weight: 650;
+    font-weight: 700;
     margin-bottom: 9px;
   }
   .tb-l .d,
@@ -786,14 +906,13 @@ body {
   .tb-l .c::before {
     content: attr(data-r);
     display: block;
-    font-size: 9.5px;
+    font-size: 12px;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.3px;
     color: var(--tinta-3);
     margin-bottom: 2px;
-    font-family: var(--fonte-sans);
-    letter-spacing: 0.5px;
+    font-variant-numeric: normal;
   }
 
   .serie-rolagem {
@@ -821,7 +940,7 @@ body {
   }
   .faixa {
     padding: 11px 12px;
-    font-size: 11.5px;
+    font-size: 12.5px;
   }
   .vazio {
     padding: 26px 14px;
@@ -858,14 +977,7 @@ body {
   border-bottom: 1px solid var(--linha);
 }
 .cxsb-marca {
-  font-size: 17px;
-  font-weight: 700;
-  letter-spacing: -0.4px;
-  color: var(--tinta);
-  white-space: nowrap;
-}
-.cxsb-marca span {
-  color: var(--acao);
+  display: flex;
 }
 .cxsb-sigla {
   display: none;
@@ -924,7 +1036,7 @@ body {
 }
 
 .cxsb-empresa {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
   color: var(--tinta-3);
   padding: 4px 12px 10px;
@@ -944,7 +1056,7 @@ body {
   width: 100%;
   text-align: left;
   font-family: inherit;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.7px;
   text-transform: uppercase;
@@ -999,10 +1111,10 @@ body {
 }
 .cxsb-item.ativo {
   background: var(--acao);
-  color: #fff;
+  color: var(--sobre-acao);
 }
 .cxsb-item.ativo .material-symbols-rounded {
-  color: #fff;
+  color: var(--sobre-acao);
 }
 .cxsb-item .material-symbols-rounded {
   font-size: 19px;
@@ -1030,6 +1142,15 @@ body {
   display: none;
 }
 
+.cxsb-pe {
+  flex-shrink: 0;
+  padding: 14px 16px calc(14px + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--linha);
+}
+.cxsb-pe .assinatura {
+  height: 26px;
+}
+
 /* ---- modo estreito: exceção dentro do desktop ---- */
 @media (min-width: 901px) {
   .cxsidebar:not(:hover):not(.fixa) {
@@ -1043,7 +1164,8 @@ body {
   .cxsidebar:not(:hover):not(.fixa) .cxsb-toggle,
   .cxsidebar:not(:hover):not(.fixa) .cxsb-item-txt,
   .cxsidebar:not(:hover):not(.fixa) .cxsb-grupo,
-  .cxsidebar:not(:hover):not(.fixa) .cxsb-empresa {
+  .cxsidebar:not(:hover):not(.fixa) .cxsb-empresa,
+  .cxsidebar:not(:hover):not(.fixa) .cxsb-pe {
     display: none;
   }
   .cxsidebar:not(:hover):not(.fixa) .cxsb-sigla {
@@ -1061,7 +1183,7 @@ body {
     padding: 0;
   }
   .cxsidebar:hover:not(.fixa) {
-    box-shadow: 14px 0 44px rgba(23, 23, 26, 0.13), inset -1px 0 0 var(--linha);
+    box-shadow: var(--e-pop), inset -1px 0 0 var(--linha);
   }
   .cxsidebar:not(:hover):not(.fixa) .cxsb-item[data-tip]:hover::after {
     content: attr(data-tip);
@@ -1071,7 +1193,7 @@ body {
     transform: translateY(-50%);
     background: var(--tinta);
     color: var(--papel);
-    font-size: 11.5px;
+    font-size: 12px;
     font-weight: 500;
     padding: 5px 9px;
     border-radius: 6px;
@@ -1085,26 +1207,26 @@ body {
 .cxsb-ham {
   display: none;
   position: fixed;
-  top: 9px;
-  left: 12px;
+  top: 4px;
+  left: 10px;
   z-index: 190;
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
   border: none;
   background: var(--papel);
   color: var(--tinta);
   cursor: pointer;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 10px rgba(23, 23, 26, 0.12), 0 0 0 1px var(--linha);
+  box-shadow: var(--e2);
 }
 .cxsb-veu {
   display: none;
   position: fixed;
   inset: 0;
   z-index: 199;
-  background: rgba(23, 23, 26, 0.45);
+  background: var(--veu);
 }
 
 @media (max-width: 900px) {
@@ -1122,7 +1244,7 @@ body {
   }
   .cxsidebar.gaveta {
     transform: translateX(0);
-    box-shadow: 14px 0 44px rgba(23, 23, 26, 0.2);
+    box-shadow: var(--e-pop);
   }
   .cxsb-toggle {
     display: none;
@@ -1130,6 +1252,9 @@ body {
   .cxsb-item {
     height: 46px;
     min-height: 46px;
+  }
+  .cxsb-grupo {
+    min-height: 44px;
   }
   .cxsb-lista {
     transition: none;
@@ -1142,7 +1267,7 @@ body {
 .md-veu {
   position: fixed;
   inset: 0;
-  background: rgba(23, 23, 26, 0.45);
+  background: var(--veu);
   backdrop-filter: blur(3px);
   z-index: 1000;
   display: flex;
@@ -1153,7 +1278,7 @@ body {
 .md {
   background: var(--papel);
   border-radius: 16px;
-  box-shadow: 0 24px 70px rgba(23, 23, 26, 0.24);
+  box-shadow: var(--e-pop);
   width: 100%;
   max-width: 520px;
   max-height: 90vh;
@@ -1186,7 +1311,7 @@ body {
 }
 .md-titulo {
   font-size: 18px;
-  font-weight: 650;
+  font-weight: 700;
   letter-spacing: -0.4px;
   line-height: 1.25;
 }
@@ -1257,6 +1382,12 @@ body {
     flex: 1;
     justify-content: center;
   }
+  .md-fechar {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    margin: -6px -8px 0 0;
+  }
 }
 
 /* ============================================================
@@ -1283,23 +1414,7 @@ body {
   max-width: 392px;
 }
 .entrada-marca {
-  font-size: 19px;
-  font-weight: 700;
-  letter-spacing: -0.4px;
-  color: var(--tinta);
   margin-bottom: 18px;
-  display: flex;
-  align-items: baseline;
-}
-.entrada-marca span {
-  color: var(--acao);
-}
-.entrada-mod {
-  font-size: 12.5px;
-  font-weight: 500;
-  color: var(--tinta-3) !important;
-  margin-left: 8px;
-  letter-spacing: 0;
 }
 .entrada-cartao {
   padding: 26px 26px 24px;
@@ -1307,7 +1422,7 @@ body {
 }
 .entrada-tit {
   font-size: 20px;
-  font-weight: 650;
+  font-weight: 700;
   letter-spacing: -0.5px;
 }
 .entrada-sub {
@@ -1317,7 +1432,7 @@ body {
   margin-top: 6px;
 }
 .entrada-ajuda {
-  font-size: 11.5px;
+  font-size: 12px;
   line-height: 1.55;
   color: var(--tinta-3);
   border-top: 1px solid var(--linha);
@@ -1325,10 +1440,12 @@ body {
   margin-top: 2px;
 }
 .entrada-pe {
-  text-align: center;
-  font-size: 11.5px;
-  color: var(--tinta-3);
-  margin-top: 18px;
+  display: flex;
+  justify-content: center;
+  margin-top: 26px;
+}
+.entrada-pe .assinatura {
+  height: 30px;
 }
 
 /* ------------------------------------------------- menu do usuário */
@@ -1352,7 +1469,7 @@ body {
   font-weight: 600;
 }
 .usermenu-emp {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--tinta-3);
 }
 .usermenu-av {
@@ -1360,16 +1477,16 @@ body {
   height: 32px;
   min-width: 32px;
   border-radius: 50%;
-  background: var(--acao-fraco);
-  color: var(--acao);
+  background: var(--marca-lilas);
+  color: var(--marca-grafite);
   display: grid;
   place-items: center;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
 }
 .usermenu-sair {
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   background: var(--papel-2);
   color: var(--tinta-3);
@@ -1380,6 +1497,15 @@ body {
   transition: 0.15s;
 }
 .usermenu-sair:hover {
-  background: var(--cr-fundo);
-  color: var(--critico);
+  background: var(--marca-rosa);
+  color: var(--marca-grafite);
+}
+@media (max-width: 900px) {
+  .usermenu {
+    gap: 6px;
+  }
+  .usermenu-sair {
+    width: 44px;
+    height: 44px;
+  }
 }

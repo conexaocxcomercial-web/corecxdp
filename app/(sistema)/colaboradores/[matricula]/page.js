@@ -2,8 +2,8 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import {
   OPCOES, buscarColaborador, listarAtestados, listarMovimentacoes, listarOcorrencias,
+  mensagemParaTela,
 } from '@/lib/registros';
-import { ErroDePlanilha } from '@/lib/planilha';
 import { formatarData, iniciais, plural, tempoDeCasa } from '@/lib/formato';
 import {
   Cartao, Celula, Comando, Faixa, LinhaTabela, Secao, Tabela, Vazio, Wrap,
@@ -58,9 +58,10 @@ export default async function Ficha({ params }) {
         <Comando titulo="Ficha" />
         <Wrap>
           <Faixa tom="erro">
-            {erro instanceof ErroDePlanilha
-              ? erro.message
-              : 'Não foi possível abrir esta ficha agora. Recarregue a página em alguns segundos.'}
+            {mensagemParaTela(
+              erro,
+              'Não foi possível abrir esta ficha agora. Recarregue a página em alguns segundos.'
+            )}
           </Faixa>
         </Wrap>
       </>
@@ -92,7 +93,7 @@ export default async function Ficha({ params }) {
           <div className="flex flex-wrap items-start gap-4">
             <span
               aria-hidden="true"
-              className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-[var(--acao-fraco)] text-[14px] font-bold text-[var(--acao)]"
+              className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-[var(--marca-lilas)] text-[14px] font-bold text-[var(--marca-grafite)]"
             >
               {iniciais(pessoa.nome)}
             </span>
@@ -232,7 +233,7 @@ export default async function Ficha({ params }) {
                             href={item.anexo}
                             target="_blank"
                             rel="noreferrer"
-                            className="text-[var(--acao)] hover:underline"
+                            className="text-[var(--acao-texto)] hover:underline"
                           >
                             Abrir anexo
                           </a>

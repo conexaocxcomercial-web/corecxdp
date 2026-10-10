@@ -58,10 +58,9 @@ export function Kpis({ children }) {
 export function Kpi({ rotulo, valor, apoio, cor, href }) {
   const conteudo = (
     <>
+      {cor ? <span className="kpi-tom" style={{ background: cor }} aria-hidden="true" /> : null}
       <div className="kpi-r">{rotulo}</div>
-      <div className="kpi-v num" style={cor ? { color: cor } : undefined}>
-        {valor}
-      </div>
+      <div className="kpi-v num">{valor}</div>
       {apoio ? <div className="kpi-p">{apoio}</div> : null}
     </>
   );
@@ -112,7 +111,7 @@ export function Celula({ rotulo, alinha, children }) {
 
 export function Nome({ href, children }) {
   return (
-    <Link href={href} className="tb-nome hover:text-[var(--acao)]">
+    <Link href={href} className="tb-nome hover:text-[var(--acao-texto)]">
       {children}
     </Link>
   );

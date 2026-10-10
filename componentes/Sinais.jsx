@@ -1,6 +1,7 @@
 /**
- * Pílulas de estado no padrão do core.cx: verde resolve, âmbar espera,
- * vermelho recusa, roxo em curso, neutro encerrado.
+ * Pílulas de estado só com as cores da marca: lima resolve, escura
+ * espera, rosa recusa, violeta em curso, lilás férias, neutro
+ * encerrado. As cores ficam em `.pil` no globals.css.
  */
 const TONS = {
   Ativo: 'ok',
@@ -16,21 +17,12 @@ const TONS = {
   Inativo: '',
 };
 
-const PONTOS = {
-  ok: 'var(--ok)',
-  at: 'var(--atencao)',
-  cr: 'var(--critico)',
-  ac: 'var(--acao)',
-  az: 'var(--azul)',
-  '': 'var(--tinta-3)',
-};
-
 export function Status({ children }) {
   const tom = TONS[children] ?? '';
 
   return (
     <span className={`pil ${tom}`}>
-      <span className="pil-pt" style={{ background: PONTOS[tom] }} />
+      <span className="pil-pt" />
       {children}
     </span>
   );

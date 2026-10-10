@@ -5,6 +5,7 @@ import { iniciais } from '@/lib/formato';
 import { Navegacao } from '@/componentes/Navegacao';
 import { BotaoDeTema } from '@/componentes/Tema';
 import { Icone } from '@/componentes/Icones';
+import { Marca } from '@/componentes/Marca';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,10 +18,7 @@ export default async function LayoutDoSistema({ children }) {
       <Navegacao empresa={usuario.empresa} />
 
       <div className="top-bar">
-        <div className="top-bar-logo">
-          core<span>.cx</span>
-          <span className="top-bar-mod">módulo dp</span>
-        </div>
+        <Marca />
 
         <div className="usermenu">
           <BotaoDeTema />

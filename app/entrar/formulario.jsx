@@ -41,8 +41,7 @@ export function FormularioDeEntrada({ destino }) {
       </BotaoEnviar>
 
       <p className="entrada-ajuda">
-        Perdeu o acesso? Quem administra a plataforma pode recriar sua senha na aba Usuarios da
-        planilha.
+        Perdeu o acesso? Quem administra a plataforma pode recriar sua senha.
       </p>
     </form>
   );

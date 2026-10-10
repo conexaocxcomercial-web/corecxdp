@@ -1,5 +1,6 @@
-import { OPCOES, listarColaboradores, listarMovimentacoes } from '@/lib/registros';
-import { ErroDePlanilha } from '@/lib/planilha';
+import {
+  OPCOES, listarColaboradores, listarMovimentacoes, mensagemParaTela,
+} from '@/lib/registros';
 import { formatarData, hojeISO } from '@/lib/formato';
 import {
   Cartao, Celula, Comando, Faixa, LinhaTabela, Nome, Tabela, Vazio, Wrap,
@@ -47,9 +48,10 @@ export default async function Movimentacoes({ searchParams }) {
         <Comando titulo="Movimentações" />
         <Wrap>
           <Faixa tom="erro">
-            {erro instanceof ErroDePlanilha
-              ? erro.message
-              : 'Não foi possível ler a aba Movimentacoes_DP agora. Recarregue a página em alguns segundos.'}
+            {mensagemParaTela(
+              erro,
+              'Não foi possível carregar as movimentações agora. Recarregue a página em alguns segundos.'
+            )}
           </Faixa>
         </Wrap>
       </>

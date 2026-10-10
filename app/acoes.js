@@ -12,8 +12,8 @@ import {
   registrarAtestado,
   registrarMovimentacao,
   registrarOcorrencia,
+  mensagemParaTela,
 } from '@/lib/registros';
-import { ErroDePlanilha } from '@/lib/planilha';
 import { cpfValido } from '@/lib/formato';
 
 function ler(dados, campo) {
@@ -21,17 +21,15 @@ function ler(dados, campo) {
 }
 
 function mensagemDeFalha(erro) {
-  if (erro instanceof ErroDePlanilha) return erro.message;
-  console.error(erro);
-  return 'O registro não foi gravado na planilha. Tente de novo em alguns segundos.';
+  return mensagemParaTela(erro, 'O registro não foi gravado. Tente de novo em alguns segundos.');
 }
 
 /* ------------------------------------------------------------------ acesso */
 
 const RECADOS = {
   credenciais: 'E-mail ou senha não conferem. Confira os dados e tente de novo.',
-  inativo: 'Este acesso está marcado como inativo na planilha. Fale com quem administra.',
-  'sem-cliente': 'Este usuário não está ligado a nenhuma empresa. Preencha a coluna Cliente na aba Usuarios.',
+  inativo: 'Este acesso está inativo. Fale com quem administra a plataforma.',
+  'sem-cliente': 'Este acesso ainda não está ligado a nenhuma empresa. Fale com quem administra a plataforma.',
 };
 
 export async function entrar(_estado, dados) {
@@ -47,7 +45,9 @@ export async function entrar(_estado, dados) {
   try {
     resultado = await autenticar(email, senha);
   } catch (erro) {
-    return { erro: mensagemDeFalha(erro) };
+    return {
+      erro: mensagemParaTela(erro, 'Não foi possível conferir o acesso agora. Tente de novo em alguns segundos.'),
+    };
   }
 
   if (resultado.erro) {

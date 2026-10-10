@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Icone } from '@/componentes/Icones';
+import { Assinatura, Marca } from '@/componentes/Marca';
 
 const GRUPOS = [
   {
@@ -106,7 +107,7 @@ export function Navegacao({ empresa }) {
       >
         <div className="cxsb-head">
           <Link href="/painel" className="cxsb-marca">
-            core<span>.cx</span>
+            <Marca modulo={false} />
           </Link>
           <span className="cxsb-sigla" aria-hidden="true">
             cx
@@ -165,6 +166,10 @@ export function Navegacao({ empresa }) {
               </div>
             );
           })}
+        </div>
+
+        <div className="cxsb-pe">
+          <Assinatura />
         </div>
       </nav>
     </>

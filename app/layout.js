@@ -1,20 +1,5 @@
-import { IBM_Plex_Mono, Inter } from 'next/font/google';
 import { ScriptDeTema } from '@/componentes/Tema';
 import './globals.css';
-
-const inter = Inter({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--fonte-sans',
-  display: 'swap',
-});
-
-const plex = IBM_Plex_Mono({
-  subsets: ['latin'],
-  weight: ['400', '500', '600'],
-  variable: '--fonte-mono',
-  display: 'swap',
-});
 
 export const metadata = {
   title: { default: 'core.cx módulo DP', template: '%s | core.cx' },
@@ -23,9 +8,10 @@ export const metadata = {
 };
 
 export const viewport = {
+  // Meta tag não lê variável CSS: são --marca-gelo e --marca-preto.
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#EFEFF3' },
-    { media: '(prefers-color-scheme: dark)', color: '#121215' },
+    { media: '(prefers-color-scheme: light)', color: '#F4F4F4' },
+    { media: '(prefers-color-scheme: dark)', color: '#000000' },
   ],
   width: 'device-width',
   initialScale: 1,
@@ -34,7 +20,7 @@ export const viewport = {
 
 export default function LayoutRaiz({ children }) {
   return (
-    <html lang="pt-BR" data-tema="claro" className={`${inter.variable} ${plex.variable}`} suppressHydrationWarning>
+    <html lang="pt-BR" data-tema="claro" suppressHydrationWarning>
       <head>
         <link
           rel="stylesheet"
