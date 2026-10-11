@@ -1,4 +1,5 @@
 import { ScriptDeTema } from '@/componentes/Tema';
+import { FONTE_DE_ICONES } from '@/componentes/Icones';
 import './globals.css';
 
 export const metadata = {
@@ -22,10 +23,9 @@ export default function LayoutRaiz({ children }) {
   return (
     <html lang="pt-BR" data-tema="claro" suppressHydrationWarning>
       <head>
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
-        />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <link rel="stylesheet" href={FONTE_DE_ICONES} />
         <ScriptDeTema />
       </head>
       <body className="font-sans">{children}</body>

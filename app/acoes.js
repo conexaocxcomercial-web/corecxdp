@@ -32,30 +32,53 @@ const RECADOS = {
   'sem-cliente': 'Este acesso ainda não está ligado a nenhuma empresa. Fale com quem administra a plataforma.',
 };
 
+/**
+ * Destino depois do login, só dentro deste site. "//outro.com" e
+ * "/\outro.com" começam com barra, mas o navegador lê como outro
+ * domínio: por isso a conferência é pela origem, não pelo começo.
+ */
+function destinoSeguro(destino) {
+  const base = 'http://core.cx';
+  try {
+    const url = new URL(destino, base);
+    if (!destino.startsWith('/') || url.origin !== base || url.pathname === '/entrar') {
+      return '/painel';
+    }
+    return `${url.pathname}${url.search}${url.hash}`;
+  } catch {
+    return '/painel';
+  }
+}
+
 export async function entrar(_estado, dados) {
   const email = ler(dados, 'email');
   const senha = ler(dados, 'senha');
   const destino = ler(dados, 'destino');
+  const manterConectado = dados.get('manter') === 'sim';
+
+  // O e-mail e a caixa voltam para a tela: o React limpa o formulário
+  // depois do envio, e quem errou a senha não deve redigitar o e-mail.
+  const devolver = (erro) => ({ erro, email, manterConectado });
 
   if (!email || !senha) {
-    return { erro: 'Preencha e-mail e senha para entrar.' };
+    return devolver('Preencha e-mail e senha para entrar.');
   }
 
   let resultado;
   try {
     resultado = await autenticar(email, senha);
   } catch (erro) {
-    return {
-      erro: mensagemParaTela(erro, 'Não foi possível conferir o acesso agora. Tente de novo em alguns segundos.'),
-    };
+    return devolver(
+      mensagemParaTela(erro, 'Não foi possível conferir o acesso agora. Tente de novo em alguns segundos.'),
+    );
   }
 
   if (resultado.erro) {
-    return { erro: RECADOS[resultado.erro] || RECADOS.credenciais };
+    return devolver(RECADOS[resultado.erro] || RECADOS.credenciais);
   }
 
-  await abrirSessao(resultado.usuario);
-  redirect(destino.startsWith('/') && destino !== '/entrar' ? destino : '/painel');
+  await abrirSessao(resultado.usuario, { manterConectado });
+  redirect(destinoSeguro(destino));
 }
 
 export async function sair() {

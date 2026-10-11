@@ -1,0 +1,14 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "design-system-font",
+        "value": "material symbols rounded",
+        "createdAt": "2026-10-10T17:08:39.291Z",
+        "reason": "Claude: é a fonte de ícones do projeto (componentes/Icones.jsx, citada no CLAUDE.md), não fonte de texto"
+      }
+    ]
+  }
+}

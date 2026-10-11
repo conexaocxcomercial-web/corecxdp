@@ -1,0 +1,188 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-10T00:00:00Z",
+  "title": "Design System: core.cx · módulo dp",
+  "extensions": {
+    "colorMeta": {
+      "violeta": { "role": "primary", "displayName": "Violeta de Marca", "canonical": "#7371ff", "tonalRamp": ["oklch(15% 0.21 280)", "oklch(26% 0.21 280)", "oklch(37% 0.21 280)", "oklch(48% 0.21 280)", "oklch(61% 0.21 280)", "oklch(72% 0.15 280)", "oklch(84% 0.08 280)", "oklch(95% 0.03 280)"] },
+      "lilas": { "role": "secondary", "displayName": "Lilás", "canonical": "#dbbfff", "tonalRamp": ["oklch(15% 0.1 305)", "oklch(26% 0.1 305)", "oklch(37% 0.1 305)", "oklch(48% 0.1 305)", "oklch(60% 0.1 305)", "oklch(72% 0.1 305)", "oklch(84% 0.1 305)", "oklch(95% 0.03 305)"] },
+      "lima": { "role": "secondary", "displayName": "Lima", "canonical": "#bef533", "tonalRamp": ["oklch(15% 0.1 125)", "oklch(26% 0.12 125)", "oklch(37% 0.15 125)", "oklch(48% 0.17 125)", "oklch(60% 0.19 125)", "oklch(72% 0.2 125)", "oklch(90% 0.21 125)", "oklch(95% 0.1 125)"] },
+      "rosa": { "role": "tertiary", "displayName": "Rosa", "canonical": "#ff43c0", "tonalRamp": ["oklch(15% 0.1 345)", "oklch(26% 0.15 345)", "oklch(37% 0.2 345)", "oklch(48% 0.24 345)", "oklch(66% 0.27 345)", "oklch(76% 0.18 345)", "oklch(86% 0.09 345)", "oklch(95% 0.03 345)"] },
+      "grafite": { "role": "neutral", "displayName": "Grafite", "canonical": "#1e1e1e", "tonalRamp": ["oklch(15% 0 0)", "oklch(23% 0 0)", "oklch(37% 0 0)", "oklch(48% 0 0)", "oklch(60% 0 0)", "oklch(72% 0 0)", "oklch(84% 0 0)", "oklch(95% 0 0)"] },
+      "preto": { "role": "neutral", "displayName": "Preto", "canonical": "#000000", "tonalRamp": ["oklch(0% 0 0)", "oklch(15% 0 0)", "oklch(26% 0 0)", "oklch(37% 0 0)", "oklch(48% 0 0)", "oklch(60% 0 0)", "oklch(72% 0 0)", "oklch(84% 0 0)"] },
+      "branco": { "role": "neutral", "displayName": "Branco", "canonical": "#ffffff", "tonalRamp": ["oklch(15% 0 0)", "oklch(26% 0 0)", "oklch(37% 0 0)", "oklch(48% 0 0)", "oklch(60% 0 0)", "oklch(72% 0 0)", "oklch(84% 0 0)", "oklch(100% 0 0)"] },
+      "gelo": { "role": "neutral", "displayName": "Gelo", "canonical": "#f4f4f4", "tonalRamp": ["oklch(15% 0 0)", "oklch(26% 0 0)", "oklch(37% 0 0)", "oklch(48% 0 0)", "oklch(60% 0 0)", "oklch(72% 0 0)", "oklch(84% 0 0)", "oklch(97% 0 0)"] },
+      "linha": { "role": "neutral", "displayName": "Linha", "canonical": "color-mix(in srgb, #1e1e1e 11%, #ffffff)", "darkValue": "color-mix(in srgb, #f4f4f4 12%, #1e1e1e)" },
+      "linha-2": { "role": "neutral", "displayName": "Linha Forte", "canonical": "color-mix(in srgb, #1e1e1e 20%, #ffffff)", "darkValue": "color-mix(in srgb, #f4f4f4 20%, #1e1e1e)" },
+      "linha-3": { "role": "neutral", "displayName": "Linha de Campo", "canonical": "color-mix(in srgb, #1e1e1e 52%, #ffffff)", "darkValue": "color-mix(in srgb, #f4f4f4 38%, #1e1e1e)" },
+      "tinta-2": { "role": "neutral", "displayName": "Tinta Secundária", "canonical": "color-mix(in srgb, #1e1e1e 80%, #ffffff)", "darkValue": "color-mix(in srgb, #f4f4f4 72%, #1e1e1e)" },
+      "tinta-3": { "role": "neutral", "displayName": "Tinta de Apoio", "canonical": "color-mix(in srgb, #1e1e1e 68%, #ffffff)", "darkValue": "color-mix(in srgb, #f4f4f4 58%, #1e1e1e)" },
+      "acao-forte": { "role": "primary", "displayName": "Violeta Claro de Hover", "canonical": "color-mix(in srgb, #7371ff 75%, #dbbfff)" },
+      "acao-fraco": { "role": "primary", "displayName": "Véu Violeta", "canonical": "color-mix(in srgb, #dbbfff 40%, #ffffff)", "darkValue": "color-mix(in srgb, #7371ff 22%, #1e1e1e)" },
+      "acao-texto": { "role": "primary", "displayName": "Violeta Tinta", "canonical": "color-mix(in srgb, #7371ff 70%, #000000)", "darkValue": "#dbbfff" },
+      "sobre-violeta-2": { "role": "neutral", "displayName": "Preto Sobre Violeta", "canonical": "color-mix(in srgb, #000000 85%, #7371ff)" }
+    },
+    "themes": {
+      "claro": { "mesa": "gelo", "papel": "branco", "papel-2": "gelo", "tinta": "grafite", "acao": "violeta", "sobre-acao": "preto" },
+      "escuro": { "mesa": "preto", "papel": "grafite", "papel-2": "color-mix(in srgb, #f4f4f4 7%, #1e1e1e)", "tinta": "gelo", "acao": "violeta", "sobre-acao": "preto" },
+      "palco-entrada": { "fundo": "violeta", "texto": "preto", "nota": "Igual nos dois temas." }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Frase do palco violeta da entrada." },
+      "display-compacto": { "displayName": "Display compacto", "purpose": "Frase do palco em telas baixas (até 820px de altura)." },
+      "display-celular": { "displayName": "Display celular", "purpose": "Frase da faixa violeta da entrada no celular e no tablet." },
+      "headline": { "displayName": "Headline", "purpose": "Título da coluna do formulário da entrada." },
+      "headline-celular": { "displayName": "Headline celular", "purpose": "O mesmo título no celular e no tablet." },
+      "subtitulo-entrada": { "displayName": "Subtítulo da entrada", "purpose": "Linha sob o título da entrada e títulos dos perfis na faixa violeta do celular." },
+      "icone-botao-entrada": { "displayName": "Ícone do botão da entrada", "purpose": "Ícone do botão Entrar, na fonte de ícones." },
+      "headline-janela": { "displayName": "Headline de janela", "purpose": "Título das janelas de cadastro." },
+      "title": { "displayName": "Title", "purpose": "Título da barra de comando de cada tela interna." },
+      "title-cartao": { "displayName": "Title de cartão", "purpose": "Título de cartão." },
+      "numero-kpi": { "displayName": "Número de KPI", "purpose": "Valor do KPI, tabular; 19px no celular." },
+      "body": { "displayName": "Body", "purpose": "Texto de tabelas, botões, faixas e controles das telas internas." },
+      "body-entrada": { "displayName": "Body da entrada", "purpose": "Ajuda, contato e rótulos da tela de entrada." },
+      "label": { "displayName": "Label", "purpose": "Rótulos em maiúsculas das telas internas: KPI, seção, cabeçalho de tabela, campo, grupo do menu." },
+      "campo": { "displayName": "Campo", "purpose": "Campos em toque e na entrada; 16px para o iOS não dar zoom." }
+    },
+    "shadows": [
+      { "name": "e1", "value": "0 1px 2px color-mix(in srgb, #1e1e1e 5%, transparent), 0 0 0 1px var(--linha)", "purpose": "Papel apoiado: cartões, KPIs, opção escolhida do segmentado." },
+      { "name": "e2", "value": "0 4px 14px color-mix(in srgb, #1e1e1e 7%, transparent), 0 0 0 1px var(--linha)", "purpose": "Papel erguido: botão flutuante do menu em toque." },
+      { "name": "e-pop", "value": "0 12px 34px color-mix(in srgb, #1e1e1e 16%, transparent), 0 0 0 1px var(--linha)", "purpose": "Sobreposição: janelas, gaveta, menu expandido." },
+      { "name": "e1-escuro", "value": "0 1px 2px color-mix(in srgb, #000000 30%, transparent), 0 0 0 1px var(--linha)", "purpose": "e1 no tema escuro." },
+      { "name": "e2-escuro", "value": "0 4px 14px color-mix(in srgb, #000000 35%, transparent), 0 0 0 1px var(--linha)", "purpose": "e2 no tema escuro." },
+      { "name": "e-pop-escuro", "value": "0 12px 34px color-mix(in srgb, #000000 50%, transparent), 0 0 0 1px var(--linha)", "purpose": "e-pop no tema escuro." },
+      { "name": "veu", "value": "color-mix(in srgb, #1e1e1e 45%, transparent)", "purpose": "Fundo atrás de janelas e gaveta; preto 60% no escuro; desfoque de 3px nas janelas." },
+      { "name": "halo-foco-campo", "value": "0 0 0 3px var(--acao-fraco)", "purpose": "Halo do campo em foco, junto da borda violeta." },
+      { "name": "previa-sobre-palco", "value": "0 28px 64px color-mix(in srgb, #000000 26%, transparent), 0 0 0 1px color-mix(in srgb, #000000 14%, transparent)", "purpose": "Exclusiva da prévia do painel sobre o violeta." }
+    ],
+    "motion": [
+      { "name": "estado", "value": "0.14s–0.15s ease", "purpose": "Hover e estado de botões, campos, itens de menu, Caixa." },
+      { "name": "ease-padrao", "value": "cubic-bezier(0.4, 0, 0.2, 1)", "purpose": "Menu lateral abrindo (0.22s) e gaveta (0.24s)." },
+      { "name": "janela-entra", "value": "0.18s cubic-bezier(0.34, 1.06, 0.64, 1)", "purpose": "Janela sobe 10px e cresce de 0.985." },
+      { "name": "troca-de-tema", "value": "0.32s cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "View-transition da raiz ao trocar o tema." },
+      { "name": "previa-sobe", "value": "0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.12s", "purpose": "Prévia do painel sobe 28px com desfoque, a partir de 40% de opacidade." },
+      { "name": "movimento-reduzido", "value": "animation: none; transition: none", "purpose": "prefers-reduced-motion desliga toda animação e transição; a troca de tema fica instantânea." }
+    ],
+    "breakpoints": [
+      { "name": "toque", "value": "900px", "purpose": "Telas internas: gaveta, tabelas em cartão, alvos de 44px, campos de 16px." },
+      { "name": "usuario-id", "value": "620px", "purpose": "Nome e empresa aparecem no menu do usuário a partir daqui." },
+      { "name": "entrada-folha", "value": "1023px", "purpose": "Entrada: abaixo disso, faixa violeta no alto e formulário em folha." },
+      { "name": "entrada-perfis", "value": "1279px", "purpose": "Entrada: abaixo disso, perfis só com o título." },
+      { "name": "entrada-baixa", "value": "max-height 820px (min-width 1024px)", "purpose": "Entrada: palco compactado em notebook baixo." },
+      { "name": "entrada-estreita", "value": "479px", "purpose": "Seletor de tema sem ícones." }
+    ]
+  },
+  "components": [
+    {
+      "name": "Botão principal",
+      "kind": "button",
+      "refersTo": "button-acao",
+      "description": "Ação que conclui. Violeta com texto preto; hover clareia.",
+      "html": "<button class=\"ds-btn-acao\"><svg width=\"17\" height=\"17\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12l5 5L20 7\"/></svg>Salvar</button>",
+      "css": ".ds-btn-acao { display: inline-flex; align-items: center; gap: 6px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 12.5px; font-weight: 700; padding: 8px 13px; border: none; border-radius: 9px; background: var(--acao, #7371ff); color: var(--sobre-acao, #000000); cursor: pointer; transition: background 0.14s; } .ds-btn-acao:hover { background: var(--acao-forte, color-mix(in srgb, #7371ff 75%, #dbbfff)); } .ds-btn-acao:focus-visible { outline: 2px solid var(--acao, #7371ff); outline-offset: 2px; } .ds-btn-acao:disabled { background: var(--linha-2, color-mix(in srgb, #1e1e1e 20%, #ffffff)); color: var(--tinta-2, color-mix(in srgb, #1e1e1e 80%, #ffffff)); cursor: wait; }"
+    },
+    {
+      "name": "Botão fantasma",
+      "kind": "button",
+      "refersTo": "button-fantasma",
+      "description": "Ação secundária e ações na linha, em tom de papel.",
+      "html": "<button class=\"ds-btn-fant\">Cancelar</button>",
+      "css": ".ds-btn-fant { display: inline-flex; align-items: center; gap: 6px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 12.5px; font-weight: 700; padding: 8px 13px; border: none; border-radius: 9px; background: var(--papel-2, #f4f4f4); color: var(--tinta-2, color-mix(in srgb, #1e1e1e 80%, #ffffff)); cursor: pointer; transition: background 0.14s, color 0.14s; } .ds-btn-fant:hover { background: var(--linha, color-mix(in srgb, #1e1e1e 11%, #ffffff)); color: var(--tinta, #1e1e1e); } .ds-btn-fant:focus-visible { outline: 2px solid var(--acao, #7371ff); outline-offset: 2px; }"
+    },
+    {
+      "name": "Campo de senha da entrada",
+      "kind": "input",
+      "refersTo": "campo-entrada",
+      "description": "Campo alto de 48px e 16px, com botão de olho dentro do campo.",
+      "html": "<div class=\"ds-fg\"><label class=\"ds-fg-rot\" for=\"ds-senha\">Senha</label><div class=\"ds-senha\"><input id=\"ds-senha\" class=\"ds-campo\" type=\"password\" value=\"segredo\"><button type=\"button\" class=\"ds-olho\" aria-label=\"Mostrar senha\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z\"/><circle cx=\"12\" cy=\"12\" r=\"3\"/></svg></button></div></div>",
+      "css": ".ds-fg { display: flex; flex-direction: column; gap: 8px; max-width: 380px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; } .ds-fg-rot { font-size: 14px; font-weight: 600; color: var(--tinta-2, color-mix(in srgb, #1e1e1e 80%, #ffffff)); } .ds-senha { position: relative; } .ds-campo { width: 100%; font-family: inherit; font-size: 16px; font-weight: 500; min-height: 48px; padding: 0 48px 0 14px; background: var(--papel-2, #f4f4f4); border: 1px solid var(--linha-3, color-mix(in srgb, #1e1e1e 52%, #ffffff)); border-radius: 9px; color: var(--tinta, #1e1e1e); caret-color: var(--acao, #7371ff); outline: none; transition: background 0.15s, border-color 0.15s, box-shadow 0.15s; } .ds-campo:hover:not(:focus) { border-color: var(--tinta-3, color-mix(in srgb, #1e1e1e 68%, #ffffff)); } .ds-campo:focus { background: var(--papel, #ffffff); border-color: var(--acao, #7371ff); box-shadow: 0 0 0 3px var(--acao-fraco, color-mix(in srgb, #dbbfff 40%, #ffffff)); } .ds-olho { position: absolute; top: 0; right: 0; bottom: 0; width: 44px; display: grid; place-items: center; border: none; background: none; border-radius: 9px; color: var(--tinta-3, color-mix(in srgb, #1e1e1e 68%, #ffffff)); cursor: pointer; transition: color 0.15s; } .ds-olho:hover { color: var(--tinta, #1e1e1e); } .ds-olho:focus-visible { outline: 2px solid var(--acao, #7371ff); outline-offset: 2px; }"
+    },
+    {
+      "name": "Caixa de marcar",
+      "kind": "input",
+      "refersTo": "caixa",
+      "description": "Quadro desenhado de 22px; marcado vira violeta com visto preto. Alvo de toque é a linha inteira.",
+      "html": "<label class=\"ds-caixa\"><input type=\"checkbox\" class=\"ds-caixa-in\" checked><span class=\"ds-caixa-q\" aria-hidden=\"true\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 12l5 5L20 7\"/></svg></span><span class=\"ds-caixa-t\">Manter conectado por 7 dias<span class=\"ds-caixa-dica\">Não marque em computador compartilhado.</span></span></label>",
+      "css": ".ds-caixa { position: relative; display: flex; gap: 12px; align-items: flex-start; min-height: 44px; padding: 10px 0; cursor: pointer; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.4; color: var(--tinta, #1e1e1e); } .ds-caixa-in { position: absolute; top: 10px; left: 0; width: 22px; height: 22px; margin: 0; opacity: 0; cursor: pointer; } .ds-caixa-q { flex-shrink: 0; width: 22px; height: 22px; margin-top: -1px; display: grid; place-items: center; border-radius: 6px; border: 1.5px solid var(--tinta-3, color-mix(in srgb, #1e1e1e 68%, #ffffff)); background: var(--papel, #ffffff); color: transparent; transition: background 0.15s, border-color 0.15s, color 0.15s; } .ds-caixa:hover .ds-caixa-q { border-color: var(--tinta, #1e1e1e); } .ds-caixa-in:checked + .ds-caixa-q { background: var(--acao, #7371ff); border-color: var(--acao, #7371ff); color: var(--sobre-acao, #000000); } .ds-caixa-in:focus-visible + .ds-caixa-q { outline: 2px solid var(--acao, #7371ff); outline-offset: 2px; } .ds-caixa-t { display: flex; flex-direction: column; gap: 2px; font-weight: 500; } .ds-caixa-dica { font-size: 13px; font-weight: 400; color: var(--tinta-3, color-mix(in srgb, #1e1e1e 68%, #ffffff)); }"
+    },
+    {
+      "name": "Pílulas de situação",
+      "kind": "chip",
+      "refersTo": "pilula-ok",
+      "description": "Situação só com a paleta: lima resolve, escura espera, rosa recusa, violeta em curso, lilás férias, neutro encerrado.",
+      "html": "<div class=\"ds-pils\"><span class=\"ds-pil ds-ok\"><span class=\"ds-pt\"></span>Aprovado</span><span class=\"ds-pil ds-at\"><span class=\"ds-pt\"></span>Pendente</span><span class=\"ds-pil ds-cr\"><span class=\"ds-pt\"></span>Rejeitado</span><span class=\"ds-pil ds-ac\"><span class=\"ds-pt\"></span>Em andamento</span><span class=\"ds-pil ds-az\"><span class=\"ds-pt\"></span>Férias</span><span class=\"ds-pil\"><span class=\"ds-pt\"></span>Inativo</span></div>",
+      "css": ".ds-pils { display: flex; flex-wrap: wrap; gap: 8px; } .ds-pil { display: inline-flex; align-items: center; gap: 6px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 500; padding: 4px 10px; border-radius: 999px; background: var(--papel-2, #f4f4f4); color: var(--tinta-2, color-mix(in srgb, #1e1e1e 80%, #ffffff)); white-space: nowrap; } .ds-pt { width: 6px; height: 6px; border-radius: 50%; background: currentColor; } .ds-ok { background: #bef533; color: #1e1e1e; } .ds-at { background: var(--tinta, #1e1e1e); color: var(--papel, #ffffff); } .ds-cr { background: #ff43c0; color: #1e1e1e; } .ds-ac { background: #7371ff; color: #000000; } .ds-az { background: #dbbfff; color: #1e1e1e; }"
+    },
+    {
+      "name": "Cartão de KPI",
+      "kind": "card",
+      "refersTo": "cartao",
+      "description": "Papel apoiado sobre a mesa: rótulo maiúsculo, número tabular de 24px e apoio. Sem tarja lateral.",
+      "html": "<div class=\"ds-kpi\"><div class=\"ds-kpi-r\">Pessoas ativas</div><div class=\"ds-kpi-v\">15</div><div class=\"ds-kpi-p\">em 4 áreas</div></div>",
+      "css": ".ds-kpi { max-width: 220px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background: var(--papel, #ffffff); color: var(--tinta, #1e1e1e); border-radius: 12px; padding: 15px 17px; box-shadow: 0 1px 2px color-mix(in srgb, #1e1e1e 5%, transparent), 0 0 0 1px var(--linha, color-mix(in srgb, #1e1e1e 11%, #ffffff)); } .ds-kpi-r { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--tinta-3, color-mix(in srgb, #1e1e1e 68%, #ffffff)); margin-bottom: 7px; } .ds-kpi-v { font-size: 24px; font-weight: 700; letter-spacing: -0.9px; line-height: 1; font-variant-numeric: tabular-nums; } .ds-kpi-p { font-size: 12px; font-weight: 500; color: var(--tinta-3, color-mix(in srgb, #1e1e1e 68%, #ffffff)); margin-top: 6px; line-height: 1.4; }"
+    },
+    {
+      "name": "Seletor de tema",
+      "kind": "custom",
+      "refersTo": "segmentado",
+      "description": "Segmentado Claro/Sistema/Escuro; a escolhida é uma placa de papel e mantém o peso 500.",
+      "html": "<div class=\"ds-segm\" role=\"radiogroup\" aria-label=\"Tema\"><button class=\"ds-segm-btn ds-on\" role=\"radio\" aria-checked=\"true\">Claro</button><button class=\"ds-segm-btn\" role=\"radio\" aria-checked=\"false\">Sistema</button><button class=\"ds-segm-btn\" role=\"radio\" aria-checked=\"false\">Escuro</button></div>",
+      "css": ".ds-segm { display: inline-flex; background: var(--papel-2, #f4f4f4); border-radius: 9px; padding: 3px; gap: 2px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; } .ds-segm-btn { min-height: 34px; padding: 0 10px; font-family: inherit; font-size: 13px; font-weight: 500; color: var(--tinta-2, color-mix(in srgb, #1e1e1e 80%, #ffffff)); background: none; border: none; border-radius: 6px; cursor: pointer; transition: 0.15s; } .ds-segm-btn:hover { color: var(--tinta, #1e1e1e); } .ds-segm-btn:focus-visible { outline: 2px solid var(--acao, #7371ff); outline-offset: 2px; } .ds-on { background: var(--papel, #ffffff); color: var(--tinta, #1e1e1e); box-shadow: 0 1px 2px color-mix(in srgb, #1e1e1e 5%, transparent), 0 0 0 1px var(--linha, color-mix(in srgb, #1e1e1e 11%, #ffffff)); }"
+    },
+    {
+      "name": "Item do menu lateral",
+      "kind": "nav",
+      "refersTo": "item-menu-ativo",
+      "description": "Itens de 38px em Tinta Secundária; o ativo é violeta com texto preto.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav-item ds-ativo\" href=\"#\">Painel</a><a class=\"ds-nav-item\" href=\"#\">Colaboradores</a><a class=\"ds-nav-item\" href=\"#\">Atestados</a></nav>",
+      "css": ".ds-nav { display: flex; flex-direction: column; gap: 1px; width: 232px; padding: 8px; background: var(--papel, #ffffff); font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; } .ds-nav-item { display: flex; align-items: center; height: 38px; padding: 0 14px; border-radius: 8px; font-size: 13px; font-weight: 500; color: var(--tinta-2, color-mix(in srgb, #1e1e1e 80%, #ffffff)); text-decoration: none; transition: 0.14s; } .ds-nav-item:hover { background: var(--papel-2, #f4f4f4); color: var(--tinta, #1e1e1e); } .ds-nav-item:focus-visible { outline: 2px solid var(--acao, #7371ff); outline-offset: 2px; } .ds-ativo, .ds-ativo:hover { background: var(--acao, #7371ff); color: var(--sobre-acao, #000000); font-weight: 600; }"
+    },
+    {
+      "name": "Palco violeta",
+      "kind": "custom",
+      "refersTo": "palco-violeta",
+      "description": "Superfície de marca da entrada: violeta chapado, igual nos dois temas, texto preto, perfis com fio preto no topo.",
+      "html": "<div class=\"ds-palco\"><p class=\"ds-frase\">O departamento pessoal da sua empresa, num só lugar.</p><ul class=\"ds-perfis\"><li><b>RH lança</b><span>Colaboradores, ocorrências, atestados e movimentações.</span></li><li><b>Gestor aprova</b><span>Atestados e movimentações decididos até pelo celular.</span></li><li><b>Contador confere</b><span>Histórico e indicadores claros para conferir.</span></li></ul></div>",
+      "css": ".ds-palco { background: #7371ff; color: #000000; padding: 40px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; } .ds-frase { margin: 0; font-size: 40px; font-weight: 700; line-height: 1.04; letter-spacing: -0.035em; max-width: 12em; text-wrap: balance; } .ds-perfis { list-style: none; margin: 32px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; } .ds-perfis li { display: flex; flex-direction: column; gap: 4px; padding-top: 12px; border-top: 1.5px solid #000000; } .ds-perfis b { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; } .ds-perfis span { font-size: 14px; line-height: 1.45; color: color-mix(in srgb, #000000 85%, #7371ff); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "Papel sobre a mesa",
+    "overview": "O sistema fala a língua dos próprios tokens: uma mesa cinza-gelo, folhas de papel branco apoiadas nela, tinta grafite para o texto e uma linha fina para separar. Sobre esse escritório quieto, o violeta da marca (#7371ff) é a única voz de ação: o botão que conclui, o item de menu em que você está, a barra da série, o anel de foco. Tudo o mais é tom de papel e de tinta. A densidade é de ferramenta de trabalho: texto corrido em 12,5px, rótulos em 12px, vãos de 11px, cartões que viram pilhas no celular sem perder nenhum dado.\n\nA paleta inteira são as oito cores obrigatórias da marca, e só elas. Todo tom intermediário sai de color-mix() entre essas oito; não existe outro hex no sistema. As situações (pílulas, marcas de gráfico) usam a paleta como código: lima resolve, escura espera, rosa recusa, violeta em curso, lilás férias, neutro encerrado. O tema escuro troca os valores dos tokens e nenhuma classe de componente muda: a mesa vira preto, o papel vira grafite, a tinta vira gelo.\n\nA tela de entrada leva o mesmo mundo para fora do sistema. A coluna do formulário é papel com os mesmos campos e o mesmo botão, só mais altos e mais legíveis; ao lado, um palco violeta chapado, igual nos dois temas, com texto preto em Helvetica bold de tracking fechado, e uma prévia do painel montada com os componentes reais. O violeta, ali, deixa de ser acento e vira chão; é a única superfície do sistema em que isso acontece.",
+    "keyCharacteristics": [
+      "Oito cores de marca, nenhuma outra; tons intermediários só por color-mix().",
+      "Violeta é fundo e destaque, nunca texto sobre claro; sobre violeta o texto é preto.",
+      "Papel sobre mesa: cartões brancos com sombra-contorno de 1px sobre fundo gelo.",
+      "Helvetica em todos os papéis, peso 700 e tracking negativo nos títulos.",
+      "Dois temas por troca de tokens, com transição suave por view-transition.",
+      "Mobile-first de verdade: campos de 16px, alvos de 44px, tabelas que viram cartões, janelas que sobem de baixo."
+    ],
+    "rules": [
+      { "name": "The Oito Cores Rule", "body": "As oito cores de --marca-* são os únicos hex do sistema. Qualquer tom novo é color-mix() entre elas; telas usam os tokens semânticos, nunca hex solto. A única exceção existente é o themeColor da página de entrada, que o metadado do navegador exige em hex e é o próprio violeta.", "section": "colors" },
+      { "name": "The Violeta-Fundo Rule", "body": "O violeta é fundo e destaque, não texto sobre claro. Sobre violeta, o texto é preto; quando o violeta precisa ser texto, usa-se a Violeta Tinta (--acao-texto).", "section": "colors" },
+      { "name": "The Paleta-como-Situação Rule", "body": "Situação usa só a paleta, sempre como fundo com texto grafite: lima resolve, escura espera, rosa recusa, violeta em curso, lilás férias, neutro encerrado. Lima, lilás e rosa nunca são cor de texto.", "section": "colors" },
+      { "name": "The Doze-Pixels Rule", "body": "Nenhum texto abaixo de 12px, em nenhuma tela. O menor tamanho do sistema é 12px, e campos em toque têm 16px.", "section": "typography" },
+      { "name": "The Peso-Que-Não-Pula Rule", "body": "Onde trocar a escolha mudaria a largura do controle (o seletor de tema da entrada), a opção escolhida mantém o peso 500 e se distingue só pela cor e pelo fundo.", "section": "typography" },
+      { "name": "The Contorno-Junto Rule", "body": "Toda sombra do sistema carrega o contorno de 1px em --linha. Profundidade sem limite visível não existe aqui.", "section": "elevation" },
+      { "name": "The Folha-Que-Sobe Rule", "body": "Em toque, o que se abre por cima sobe de baixo como folha com os cantos de cima arredondados: a janela de cadastro (18px) e a coluna da entrada sobre a faixa violeta (24px).", "section": "shapes" }
+    ],
+    "dos": [
+      "Do usar os tokens semânticos (--papel, --mesa, --tinta, --linha, --acao e variações) em toda tela nova; o tema escuro vem de graça.",
+      "Do derivar qualquer tom novo por color-mix() entre as oito cores de --marca-*.",
+      "Do pôr texto preto sobre violeta e usar --acao-texto quando o violeta precisar ser texto ou ícone sobre papel.",
+      "Do marcar situação com a pílula e a paleta: lima resolve, escura espera, rosa recusa, violeta em curso, lilás férias, neutro encerrado.",
+      "Do manter campos em 16px e alvos em 44px abaixo de 900px, e texto nunca abaixo de 12px.",
+      "Do levar toda sombra com o contorno de 1px em --linha (--e1, --e2, --e-pop).",
+      "Do usar .num (algarismos tabulares) em números que se comparam em coluna.",
+      "Do fazer o que se abre por cima subir de baixo como folha em toque."
+    ],
+    "donts": [
+      "Don't escrever hex solto nas telas nem criar cor fora das oito da marca.",
+      "Don't usar violeta como texto sobre fundo claro (3,8:1), nem lima, lilás ou rosa como cor de texto.",
+      "Don't escurecer o violeta no hover: com texto preto, o contraste cai para 3,9:1; o hover clareia.",
+      "Don't trocar a Helvetica por outra família, nem para títulos nem para números.",
+      "Don't usar sombra dura ou deslocada; a profundidade é difusa e sempre contornada.",
+      "Don't marcar tom de cartão com tarja lateral colorida. A tarja de 4px que os KPIs das telas internas carregam hoje é desvio conhecido, não padrão a repetir."
+    ]
+  }
+}
