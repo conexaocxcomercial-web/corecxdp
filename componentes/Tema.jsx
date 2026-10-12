@@ -64,33 +64,6 @@ function useEscolha() {
   return [escolha, escolher];
 }
 
-/** Botão único da barra do topo: alterna entre claro e escuro. */
-export function BotaoDeTema() {
-  const [tema, setTema] = useState('claro');
-
-  useEffect(() => {
-    setTema(document.documentElement.dataset.tema || 'claro');
-  }, []);
-
-  function alternar() {
-    const novo = tema === 'escuro' ? 'claro' : 'escuro';
-    aplicar(novo);
-    setTema(novo);
-  }
-
-  return (
-    <button
-      type="button"
-      onClick={alternar}
-      title={`Mudar para o tema ${tema === 'escuro' ? 'claro' : 'escuro'}`}
-      aria-label={`Mudar para o tema ${tema === 'escuro' ? 'claro' : 'escuro'}`}
-      className="grid h-11 w-11 place-items-center rounded-full min-[901px]:h-9 min-[901px]:w-9 bg-[var(--papel-2)] text-[var(--tinta-3)] transition-colors hover:bg-[var(--linha)] hover:text-[var(--tinta)]"
-    >
-      <Icone nome={tema === 'escuro' ? 'light_mode' : 'dark_mode'} tamanho={20} />
-    </button>
-  );
-}
-
 const OPCOES_DE_TEMA = [
   { valor: 'claro', rotulo: 'Claro', icone: 'light_mode' },
   { valor: 'sistema', rotulo: 'Sistema', icone: 'contrast' },

@@ -6,6 +6,7 @@ import { abrirSessao, fecharSessao } from '@/lib/sessao';
 import { autenticar } from '@/lib/usuarios';
 import {
   cadastrarColaborador,
+  listarColaboradores,
   mudarChecklist,
   mudarStatusDoAtestado,
   mudarStatusDoColaborador,
@@ -14,7 +15,7 @@ import {
   registrarOcorrencia,
   mensagemParaTela,
 } from '@/lib/registros';
-import { cpfValido } from '@/lib/formato';
+import { cpfValido, paraBusca } from '@/lib/formato';
 
 function ler(dados, campo) {
   return String(dados.get(campo) ?? '').trim();
@@ -87,6 +88,46 @@ export async function sair() {
 }
 
 /* ----------------------------------------------------------- colaboradores */
+
+/**
+ * Busca de pessoa da barra do topo: nome ou matrícula, só da empresa da
+ * sessão (o recorte vem de lib/registros). Devolve no máximo 8 pessoas,
+ * primeiro quem começa com o termo, sem CPF nem salário.
+ */
+export async function buscarPessoas(termo) {
+  const busca = paraBusca(termo);
+  if (busca.length < 2) return { pessoas: [] };
+
+  try {
+    const pessoas = await listarColaboradores();
+    const pontuadas = pessoas
+      .map((pessoa) => {
+        const nome = paraBusca(pessoa.nome);
+        const matricula = paraBusca(pessoa.matricula);
+        let pontos = 0;
+        if (matricula === busca) pontos = 4;
+        else if (nome.startsWith(busca)) pontos = 3;
+        else if (nome.split(/\s+/).some((parte) => parte.startsWith(busca))) pontos = 2;
+        else if (nome.includes(busca) || matricula.includes(busca)) pontos = 1;
+        return { pessoa, pontos };
+      })
+      .filter((item) => item.pontos > 0)
+      .sort((a, b) => b.pontos - a.pontos || a.pessoa.nome.localeCompare(b.pessoa.nome, 'pt-BR'))
+      .slice(0, 8);
+
+    return {
+      pessoas: pontuadas.map(({ pessoa }) => ({
+        matricula: pessoa.matricula,
+        nome: pessoa.nome,
+        cargo: pessoa.cargo,
+        departamento: pessoa.departamento,
+        status: pessoa.status,
+      })),
+    };
+  } catch (erro) {
+    return { pessoas: [], erro: mensagemParaTela(erro, 'A busca não respondeu agora. Tente de novo.') };
+  }
+}
 
 export async function salvarColaborador(_estado, dados) {
   const pessoa = {

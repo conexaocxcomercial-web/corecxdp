@@ -83,8 +83,9 @@ export default async function Atestados({ searchParams }) {
 
   const pendentes = atestados.filter((item) => item.status === 'Pendente').length;
 
-  const registro = (
+  const registro = (abrirAoCarregar = false) => (
     <PainelDeRegistro
+      abrirAoCarregar={abrirAoCarregar}
       abrir="Registrar"
       titulo="Registrar atestado"
       descricao="Lance o afastamento e guarde o link do documento. A validação pode ficar para depois."
@@ -98,7 +99,7 @@ export default async function Atestados({ searchParams }) {
         opcoes={ativos.map((p) => ({ valor: p.matricula, texto: `${p.nome} (${p.matricula})` }))}
         required
       />
-      <div className="md-duas">
+      <div className="folha-duas">
         <Data rotulo="Primeiro dia" nome="inicio" defaultValue={hojeISO()} required />
         <Texto
           rotulo="Dias de afastamento"
@@ -111,7 +112,7 @@ export default async function Atestados({ searchParams }) {
           required
         />
       </div>
-      <div className="md-duas">
+      <div className="folha-duas">
         <Texto rotulo="CID" nome="cid" dica="opcional" placeholder="J06.9" />
         <Selecao rotulo="Validação" nome="status" opcoes={OPCOES.statusAtestado} />
       </div>
@@ -130,7 +131,7 @@ export default async function Atestados({ searchParams }) {
       <Cabecalho
         titulo="Atestados"
         subtitulo={pendentes > 0 ? `${pendentes} ${plural(pendentes, 'pendente', 'pendentes')}` : `${atestados.length} no total`}
-        acoes={registro}
+        acoes={registro(parametros?.lancar === '1')}
       >
         <Busca placeholder="Buscar por pessoa, matrícula ou CID" />
         <Seletor chave="status" rotulo="Todas as validações" opcoes={OPCOES.statusAtestado} />
@@ -146,7 +147,7 @@ export default async function Atestados({ searchParams }) {
 
         <Cartao liso>
           {filtrados.length === 0 ? (
-            <Vazio icone={atestados.length === 0 ? 'clinical_notes' : 'search_off'} acao={atestados.length === 0 ? registro : null}>
+            <Vazio icone={atestados.length === 0 ? 'clinical_notes' : 'search_off'} acao={atestados.length === 0 ? registro() : null}>
               {atestados.length === 0
                 ? 'Nenhum atestado registrado. Registre o primeiro para acompanhar afastamentos e dias cobertos.'
                 : 'Nenhum atestado corresponde à busca. Limpe os filtros ou tente outro termo.'}

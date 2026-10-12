@@ -234,7 +234,7 @@ Toda fase é testada em 375px e 1440px, nos temas claro e escuro, e termina com 
 | # | Fase | Entrega | Como testar |
 |---|---|---|---|
 | 1 | **Fundação visual** ✅ concluída em 12/10/2026 | Tipografia e medidas da entrada nas telas internas; `Cabecalho`, seções, `Numero`, tabelas e cartões, campos de 48px; aplicada às 7 telas atuais **sem mudar o conteúdo**; DESIGN.md atualizado | As 7 telas atuais funcionando com o visual novo |
-| 2 | **Navegação e casca** | Barra inferior, menu lateral reorganizado, menu de usuário, busca de pessoa, `Folha` genérica; textos novos dos perfis na entrada (`lib/marca.js`) | Navegar tudo com uma mão em 375px; teclado e leitor de tela |
+| 2 | **Navegação e casca** ✅ concluída em 12/10/2026 | Barra inferior, menu lateral reorganizado, menu de usuário, busca de pessoa, `Folha` genérica; textos novos dos perfis na entrada (`lib/marca.js`) | Navegar tudo com uma mão em 375px; teclado e leitor de tela |
 | 3 | **Camada de dados, perfis e alcance** | `lib/dados/`, permissões, seletor de alcance, logins por perfil, "Ver como…"; navegação de cada perfil (incluindo a do Parceiro no celular) | Testes de isolamento; cada login vê só o que alcança |
 | 4 | **Dados de demonstração ampliados** | Gerador com datas ancoradas em hoje, parceiros, clientes, CNPJs, 18 meses de histórico | Números das telas atuais mudam com coerência ao trocar o alcance |
 | 5 | **Início da Gestão e Pendências** | **Primeiro: três estruturas da tela inicial lado a lado para escolha.** Depois: a escolhida, Pendências, regras de prazo em configuração | Aprovar e rejeitar no celular; prazos batem com os dados |
@@ -274,4 +274,16 @@ O que cada fase entregou e o que ficou decidido no caminho, para a fase seguinte
 - Tabelas sem o invólucro `p-[10px]`: encostam nas bordas do cartão liso e viram lista no celular.
 - `BotaoEnviar` ganhou `variante`. Tokens novos: `--alt-ctrl` (48px), `--respiro` (32px; 16px no celular), `--r-folha` (24px).
 - Menu lateral e menu do usuário não mudaram (fase 2).
+
+### Fase 2: navegação e casca (12/10/2026)
+
+- `lib/navegacao.js` é o arquivo único de navegação por perfil: grupos do menu lateral, barra inferior, opções do Lançar. Só a Gestão está definida; itens de módulos futuros ficam com `disponivel: false`. Parceiro e Administração entram na fase 3.
+- Celular: `BarraInferior` (Início com o número de pendências, Pessoas, Lançar, Indicadores, Menu) no lugar do botão flutuante e da gaveta; a aba Menu é uma folha com o bloco da pessoa e a navegação completa. O menu lateral só existe a partir de 901px.
+- `Folha` (`componentes/Folha.jsx`, `<dialog>` com `showModal()`) é a base de tudo que abre por cima; `PainelDeRegistro` usa ela. Classes `.md-*` viraram `.folha-*` (`md-duas` → `folha-duas`).
+- Lançar provisório: a folha "O que aconteceu?" leva ao cadastro da própria tela com `?lancar=1` (`PainelDeRegistro abrirAoCarregar`). O Lançar em três passos continua na fase 8.
+- Menu do usuário (`MenuDoUsuario.jsx`): popover no computador, folha no celular; tema, ajuda (contatos de `MARCA.suporte`, os mesmos canais da Conexão CX que a entrada já indica) e Sair. "Ver como…" e o alcance entram na fase 3.
+- `BuscaDePessoa` na barra do topo (computador) com a ação de servidor `buscarPessoas`; no celular a busca é a da tela Colaboradores.
+- `contarPendencias()` em `lib/registros.js` serve o painel e o número da barra inferior. `emDemonstracao()` em `lib/contexto.js` mostra a etiqueta "Dados de demonstração".
+- Textos novos dos perfis na entrada (`MARCA.perfis`): Gestão lança, Gestão aprova, Parceiro acompanha.
+- Acessibilidade da casca: "Pular para o conteúdo", `<header>` na barra do topo, `<main id="conteudo">`, hover do Tailwind só em quem tem mouse (`hoverOnlyWhenSupported`).
 

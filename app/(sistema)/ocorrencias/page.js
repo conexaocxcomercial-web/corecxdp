@@ -54,8 +54,9 @@ export default async function Ocorrencias({ searchParams }) {
     return combina && (!tipo || item.tipo === tipo);
   });
 
-  const registro = (
+  const registro = (abrirAoCarregar = false) => (
     <PainelDeRegistro
+      abrirAoCarregar={abrirAoCarregar}
       abrir="Registrar"
       titulo="Registrar ocorrência"
       descricao="Faltas, atrasos e medidas disciplinares. O que for descrito aqui é o que sustenta a decisão depois."
@@ -69,7 +70,7 @@ export default async function Ocorrencias({ searchParams }) {
         opcoes={ativos.map((p) => ({ valor: p.matricula, texto: `${p.nome} (${p.matricula})` }))}
         required
       />
-      <div className="md-duas">
+      <div className="folha-duas">
         <Data rotulo="Data da ocorrência" nome="data" defaultValue={hojeISO()} required />
         <Selecao rotulo="Tipo" nome="tipo" opcoes={OPCOES.tiposDeOcorrencia} />
       </div>
@@ -88,7 +89,7 @@ export default async function Ocorrencias({ searchParams }) {
       <Cabecalho
         titulo="Ocorrências e faltas"
         subtitulo={`${filtradas.length} de ${ocorrencias.length}`}
-        acoes={registro}
+        acoes={registro(parametros?.lancar === '1')}
       >
         <Busca placeholder="Buscar por pessoa, matrícula ou motivo" />
         <Seletor chave="tipo" rotulo="Todos os tipos" opcoes={OPCOES.tiposDeOcorrencia} />
@@ -97,7 +98,7 @@ export default async function Ocorrencias({ searchParams }) {
       <Wrap>
         <Cartao liso>
           {filtradas.length === 0 ? (
-            <Vazio icone={ocorrencias.length === 0 ? 'event_available' : 'search_off'} acao={ocorrencias.length === 0 ? registro : null}>
+            <Vazio icone={ocorrencias.length === 0 ? 'event_available' : 'search_off'} acao={ocorrencias.length === 0 ? registro() : null}>
               {ocorrencias.length === 0
                 ? 'Nenhuma ocorrência registrada. Registre a primeira para começar o histórico de ausências da empresa.'
                 : 'Nenhuma ocorrência corresponde à busca. Limpe os filtros ou tente outro termo.'}

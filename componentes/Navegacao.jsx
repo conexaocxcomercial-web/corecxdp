@@ -5,36 +5,16 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Icone } from '@/componentes/Icones';
 import { Assinatura, Marca } from '@/componentes/Marca';
+import { estaAtiva } from '@/lib/navegacao';
 
-const GRUPOS = [
-  {
-    chave: 'visao',
-    rotulo: null,
-    itens: [
-      { href: '/painel', nome: 'Painel', icone: 'space_dashboard' },
-      { href: '/indicadores', nome: 'Indicadores', icone: 'monitoring' },
-    ],
-  },
-  {
-    chave: 'registros',
-    rotulo: 'Registros',
-    itens: [
-      { href: '/colaboradores', nome: 'Colaboradores', icone: 'group' },
-      { href: '/ocorrencias', nome: 'Ocorrências', icone: 'event_busy' },
-      { href: '/atestados', nome: 'Atestados', icone: 'clinical_notes' },
-      { href: '/movimentacoes', nome: 'Movimentações', icone: 'swap_horiz' },
-    ],
-  },
-];
-
-function estaAtiva(caminho, href) {
-  return caminho === href || caminho.startsWith(`${href}/`);
-}
-
-export function Navegacao({ empresa }) {
+/**
+ * Menu lateral do computador (a partir de 901px): trilho de 60px que abre
+ * a 248px no hover ou fica fixo aberto. Os grupos vêm de lib/navegacao.js.
+ * No celular quem navega é a BarraInferior.
+ */
+export function Navegacao({ empresa, grupos }) {
   const caminho = usePathname();
   const [fixa, setFixa] = useState(false);
-  const [gaveta, setGaveta] = useState(false);
   const [fechados, setFechados] = useState({});
 
   useEffect(() => {
@@ -57,18 +37,6 @@ export function Navegacao({ empresa }) {
     document.documentElement.style.setProperty('--cx-sb-w', fixa ? '248px' : '60px');
   }, [fixa]);
 
-  useEffect(() => {
-    setGaveta(false);
-  }, [caminho]);
-
-  useEffect(() => {
-    const aoTeclar = (evento) => {
-      if (evento.key === 'Escape') setGaveta(false);
-    };
-    document.addEventListener('keydown', aoTeclar);
-    return () => document.removeEventListener('keydown', aoTeclar);
-  }, []);
-
   function alternarFixa() {
     const nova = !fixa;
     setFixa(nova);
@@ -90,88 +58,77 @@ export function Navegacao({ empresa }) {
   }
 
   return (
-    <>
-      <button className="cxsb-ham" onClick={() => setGaveta(true)} aria-label="Abrir menu">
-        <Icone nome="menu" />
-      </button>
+    <nav className={`cxsidebar ${fixa ? 'fixa' : ''}`} aria-label="Navegação principal">
+      <div className="cxsb-head">
+        <Link href="/painel" className="cxsb-marca" aria-label="Início">
+          <Marca modulo={false} />
+        </Link>
+        <span className="cxsb-sigla" aria-hidden="true">
+          cx
+        </span>
+        <button
+          type="button"
+          className="cxsb-toggle"
+          onClick={alternarFixa}
+          aria-pressed={fixa}
+          title={fixa ? 'Soltar menu' : 'Fixar menu aberto'}
+          aria-label={fixa ? 'Soltar menu' : 'Fixar menu aberto'}
+        >
+          <Icone nome={fixa ? 'left_panel_close' : 'keep'} />
+        </button>
+      </div>
 
-      <div
-        className={`cxsb-veu ${gaveta ? 'on' : ''}`}
-        onClick={() => setGaveta(false)}
-        role="presentation"
-      />
+      <div className="cxsb-body">
+        <p className="cxsb-empresa">{empresa}</p>
 
-      <nav
-        className={`cxsidebar ${fixa ? 'fixa' : ''} ${gaveta ? 'gaveta' : ''}`}
-        aria-label="Navegação principal"
-      >
-        <div className="cxsb-head">
-          <Link href="/painel" className="cxsb-marca">
-            <Marca modulo={false} />
-          </Link>
-          <span className="cxsb-sigla" aria-hidden="true">
-            cx
-          </span>
-          <button
-            className="cxsb-toggle"
-            onClick={alternarFixa}
-            aria-pressed={fixa}
-            title={fixa ? 'Soltar menu' : 'Fixar menu aberto'}
-            aria-label={fixa ? 'Soltar menu' : 'Fixar menu aberto'}
-          >
-            <Icone nome={fixa ? 'left_panel_close' : 'keep'} />
-          </button>
-        </div>
+        {grupos.map((grupo) => {
+          const fechado = Boolean(fechados[grupo.chave]);
+          const idLista = `cxsb-${grupo.chave}`;
 
-        <div className="cxsb-body">
-          <p className="cxsb-empresa">{empresa}</p>
+          return (
+            <div key={grupo.chave}>
+              {grupo.rotulo ? (
+                <>
+                  <div className="cxsb-sep" />
+                  <button
+                    type="button"
+                    className={`cxsb-grupo ${fechado ? 'fechado' : ''}`}
+                    onClick={() => alternarGrupo(grupo.chave)}
+                    aria-expanded={!fechado}
+                    aria-controls={idLista}
+                  >
+                    {grupo.rotulo}
+                    <Icone nome="expand_more" className="cxsb-grupo-caret" />
+                  </button>
+                </>
+              ) : null}
 
-          {GRUPOS.map((grupo) => {
-            const fechado = Boolean(fechados[grupo.chave]);
-
-            return (
-              <div key={grupo.chave}>
-                {grupo.rotulo ? (
-                  <>
-                    <div className="cxsb-sep" />
-                    <button
-                      type="button"
-                      className={`cxsb-grupo ${fechado ? 'fechado' : ''}`}
-                      onClick={() => alternarGrupo(grupo.chave)}
-                      aria-expanded={!fechado}
+              <div id={idLista} className={`cxsb-lista ${fechado ? 'fechada' : ''}`}>
+                {grupo.itens.map((item) => {
+                  const ativa = estaAtiva(caminho, item.href);
+                  return (
+                    <Link
+                      key={item.id}
+                      href={item.href}
+                      data-tip={item.nome}
+                      aria-current={ativa ? 'page' : undefined}
+                      className={`cxsb-item ${ativa ? 'ativo' : ''}`}
+                      tabIndex={fechado ? -1 : undefined}
                     >
-                      {grupo.rotulo}
-                      <Icone nome="expand_more" className="cxsb-grupo-caret" />
-                    </button>
-                  </>
-                ) : null}
-
-                <div className={`cxsb-lista ${fechado ? 'fechada' : ''}`}>
-                  {grupo.itens.map((item) => {
-                    const ativa = estaAtiva(caminho, item.href);
-                    return (
-                      <Link
-                        key={item.href}
-                        href={item.href}
-                        data-tip={item.nome}
-                        aria-current={ativa ? 'page' : undefined}
-                        className={`cxsb-item ${ativa ? 'ativo' : ''}`}
-                      >
-                        <Icone nome={item.icone} />
-                        <span className="cxsb-item-txt">{item.nome}</span>
-                      </Link>
-                    );
-                  })}
-                </div>
+                      <Icone nome={item.icone} />
+                      <span className="cxsb-item-txt">{item.nome}</span>
+                    </Link>
+                  );
+                })}
               </div>
-            );
-          })}
-        </div>
+            </div>
+          );
+        })}
+      </div>
 
-        <div className="cxsb-pe">
-          <Assinatura />
-        </div>
-      </nav>
-    </>
+      <div className="cxsb-pe">
+        <Assinatura />
+      </div>
+    </nav>
   );
 }

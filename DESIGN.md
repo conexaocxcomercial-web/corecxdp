@@ -265,7 +265,27 @@ components:
     backgroundColor: "{colors.violeta}"
     textColor: "{colors.preto}"
     rounded: "8px"
-    height: "38px"
+    height: "40px"
+  barra-inferior:
+    backgroundColor: "{colors.branco}"
+    textColor: "{colors.tinta-3}"
+    height: "64px"
+  barra-inferior-ativa:
+    backgroundColor: "{colors.acao-fraco}"
+    textColor: "{colors.grafite}"
+    rounded: "{rounded.pill}"
+  barra-inferior-lancar:
+    backgroundColor: "{colors.violeta}"
+    textColor: "{colors.preto}"
+    rounded: "12px"
+  folha:
+    backgroundColor: "{colors.branco}"
+    textColor: "{colors.grafite}"
+    rounded: "{rounded.janela}"
+  folha-celular:
+    backgroundColor: "{colors.branco}"
+    textColor: "{colors.grafite}"
+    rounded: "{rounded.folha}"
   palco-violeta:
     backgroundColor: "{colors.violeta}"
     textColor: "{colors.preto}"
@@ -422,14 +442,23 @@ Firmes, com a altura da entrada; peso 700 em todos.
 - **Error / Disabled:** o erro aparece como faixa abaixo dos campos, não como cor no campo.
 
 ### Navigation
-- **Menu lateral:** papel com fio de 1px à direita. Itens de 38px (46px em toque), 13px, 500, cantos de 8px, Tinta Secundária; hover em `--papel-2`; ativo em violeta com texto preto e peso 600. Grupos em rótulo maiúsculo de 12px. No trilho de 60px só restam os ícones, com dica escura ao lado; no rodapé, a assinatura em imagem.
-- **Toque:** botão flutuante de 44px no canto (Papel erguido) abre a gaveta de 248px com véu.
+A lista de telas de cada perfil fica num só lugar, `lib/navegacao.js`: grupos do menu lateral e da aba Menu, as cinco posições da barra inferior e as opções do Lançar. Módulos que ainda não existem estão lá com `disponivel: false` e não aparecem.
+- **Menu lateral (a partir de 901px):** papel com fio de 1px à direita. Itens de 40px, 14px, 500, cantos de 8px, Tinta Secundária; hover em `--papel-2`; ativo em violeta com texto preto e peso 600. Grupos em frase, 13px, 600, Tinta de Apoio, que abrem e fecham. No trilho de 60px só restam os ícones, com dica escura ao lado; no rodapé, a assinatura em imagem. Some no celular.
+- **Barra inferior (até 900px):** fixa embaixo, papel com fio e sombra suave para cima, 64px mais a área segura, cinco posições iguais com ícone de 24px e nome de 12px, 600. A posição ativa ganha uma pílula de Véu Violeta atrás do ícone e tinta cheia; as outras ficam em Tinta de Apoio. **Lançar**, ao centro, é o único sólido: placa violeta de 48×36px com cantos de 12px e ícone preto. O número de pendências do Início é uma pílula escura de 20px com contorno de papel, e entra no nome acessível ("Início, 8 pendências"). Menu abre uma folha com o bloco da pessoa no alto e a navegação completa.
+- **Barra do topo:** marca à esquerda (com o título da página quando ele rola para fora); à direita, a etiqueta "Dados de demonstração" (Véu Violeta, 13px, 600, só na demonstração), a busca de pessoa, o botão Lançar (violeta, 40px) e o avatar. No celular ficam só a marca e o avatar: a busca vai para a aba Pessoas e o Lançar para a barra inferior.
+- **Busca de pessoa:** campo de 40px e 280px com lupa à esquerda e a tecla `/` desenhada à direita (some com o foco). Lista em papel com Sobreposição, opções de 52px com nome em 14px, 600, matrícula e cargo em 13px e a pílula de situação; a escolhida em `--papel-2`. Combobox ARIA: setas escolhem, Enter abre a ficha, Esc limpa, `/` traz o foco de qualquer tela.
+- **Pular para o conteúdo:** o primeiro Tab de toda tela interna, uma placa escura de 44px no canto que desce quando recebe foco e leva ao `<main id="conteudo">`.
 
 ### Segmentado
 Controle de escolha única em trilho `--papel-2` de 9px com 3px de respiro (Linha no cabeçalho da página); opções de 42px (44px em toque), 14px, para o conjunto ter a altura de um campo; a opção escolhida é uma placa de papel com `--e1`. Nas telas internas, a escolhida vai a 700; no celular, o segmentado do cabeçalho ocupa a largura e divide as opções por igual. O **seletor de tema** da entrada (Claro, Sistema, Escuro, cada um com ícone de 16px) é um grupo de rádio navegável por setas, 34px de altura (44px em toque), sem ícones abaixo de 480px, e mantém o peso 500 na escolhida.
 
-### Janela de cadastro
-Papel com cantos de 16px e Sobreposição, até 520px de largura, sobre véu desfocado. Cabeçalho com título de 22px, subtítulo de 15px e fechar em quadrado de 40px; corpo com 24px de respiro e 20px entre os campos; rodapé em `--papel-2` com ações de 48px à direita. Entra em 0,18s subindo 10px. Em toque, ocupa a largura, sobe de baixo com cantos de 24px no topo, respiro lateral de 16px, fechar de 44px, e os botões do rodapé dividem a largura.
+### Folha
+`Folha` (`componentes/Folha.jsx`) é tudo que se abre por cima: cadastro (`PainelDeRegistro`), Lançar, menu do usuário e aba Menu, e depois filtros, alcance e exportação. É um `<dialog>` aberto com `showModal()`: o navegador prende o foco dentro, fecha com Esc e devolve o foco a quem abriu; clicar fora fecha; a página por trás não rola. Papel com cantos de 16px e Sobreposição, até 520px de largura, sobre véu desfocado. Cabeçalho com título (`h2`) de 22px, subtítulo de 15px e fechar em quadrado de 40px; corpo (`.folha-corpo`) com 24px de respiro e 20px entre os campos; rodapé (`.folha-pe`) em `--papel-2` com ações de 48px à direita. Entra em 0,2s subindo 10px. Em toque, ocupa a largura e sobe de baixo (0,28s) com cantos de 24px no topo e uma alça de 36×4px, respiro lateral de 16px, fechar de 44px, e os botões do rodapé dividem a largura.
+- **Popover** (`tipo="popover"`, menu do usuário): no computador, 360px ancorado sob o avatar, cantos de 12px, sem escurecer a tela; no celular, a mesma folha que sobe de baixo.
+- **Opção em lista** (`.opcao`): linha de 56px com ícone num círculo de 40px em Véu Violeta e Violeta Tinta, nome em 16px, 600, descrição em 14px e seta; na navegação da aba Menu, círculo de 36px em `--papel-2`, e a tela atual em violeta.
+
+### Menu do usuário
+O avatar (círculo lilás de 36px com as iniciais, num alvo de 44px) abre a folha "Sua conta": avatar de 48px, nome e e-mail; perfil e empresa numa placa `--papel-2`; o aviso de demonstração, quando há; o seletor de tema (Claro, Sistema, Escuro) em largura total; ajuda com os contatos de suporte de `lib/marca.js`; e Sair como botão fantasma de largura total.
 
 ### Palco violeta (entrada)
 Superfície inteira em violeta chapado, igual nos dois temas, com texto preto e secundário em Preto Sobre Violeta. Frase em Display; três perfis em colunas com fio preto de 1,5px no topo; etiqueta "Dados ilustrativos" de 12px. A seleção de texto ali inverte (fundo preto, texto violeta). No celular, o palco vira a faixa do alto, com a marca em preto e o ".cx" em branco.
@@ -449,6 +478,7 @@ A troca entre claro e escuro usa view-transition: a tela inteira se dissolve de 
 - **Do** marcar situação com a pílula e a paleta: lima resolve, escura espera, rosa recusa, violeta em curso, lilás férias, neutro encerrado.
 - **Do** manter campos e botões em 48px com campos de 16px em qualquer tela, ações na linha em 44px no toque, e texto nunca abaixo de 12px.
 - **Do** abrir toda tela interna com o `Cabecalho` e usar `Secao`, `Cartao` e `Numero` com títulos em frase; nada de rótulo maiúsculo.
+- **Do** abrir por cima só com a `Folha`, e acrescentar tela nova em `lib/navegacao.js`, nunca direto no menu.
 - **Do** contornar todo campo com Linha de Campo; o fundo gelo sozinho não chega a 3:1.
 - **Do** acrescentar todo ícone novo à lista `ICONES` em `componentes/Icones.jsx`: a fonte baixa só os glifos listados.
 - **Do** levar toda sombra com o contorno de 1px em `--linha` (`--e1`, `--e2`, `--e-pop`).

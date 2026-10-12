@@ -1,36 +1,59 @@
 'use client';
 
 import { useActionState, useEffect, useRef, useState } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { BotaoEnviar } from '@/componentes/Botao';
+import { Folha } from '@/componentes/Folha';
 import { Icone } from '@/componentes/Icones';
 
 /**
- * Janela de registro. No desktop é modal centrado, como as do quadro;
- * no celular sobe de baixo. Fecha sozinha quando o registro entra.
+ * Cadastro numa Folha: janela no computador, folha que sobe de baixo no
+ * celular. Fecha sozinha quando o registro entra. Com `abrirAoCarregar`
+ * (o Lançar manda ?lancar=1), abre assim que a tela carrega, e ao fechar
+ * tira o parâmetro do endereço.
  */
-export function PainelDeRegistro({ abrir, titulo, descricao, acao, enviar, enviando, children }) {
-  const [aberto, setAberto] = useState(false);
+export function PainelDeRegistro({
+  abrir,
+  titulo,
+  descricao,
+  acao,
+  enviar,
+  enviando,
+  abrirAoCarregar = false,
+  children,
+}) {
+  const [aberto, setAberto] = useState(abrirAoCarregar);
   const [estado, executar] = useActionState(acao, {});
   const corpo = useRef(null);
+  const router = useRouter();
+  const caminho = usePathname();
+  const parametros = useSearchParams();
 
   useEffect(() => {
-    if (estado?.ok) setAberto(false);
+    if (abrirAoCarregar) setAberto(true);
+  }, [abrirAoCarregar]);
+
+  function fechar() {
+    setAberto(false);
+    if (parametros.get('lancar')) {
+      const novos = new URLSearchParams(parametros.toString());
+      novos.delete('lancar');
+      const consulta = novos.toString();
+      router.replace(consulta ? `${caminho}?${consulta}` : caminho, { scroll: false });
+    }
+  }
+
+  useEffect(() => {
+    if (estado?.ok) fechar();
+    // Só a chegada de um novo estado importa; fechar muda a cada render.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [estado]);
 
+  // No computador o primeiro campo já recebe o foco; no celular não, para
+  // o teclado não subir antes de a pessoa ver a folha inteira.
   useEffect(() => {
-    if (!aberto) return undefined;
-    const aoTeclar = (evento) => {
-      if (evento.key === 'Escape') setAberto(false);
-    };
-    document.addEventListener('keydown', aoTeclar);
-    document.body.style.overflow = 'hidden';
-    if (window.matchMedia('(min-width: 901px)').matches) {
-      corpo.current?.querySelector('input, select, textarea')?.focus();
-    }
-    return () => {
-      document.removeEventListener('keydown', aoTeclar);
-      document.body.style.overflow = '';
-    };
+    if (!aberto || !window.matchMedia('(min-width: 901px)').matches) return;
+    corpo.current?.querySelector('input, select, textarea')?.focus();
   }, [aberto]);
 
   return (
@@ -40,48 +63,35 @@ export function PainelDeRegistro({ abrir, titulo, descricao, acao, enviar, envia
         {abrir}
       </button>
 
-      {aberto ? (
-        <div className="md-veu" onClick={(e) => e.target === e.currentTarget && setAberto(false)}>
-          <div className="md" role="dialog" aria-modal="true" aria-label={titulo}>
-            <div className="md-head">
-              <div className="md-head-txt">
-                <div className="md-titulo">{titulo}</div>
-                {descricao ? <div className="md-sub">{descricao}</div> : null}
-              </div>
-              <button
-                type="button"
-                className="md-fechar"
-                onClick={() => setAberto(false)}
-                aria-label="Fechar sem salvar"
-              >
-                <Icone nome="close" />
-              </button>
-            </div>
-
-            <form action={executar} className="flex min-h-0 flex-1 flex-col">
-              <div ref={corpo} className="md-corpo">
-                {children}
-              </div>
-
-              {estado?.erro ? (
-                <div className="px-4 pb-1 min-[901px]:px-6">
-                  <div className="faixa erro" style={{ marginBottom: 0 }}>
-                    <Icone nome="error" />
-                    <span>{estado.erro}</span>
-                  </div>
-                </div>
-              ) : null}
-
-              <div className="md-pe">
-                <button type="button" className="btn btn-fant" onClick={() => setAberto(false)}>
-                  Cancelar
-                </button>
-                <BotaoEnviar enviando={enviando}>{enviar}</BotaoEnviar>
-              </div>
-            </form>
+      <Folha
+        aberta={aberto}
+        aoFechar={fechar}
+        titulo={titulo}
+        descricao={descricao}
+        rotuloFechar="Fechar sem salvar"
+      >
+        <form action={executar} className="folha-form">
+          <div ref={corpo} className="folha-corpo">
+            {children}
           </div>
-        </div>
-      ) : null}
+
+          {estado?.erro ? (
+            <div className="folha-erro">
+              <div className="faixa erro" role="alert">
+                <Icone nome="error" />
+                <span>{estado.erro}</span>
+              </div>
+            </div>
+          ) : null}
+
+          <div className="folha-pe">
+            <button type="button" className="btn btn-fant" onClick={fechar}>
+              Cancelar
+            </button>
+            <BotaoEnviar enviando={enviando}>{enviar}</BotaoEnviar>
+          </div>
+        </form>
+      </Folha>
     </>
   );
 }

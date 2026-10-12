@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import {
+  contarPendencias,
   listarAtestados,
   listarColaboradores,
   listarMovimentacoes,
@@ -7,7 +8,7 @@ import {
   mensagemParaTela,
 } from '@/lib/registros';
 import { calcularIndicadores } from '@/lib/indicadores';
-import { dataPorExtenso, diasAtras, formatarData, paraData, plural } from '@/lib/formato';
+import { dataPorExtenso, formatarData, paraData, plural } from '@/lib/formato';
 import {
   Cartao,
   Cabecalho,
@@ -42,13 +43,15 @@ export default async function Painel() {
   let ocorrencias;
   let atestados;
   let movimentacoes;
+  let contagem;
 
   try {
-    [pessoas, ocorrencias, atestados, movimentacoes] = await Promise.all([
+    [pessoas, ocorrencias, atestados, movimentacoes, contagem] = await Promise.all([
       listarColaboradores(),
       listarOcorrencias(),
       listarAtestados(),
       listarMovimentacoes(),
+      contarPendencias(),
     ]);
   } catch (erro) {
     return (
@@ -96,37 +99,31 @@ export default async function Painel() {
     .sort((a, b) => b[1] - a[1])
     .map(([rotulo, valor], indice) => ({ rotulo, valor, cor: PALETA[indice % PALETA.length] }));
 
-  const atestadosPendentes = atestados.filter((item) => item.status === 'Pendente');
-  const checklistsAbertos = movimentacoes.filter((item) => item.checklist !== 'Concluído');
-  const faltasDoMes = ocorrencias.filter(
-    (item) => item.tipo === 'Falta Injustificada' && diasAtras(item.data) <= 30
-  );
-
   const pendencias = [
     {
-      quantidade: atestadosPendentes.length,
+      quantidade: contagem.atestados,
       icone: 'clinical_notes',
       tom: 'at',
-      texto: `${plural(atestadosPendentes.length, 'atestado esperando', 'atestados esperando')} validação`,
+      texto: `${plural(contagem.atestados, 'atestado esperando', 'atestados esperando')} validação`,
       href: '/atestados?status=Pendente',
     },
     {
-      quantidade: checklistsAbertos.length,
+      quantidade: contagem.checklists,
       icone: 'checklist',
       tom: 'ac',
-      texto: `${plural(checklistsAbertos.length, 'movimentação com checklist', 'movimentações com checklist')} em aberto`,
+      texto: `${plural(contagem.checklists, 'movimentação com checklist', 'movimentações com checklist')} em aberto`,
       href: '/movimentacoes',
     },
     {
-      quantidade: faltasDoMes.length,
+      quantidade: contagem.faltas,
       icone: 'event_busy',
       tom: 'cr',
-      texto: `${plural(faltasDoMes.length, 'falta injustificada', 'faltas injustificadas')} nos últimos 30 dias`,
+      texto: `${plural(contagem.faltas, 'falta injustificada', 'faltas injustificadas')} nos últimos 30 dias`,
       href: '/ocorrencias?tipo=Falta+Injustificada',
     },
   ].filter((item) => item.quantidade > 0);
 
-  const totalPendente = pendencias.reduce((soma, item) => soma + item.quantidade, 0);
+  const totalPendente = contagem.total;
 
   const { serie } = calcularIndicadores({
     pessoas,

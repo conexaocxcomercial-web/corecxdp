@@ -1,6 +1,8 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ['./app/**/*.{js,jsx}', './componentes/**/*.{js,jsx}'],
+  // hover: só onde há mouse; no toque o fundo de hover ficava preso na linha tocada.
+  future: { hoverOnlyWhenSupported: true },
   theme: {
     extend: {
       colors: {

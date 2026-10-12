@@ -70,8 +70,9 @@ export default async function Movimentacoes({ searchParams }) {
     return combina && (!tipo || item.tipo === tipo);
   });
 
-  const registro = (
+  const registro = (abrirAoCarregar = false) => (
     <PainelDeRegistro
+      abrirAoCarregar={abrirAoCarregar}
       abrir="Registrar"
       titulo="Registrar movimentação"
       descricao="Promoções, transferências, afastamentos e desligamentos, com a data em que a mudança passa a valer."
@@ -85,7 +86,7 @@ export default async function Movimentacoes({ searchParams }) {
         opcoes={pessoas.map((p) => ({ valor: p.matricula, texto: `${p.nome} (${p.matricula})` }))}
         required
       />
-      <div className="md-duas">
+      <div className="folha-duas">
         <Selecao rotulo="Tipo" nome="tipo" opcoes={OPCOES.tiposDeMovimentacao} />
         <Data rotulo="Passa a valer em" nome="efetiva" defaultValue={hojeISO()} required />
       </div>
@@ -104,7 +105,7 @@ export default async function Movimentacoes({ searchParams }) {
       <Cabecalho
         titulo="Movimentações"
         subtitulo={`${filtradas.length} de ${movimentacoes.length}`}
-        acoes={registro}
+        acoes={registro(parametros?.lancar === '1')}
       >
         <Busca placeholder="Buscar por pessoa, matrícula ou motivo" />
         <Seletor chave="tipo" rotulo="Todos os tipos" opcoes={OPCOES.tiposDeMovimentacao} />
@@ -113,7 +114,7 @@ export default async function Movimentacoes({ searchParams }) {
       <Wrap>
         <Cartao liso>
           {filtradas.length === 0 ? (
-            <Vazio icone={movimentacoes.length === 0 ? 'swap_horiz' : 'search_off'} acao={movimentacoes.length === 0 ? registro : null}>
+            <Vazio icone={movimentacoes.length === 0 ? 'swap_horiz' : 'search_off'} acao={movimentacoes.length === 0 ? registro() : null}>
               {movimentacoes.length === 0
                 ? 'Nenhuma movimentação registrada. Registre a primeira para acompanhar promoções, transferências e desligamentos.'
                 : 'Nenhuma movimentação corresponde à busca. Limpe os filtros ou tente outro termo.'}

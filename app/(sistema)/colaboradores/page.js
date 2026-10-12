@@ -66,8 +66,9 @@ export default async function Colaboradores({ searchParams }) {
     );
   });
 
-  const cadastro = (
+  const cadastro = (abrirAoCarregar = false) => (
     <PainelDeRegistro
+      abrirAoCarregar={abrirAoCarregar}
       abrir="Cadastrar"
       titulo="Cadastrar colaborador"
       descricao="A matrícula é gerada automaticamente, na sequência das já cadastradas."
@@ -76,12 +77,12 @@ export default async function Colaboradores({ searchParams }) {
       enviando="Cadastrando…"
     >
       <Texto rotulo="Nome completo" nome="nome" placeholder="Ana Beatriz Moreira" required />
-      <div className="md-duas">
+      <div className="folha-duas">
         <Texto rotulo="CPF" nome="cpf" placeholder="000.000.000-00" inputMode="numeric" required />
         <Data rotulo="Admissão" nome="admissao" defaultValue={hojeISO()} required />
       </div>
       <Texto rotulo="Cargo" nome="cargo" placeholder="Analista de Operações Júnior" required />
-      <div className="md-duas">
+      <div className="folha-duas">
         <Selecao rotulo="Área" nome="departamento" opcoes={areas} />
         <Selecao rotulo="Situação" nome="status" opcoes={OPCOES.statusColaborador} />
       </div>
@@ -99,7 +100,7 @@ export default async function Colaboradores({ searchParams }) {
       <Cabecalho
         titulo="Colaboradores"
         subtitulo={`${filtradas.length} de ${pessoas.length}`}
-        acoes={cadastro}
+        acoes={cadastro(parametros?.lancar === '1')}
       >
         <Busca placeholder="Buscar por nome, matrícula, cargo ou CPF" />
         <Seletor chave="area" rotulo="Todas as áreas" opcoes={areas} />
@@ -109,7 +110,7 @@ export default async function Colaboradores({ searchParams }) {
       <Wrap>
         <Cartao liso>
           {filtradas.length === 0 ? (
-            <Vazio icone={pessoas.length === 0 ? 'group_add' : 'search_off'} acao={pessoas.length === 0 ? cadastro : null}>
+            <Vazio icone={pessoas.length === 0 ? 'group_add' : 'search_off'} acao={pessoas.length === 0 ? cadastro() : null}>
               {pessoas.length === 0
                 ? 'Nenhum colaborador cadastrado. Cadastre a primeira pessoa para abrir o registro de pessoal da empresa.'
                 : 'Nenhum colaborador corresponde à busca. Limpe os filtros ou tente outro termo.'}
