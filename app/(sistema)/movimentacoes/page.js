@@ -3,7 +3,7 @@ import {
 } from '@/lib/registros';
 import { formatarData, hojeISO } from '@/lib/formato';
 import {
-  Cartao, Celula, Comando, Faixa, LinhaTabela, Nome, Tabela, Vazio, Wrap,
+  Cabecalho, Cartao, Celula, Faixa, LinhaTabela, Nome, Tabela, Vazio, Wrap,
 } from '@/componentes/Estrutura';
 import { Status } from '@/componentes/Sinais';
 import { Busca, Seletor } from '@/componentes/Filtros';
@@ -14,7 +14,7 @@ import { atualizarChecklist, salvarMovimentacao } from '@/app/acoes';
 
 export const metadata = { title: 'Movimentações' };
 
-const GRADE = '1.4fr 1fr 110px 1.6fr 180px';
+const GRADE = '1.4fr 1fr 120px 1.6fr 230px';
 
 function Checklist({ item }) {
   if (item.checklist === 'Concluído') return <Status>{item.checklist}</Status>;
@@ -45,7 +45,7 @@ export default async function Movimentacoes({ searchParams }) {
   } catch (erro) {
     return (
       <>
-        <Comando titulo="Movimentações" />
+        <Cabecalho titulo="Movimentações" />
         <Wrap>
           <Faixa tom="erro">
             {mensagemParaTela(
@@ -101,11 +101,14 @@ export default async function Movimentacoes({ searchParams }) {
 
   return (
     <>
-      <Comando titulo="Movimentações" contador={`${filtradas.length} de ${movimentacoes.length}`}>
+      <Cabecalho
+        titulo="Movimentações"
+        subtitulo={`${filtradas.length} de ${movimentacoes.length}`}
+        acoes={registro}
+      >
         <Busca placeholder="Buscar por pessoa, matrícula ou motivo" />
         <Seletor chave="tipo" rotulo="Todos os tipos" opcoes={OPCOES.tiposDeMovimentacao} />
-        {registro}
-      </Comando>
+      </Cabecalho>
 
       <Wrap>
         <Cartao liso>
@@ -116,38 +119,36 @@ export default async function Movimentacoes({ searchParams }) {
                 : 'Nenhuma movimentação corresponde à busca. Limpe os filtros ou tente outro termo.'}
             </Vazio>
           ) : (
-            <div className="p-[10px]">
-              <Tabela
-                grade={GRADE}
-                colunas={[
-                  { rotulo: 'Pessoa' },
-                  { rotulo: 'Tipo' },
-                  { rotulo: 'Passa a valer', alinha: 'd' },
-                  { rotulo: 'Motivo' },
-                  { rotulo: 'Checklist' },
-                ]}
-              >
-                {filtradas.map((item) => (
-                  <LinhaTabela key={item.id} grade={GRADE}>
-                    <Celula>
-                      <Nome href={`/colaboradores/${item.matricula}`}>{nomeDe(item.matricula)}</Nome>
-                    </Celula>
-                    <Celula rotulo="Tipo" alinha="c">
-                      <span className="text-[var(--tinta-2)]">{item.tipo}</span>
-                    </Celula>
-                    <Celula rotulo="Passa a valer" alinha="d">
-                      <span className="num">{formatarData(item.efetiva)}</span>
-                    </Celula>
-                    <Celula rotulo="Motivo" alinha="c">
-                      <span className="text-[var(--tinta-2)]">{item.motivo || '—'}</span>
-                    </Celula>
-                    <Celula rotulo="Checklist" alinha="c">
-                      <Checklist item={item} />
-                    </Celula>
-                  </LinhaTabela>
-                ))}
-              </Tabela>
-            </div>
+            <Tabela
+              grade={GRADE}
+              colunas={[
+                { rotulo: 'Pessoa' },
+                { rotulo: 'Tipo' },
+                { rotulo: 'Passa a valer', alinha: 'd' },
+                { rotulo: 'Motivo' },
+                { rotulo: 'Checklist' },
+              ]}
+            >
+              {filtradas.map((item) => (
+                <LinhaTabela key={item.id} grade={GRADE}>
+                  <Celula>
+                    <Nome href={`/colaboradores/${item.matricula}`}>{nomeDe(item.matricula)}</Nome>
+                  </Celula>
+                  <Celula rotulo="Tipo" alinha="c">
+                    <span className="text-[var(--tinta-2)]">{item.tipo}</span>
+                  </Celula>
+                  <Celula rotulo="Passa a valer" alinha="d">
+                    <span className="num">{formatarData(item.efetiva)}</span>
+                  </Celula>
+                  <Celula rotulo="Motivo" alinha="c">
+                    <span className="text-[var(--tinta-2)]">{item.motivo || '—'}</span>
+                  </Celula>
+                  <Celula rotulo="Checklist" alinha="c">
+                    <Checklist item={item} />
+                  </Celula>
+                </LinhaTabela>
+              ))}
+            </Tabela>
           )}
         </Cartao>
       </Wrap>

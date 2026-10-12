@@ -22,6 +22,12 @@
   --r-card: 12px;
   --r-ctrl: 9px;
   --r-pill: 999px;
+  --r-folha: 24px;
+
+  /* Medidas da entrada, levadas para as telas internas: campo e botão
+     de 48px, respiro lateral de 32px (16px no celular). */
+  --alt-ctrl: 48px;
+  --respiro: 32px;
 
   --cx-rail: 60px;
   --cx-aberta: 248px;
@@ -185,6 +191,42 @@ body {
     position: sticky;
     top: 0;
     z-index: 20;
+    gap: 16px;
+  }
+  .top-esq {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+    flex: 1;
+  }
+  /* O título da página aparece aqui, pequeno, quando o título grande
+     passa por baixo da barra (Cabecalho). */
+  .top-tit {
+    min-width: 0;
+    padding-left: 14px;
+    border-left: 1px solid var(--linha);
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    pointer-events: none;
+  }
+  .top-tit:empty {
+    display: none;
+  }
+  .top-bar[data-titulo] .top-tit {
+    opacity: 1;
+    transform: none;
+  }
+  .top-esq > .marca {
+    transition: opacity 0.2s;
   }
 
   /* ------------------------------------------------------- marca */
@@ -225,47 +267,91 @@ body {
     display: none;
   }
 
-  /* --------------------------------------------- barra de comando */
-  .cmd {
-    display: flex;
+  /* ------------------------------------------- cabeçalho da página
+     O "Entrar" levado para dentro: título de 32px (28px no celular),
+     subtítulo de 15px, ações à direita e filtros logo abaixo. Rola com
+     a página; o título continua na barra do topo. */
+  .cab {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 40px var(--respiro) 28px;
+  }
+  .cab-voltar {
+    display: inline-flex;
     align-items: center;
-    gap: 11px;
-    padding: 0 22px;
-    min-height: 56px;
-    row-gap: 8px;
-    background: var(--papel);
-    border-bottom: 1px solid var(--linha);
-    flex-wrap: wrap;
-    position: sticky;
-    top: 56px;
-    z-index: 15;
-  }
-  .cmd-tit {
-    font-size: 16px;
-    font-weight: 700;
-    letter-spacing: -0.35px;
-    white-space: nowrap;
-  }
-  .cmd-sep {
-    width: 1px;
-    height: 22px;
-    background: var(--linha);
-  }
-  .cmd-cont {
-    font-size: 12px;
+    gap: 6px;
+    min-height: 44px;
+    margin: -12px 0 4px -2px;
+    font-size: 14px;
     font-weight: 600;
     color: var(--tinta-2);
-    background: var(--papel-2);
-    padding: 4px 10px;
-    border-radius: var(--r-pill);
-    white-space: nowrap;
+    transition: color 0.15s;
   }
-  .cmd-dir {
-    margin-left: auto;
+  .cab-voltar:hover {
+    color: var(--acao-texto);
+  }
+  .cab-voltar .material-symbols-rounded {
+    font-size: 20px;
+    transition: transform 0.15s;
+  }
+  .cab-voltar:hover .material-symbols-rounded {
+    transform: translateX(-2px);
+  }
+  .cab-linha {
     display: flex;
-    align-items: center;
-    gap: 9px;
     flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px 24px;
+  }
+  .cab-txt {
+    min-width: 0;
+    flex: 1 1 320px;
+  }
+  .cab-tit {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+    overflow-wrap: anywhere;
+  }
+  .cab-sub {
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--tinta-3);
+    margin-top: 8px;
+  }
+  .cab-marco {
+    display: block;
+    height: 0;
+  }
+  .cab-acoes,
+  .cab-filtros {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
+  .cab-filtros {
+    margin-top: 24px;
+  }
+  /* O cabeçalho fica direto na mesa, que tem o tom do --papel-2: aqui
+     campo e botão fantasma viram papel, e o trilho do segmentado, linha. */
+  .cab .sel,
+  .cab .campo {
+    background: var(--papel);
+  }
+  .cab .btn-fant {
+    background: var(--papel);
+    box-shadow: var(--e1);
+  }
+  .cab .btn-fant:hover {
+    background: var(--papel);
+    box-shadow: var(--e2);
+  }
+  .cab .segm {
+    background: var(--linha);
   }
 
   /* ---------------------------------------------------- controles */
@@ -276,17 +362,20 @@ body {
     padding: 3px;
     gap: 2px;
   }
+  /* 42px + 3px de trilho de cada lado: o segmentado tem a altura de um campo. */
   .segm-btn {
-    font-size: 12.5px;
+    font-size: 14px;
     font-weight: 500;
     color: var(--tinta-2);
     cursor: pointer;
-    padding: 6px 14px;
+    min-height: 42px;
+    padding: 0 16px;
     border-radius: 6px;
     white-space: nowrap;
     transition: 0.15s;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 6px;
   }
   .segm-btn:hover {
@@ -300,13 +389,15 @@ body {
   }
 
   .btn {
-    font-size: 12.5px;
+    font-size: 15px;
     font-weight: 700;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 8px 13px;
+    justify-content: center;
+    gap: 8px;
+    min-height: var(--alt-ctrl);
+    padding: 0 18px;
     border-radius: var(--r-ctrl);
     white-space: nowrap;
     transition: 0.14s;
@@ -314,7 +405,10 @@ body {
     font-family: inherit;
   }
   .btn .material-symbols-rounded {
-    font-size: 17px;
+    font-size: 20px;
+  }
+  .btn:active:not(:disabled) {
+    transform: scale(0.985);
   }
   .btn-fant {
     background: var(--papel-2);
@@ -336,28 +430,49 @@ body {
     color: var(--tinta-2);
     cursor: wait;
   }
+  .btn-fant:disabled {
+    color: var(--tinta-3);
+    cursor: wait;
+  }
+  /* Ação na linha da tabela (aprovar, concluir): mais baixa que o botão
+     de página no computador, 44px no toque. */
   .btn-mini {
-    font-size: 12px;
-    padding: 6px 10px;
+    font-size: 14px;
+    min-height: 40px;
+    padding: 0 14px;
+    gap: 6px;
   }
 
+  /* Campo e seletor como os da entrada: 48px, texto de 16px (o iOS não
+     dá zoom), cursor violeta e contorno que escurece no hover. */
   .sel,
   .campo {
-    font-size: 12.5px;
+    font-size: 16px;
     font-weight: 500;
-    padding: 8px 11px;
+    min-height: var(--alt-ctrl);
+    padding: 0 14px;
     background: var(--papel-2);
     border: 1px solid var(--linha-3);
     border-radius: var(--r-ctrl);
     color: var(--tinta);
+    caret-color: var(--acao);
     outline: none;
     font-family: inherit;
     width: 100%;
+    transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+  }
+  textarea.campo {
+    padding: 12px 14px;
+    line-height: 1.5;
   }
   .sel {
     cursor: pointer;
-    max-width: 250px;
+    max-width: 280px;
     width: auto;
+  }
+  .sel:hover:not(:focus),
+  .campo:hover:not(:focus) {
+    border-color: var(--tinta-3);
   }
   .sel:focus,
   .campo:focus {
@@ -365,46 +480,145 @@ body {
     border-color: var(--acao);
     box-shadow: 0 0 0 3px var(--acao-fraco);
   }
-  .campo::placeholder {
+  .campo::placeholder,
+  .sel::placeholder {
     color: var(--tinta-3);
+  }
+  .busca {
+    width: 320px;
+    max-width: 100%;
   }
 
   /* ------------------------------------------------------- página */
   .wrap {
     max-width: 1280px;
     margin: 0 auto;
-    padding: 18px 22px 80px;
+    padding: 0 var(--respiro) 96px;
   }
 
+  /* Seção: título em frase, 20px, sem maiúsculas nem linha. Mais
+     espaço acima (40px entre seções) do que abaixo (16px). */
   .sec {
-    margin-bottom: 22px;
+    margin-bottom: 40px;
   }
   .sec-cab {
     display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 11px;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 4px 16px;
+    margin-bottom: 16px;
   }
   .sec-tit {
-    font-size: 12px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.6px;
-    color: var(--tinta-3);
-    white-space: nowrap;
-  }
-  .sec-linha {
-    flex: 1;
-    height: 1px;
-    background: var(--linha);
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
   }
   .sec-nota {
-    font-size: 12px;
+    font-size: 14px;
     color: var(--tinta-3);
-    font-weight: 500;
   }
 
-  /* ---------------------------------------------------------- KPI */
+  /* ------------------------------------------------------- número
+     O número de cada tema: rótulo em frase, valor de 32px, apoio e,
+     quando há, variação. Sem tarja: o tom é um ponto ao lado do rótulo. */
+  .numeros {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    margin-bottom: 40px;
+  }
+  .numero {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding: 20px 20px 18px;
+    background: var(--papel);
+    border-radius: var(--r-card);
+    box-shadow: var(--e1);
+    color: inherit;
+    transition: box-shadow 0.15s;
+  }
+  a.numero:hover {
+    box-shadow: var(--e2);
+  }
+  .numero-r {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.35;
+    color: var(--tinta-2);
+  }
+  a.numero .numero-r {
+    padding-right: 28px;
+  }
+  .numero-tom {
+    width: 8px;
+    height: 8px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 1px var(--graf-contorno);
+  }
+  .numero-v {
+    margin-top: 14px;
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+  }
+  .numero-p {
+    margin-top: 8px;
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--tinta-3);
+  }
+  .numero-var {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    align-self: flex-start;
+    margin-top: 12px;
+    padding: 2px 9px 2px 6px;
+    border-radius: var(--r-pill);
+    background: var(--papel-2);
+    color: var(--tinta-2);
+    font-size: 13px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .numero-var .material-symbols-rounded {
+    font-size: 16px;
+  }
+  /* Lima melhorou, rosa piorou, sempre com texto grafite. */
+  .numero-var.bom {
+    background: var(--marca-lima);
+    color: var(--marca-grafite);
+  }
+  .numero-var.ruim {
+    background: var(--marca-rosa);
+    color: var(--marca-grafite);
+  }
+  .numero-ir {
+    position: absolute;
+    top: 18px;
+    right: 16px;
+    font-size: 20px;
+    color: var(--tinta-3);
+    transition: color 0.15s, transform 0.15s;
+  }
+  a.numero:hover .numero-ir {
+    color: var(--acao-texto);
+    transform: translateX(2px);
+  }
+
+  /* ------------------------------------------------------------ KPI
+     Só a prévia da entrada usa o Kpi antigo (até a fase 16 do
+     redesenho); as telas internas usam o Numero. */
   .kpis {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(158px, 1fr));
@@ -456,29 +670,36 @@ body {
     background: var(--papel);
     border-radius: var(--r-card);
     box-shadow: var(--e1);
-    padding: 17px 19px;
+    padding: 24px;
     overflow: hidden;
     max-width: 100%;
   }
+  .cartao-cab {
+    margin-bottom: 20px;
+  }
   .cartao-t {
-    font-size: 13px;
+    font-size: 16px;
     font-weight: 700;
-    letter-spacing: -0.15px;
-    margin-bottom: 3px;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
   }
   .cartao-d {
-    font-size: 12px;
-    color: var(--tinta-3);
+    margin-top: 4px;
+    font-size: 14px;
     line-height: 1.5;
-    margin-bottom: 15px;
+    color: var(--tinta-3);
   }
   .cartao-liso {
     padding: 0;
   }
+  .cartao-liso > .cartao-cab {
+    padding: 24px 24px 0;
+    margin-bottom: 8px;
+  }
 
   /* Texto de apoio corrido: explicações, observações, rodapés. */
   .nota {
-    font-size: 12px;
+    font-size: 13px;
     line-height: 1.6;
     color: var(--tinta-3);
   }
@@ -486,47 +707,48 @@ body {
   .duas {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 11px;
+    gap: 12px;
   }
   .tres {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 11px;
+    gap: 12px;
   }
 
-  /* ------------------------------------------------------- tabela */
+  /* ------------------------------------------------------- tabela
+     Encosta nas bordas do cartão liso: cabeçalho em frase sobre um fio,
+     linhas de 56px separadas por fio, com o mesmo respiro do cartão. */
   .tb {
-    border: 1px solid var(--linha);
-    border-radius: var(--r-ctrl);
-    overflow: hidden;
     max-width: 100%;
   }
   .tb-h,
   .tb-l {
     display: grid;
-    gap: 11px;
-    padding: 10px 13px;
+    gap: 16px;
+    padding: 0 24px;
     align-items: center;
-    font-size: 12.5px;
+    font-size: 14px;
   }
   .tb-h {
-    background: var(--papel-2);
+    min-height: 48px;
     border-bottom: 1px solid var(--linha);
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.4px;
     color: var(--tinta-3);
   }
   .tb-l {
-    border-bottom: 1px solid var(--papel-2);
+    min-height: 56px;
+    padding-block: 8px;
+    border-bottom: 1px solid var(--linha);
     transition: background 0.14s;
   }
   .tb-l:last-child {
-    border: none;
+    border-bottom: 0;
   }
-  .tb-l:hover {
-    background: var(--papel-2);
+  @media (hover: hover) {
+    .tb-l:hover {
+      background: color-mix(in srgb, var(--papel-2) 70%, var(--papel));
+    }
   }
   .tb-l > span {
     overflow: hidden;
@@ -538,42 +760,53 @@ body {
     text-align: right;
   }
   .tb-nome {
-    font-weight: 500;
+    font-weight: 600;
+  }
+  a.tb-nome {
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-underline-offset: 4px;
+    transition: color 0.15s, text-decoration-color 0.15s;
+  }
+  a.tb-nome:hover {
+    text-decoration-color: currentColor;
   }
 
   /* -------------------------------------------------------- avisos */
   .vazio {
     text-align: center;
-    padding: 38px 20px;
-    color: var(--tinta-3);
+    padding: 48px 24px;
+    color: var(--tinta-2);
   }
-  .vazio .material-symbols-rounded {
-    font-size: 32px;
-    opacity: 0.3;
+  .vazio > .material-symbols-rounded {
+    font-size: 40px;
+    color: var(--tinta-3);
+    opacity: 0.45;
     display: block;
-    margin-bottom: 9px;
+    margin-bottom: 12px;
   }
   .vazio p {
-    font-size: 12.5px;
-    line-height: 1.6;
-    max-width: 360px;
+    font-size: 15px;
+    line-height: 1.5;
+    max-width: 44ch;
     margin: 0 auto;
+    text-wrap: pretty;
   }
 
   .faixa {
     border-radius: var(--r-card);
-    padding: 13px 16px;
+    padding: 14px 16px;
     display: flex;
-    gap: 11px;
+    gap: 12px;
     align-items: flex-start;
-    margin-bottom: 14px;
-    font-size: 12.5px;
-    line-height: 1.55;
+    margin-bottom: 24px;
+    font-size: 14px;
+    line-height: 1.5;
   }
   .faixa .material-symbols-rounded {
-    font-size: 18px;
+    font-size: 20px;
     flex-shrink: 0;
-    margin-top: 1px;
+    margin-top: 0;
   }
   .faixa.info {
     background: var(--acao-fraco);
@@ -600,8 +833,9 @@ body {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 500;
+    line-height: 1.4;
     padding: 4px 10px;
     border-radius: var(--r-pill);
     background: var(--papel-2);
@@ -642,12 +876,12 @@ body {
   .bh {
     display: flex;
     flex-direction: column;
-    gap: 9px;
+    gap: 12px;
   }
   .bh-l {
     display: grid;
-    grid-template-columns: 1fr 76px;
-    gap: 11px;
+    grid-template-columns: 1fr 80px;
+    gap: 12px;
     align-items: center;
   }
   .bh-c {
@@ -656,7 +890,7 @@ body {
   }
   .bh-t {
     display: block;
-    font-size: 12.5px;
+    font-size: 14px;
     font-weight: 500;
     color: var(--tinta-2);
     overflow: hidden;
@@ -679,13 +913,13 @@ body {
   }
   .bh-v {
     display: block;
-    font-size: 12.5px;
+    font-size: 14px;
     font-weight: 700;
     text-align: right;
   }
   .bh-v small {
     display: block;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 500;
     color: var(--tinta-3);
   }
@@ -758,24 +992,21 @@ body {
   }
 
   /* ------------------------------------------------------ formulário */
+  /* Rótulo em frase, 14px, como na entrada. */
   .fg {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
   }
   .fg > label {
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: var(--tinta-3);
+    color: var(--tinta-2);
   }
   .fg-dica {
-    font-size: 12px;
+    font-size: 13px;
     color: var(--tinta-3);
     font-weight: 500;
-    text-transform: none;
-    letter-spacing: 0;
   }
 
   /* Senha: o botão de mostrar fica dentro do campo, na altura dele. */
@@ -881,21 +1112,19 @@ body {
    ============================================================ */
 
 /* Tela de toque de qualquer largura (iPad deitado, notebook com
-   toque): alvos de 44px e campo de 16px, sem mudar o layout. */
+   toque): a ação na linha e o segmentado chegam a 44px, sem mudar o
+   layout. Campo e botão já têm 48px em qualquer tela. */
 @media (pointer: coarse) {
-  .btn,
   .btn-mini,
   .segm-btn {
-    min-height: 44px;
-  }
-  .sel,
-  .campo {
-    font-size: 16px;
     min-height: 44px;
   }
 }
 
 @media (max-width: 900px) {
+  :root {
+    --respiro: 16px;
+  }
   body {
     padding-left: 0 !important;
   }
@@ -903,81 +1132,100 @@ body {
     padding: 0 16px 0 64px;
     height: 52px;
   }
-  .cmd {
-    padding: 9px 14px;
-    top: 52px;
-    gap: 8px;
+  /* No celular o título pequeno toma o lugar da marca. */
+  .top-tit {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    padding-left: 0;
+    border-left: 0;
+    transform: translateY(calc(-50% + 6px));
   }
-  .cmd-sep {
-    display: none;
+  .top-bar[data-titulo] .top-tit {
+    transform: translateY(-50%);
   }
-  .cmd-dir {
+  .top-bar[data-titulo] .top-esq > .marca {
+    opacity: 0;
+  }
+
+  .cab {
+    padding-top: 24px;
+    padding-bottom: 24px;
+  }
+  .cab-voltar {
+    margin-top: -8px;
+  }
+  .cab-tit {
+    font-size: 28px;
+  }
+  .cab-acoes {
     width: 100%;
-    margin-left: 0;
-    gap: 7px;
   }
-  .cmd-dir .sel {
+  .cab-acoes > .btn,
+  .cab-acoes > .segm {
+    flex: 1 1 auto;
+  }
+  .cab-acoes > .segm .segm-btn {
+    flex: 1;
+  }
+  .cab-filtros {
+    margin-top: 20px;
+  }
+  .cab-filtros .sel {
     flex: 1 1 calc(50% - 4px);
     max-width: none;
     min-width: 0;
   }
-  .cmd-dir .btn-acao {
-    flex: 1 1 100%;
-    justify-content: center;
+  .cab-filtros .busca {
+    flex-basis: 100%;
   }
 
-  /* Alvo de toque ≥ 44px e campo ≥ 16px (abaixo disso o iOS dá zoom). */
-  .btn,
   .btn-mini,
   .segm-btn {
-    min-height: 44px;
-    font-size: 13px;
-  }
-  .btn-mini {
-    padding: 6px 14px;
-  }
-  .sel,
-  .campo {
-    font-size: 16px;
     min-height: 44px;
   }
 
   .wrap {
-    padding: 12px 14px 64px;
+    padding-bottom: 72px;
   }
-  .kpis {
+  .numeros {
     grid-template-columns: 1fr 1fr;
     gap: 8px;
-    margin-bottom: 16px;
+    margin-bottom: 32px;
   }
-  .kpi {
-    padding: 12px 13px;
-    min-width: 0;
+  .numero {
+    padding: 16px 16px 14px;
   }
-  .kpi-r {
-    letter-spacing: 0.3px;
-    margin-bottom: 6px;
-  }
-  .kpi-v {
-    font-size: 19px;
-    letter-spacing: -0.5px;
+  .numero-v {
+    margin-top: 10px;
+    font-size: 26px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-  .kpi-p {
-    margin-top: 5px;
-    line-height: 1.35;
+  .numero-ir {
+    top: 14px;
+    right: 12px;
   }
 
   .cartao {
-    padding: 14px 15px;
+    padding: 16px;
   }
   .cartao-liso {
     padding: 0;
   }
-  .sec {
+  .cartao-liso > .cartao-cab {
+    padding: 16px 16px 0;
+  }
+  .cartao-cab {
     margin-bottom: 16px;
+  }
+  .sec {
+    margin-bottom: 32px;
+  }
+  .sec-tit {
+    font-size: 18px;
   }
   .duas,
   .tres {
@@ -985,68 +1233,60 @@ body {
     gap: 8px;
   }
 
-  /* tabela vira cartão */
-  .tb {
-    border: none;
-    border-radius: 0;
-    background: transparent;
-  }
+  /* Tabela vira lista: cada linha é um bloco com o nome em cima e os
+     campos em grade, cada um com o rótulo que vem de data-r. */
   .tb-h {
     display: none;
   }
   .tb-l {
-    display: block !important;
-    background: var(--papel-2);
-    border-radius: var(--r-ctrl);
-    border: none;
-    padding: 12px 13px;
-    margin-bottom: 7px;
-  }
-  .tb-l:last-child {
-    margin-bottom: 0;
+    display: flex !important;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 12px 24px;
+    padding: 16px;
+    min-height: 0;
   }
   .tb-l > span {
     white-space: normal;
   }
-  /* No cartão o fundo já é papel-2: o botão fantasma precisa contrastar. */
-  .tb-l .btn-fant {
-    background: var(--papel);
-    box-shadow: 0 0 0 1px var(--linha);
+  .tb-l > span:first-child {
+    flex-basis: 100%;
   }
   .tb-nome {
     display: block;
-    font-size: 13px;
+    font-size: 16px;
     font-weight: 700;
-    margin-bottom: 9px;
+    line-height: 1.3;
   }
   .tb-l .d,
   .tb-l .c {
     display: inline-flex;
     flex-direction: column;
     align-items: flex-start;
+    gap: 2px;
     text-align: left;
-    margin-right: 16px;
-    margin-top: 2px;
-    font-size: 13px;
+    font-size: 14px;
+    max-width: 100%;
   }
   .tb-l .d::before,
   .tb-l .c::before {
     content: attr(data-r);
     display: block;
-    font-size: 12px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
+    font-size: 13px;
+    font-weight: 500;
     color: var(--tinta-3);
-    margin-bottom: 2px;
     font-variant-numeric: normal;
+  }
+  .tb-l .d:not([data-r])::before,
+  .tb-l .c:not([data-r])::before {
+    display: none;
   }
 
   .serie-rolagem {
     overflow-x: auto;
     overflow-y: hidden;
-    margin: 0 -15px;
-    padding: 0 15px;
+    margin: 0 -16px;
+    padding: 0 16px;
     -webkit-overflow-scrolling: touch;
   }
   .serie {
@@ -1063,14 +1303,10 @@ body {
   }
 
   .bh-l {
-    grid-template-columns: 1fr 66px;
-  }
-  .faixa {
-    padding: 11px 12px;
-    font-size: 12.5px;
+    grid-template-columns: 1fr 72px;
   }
   .vazio {
-    padding: 26px 14px;
+    padding: 32px 16px;
   }
 }
 
@@ -1425,7 +1661,7 @@ body {
   }
 }
 .md-head {
-  padding: 20px 24px 17px;
+  padding: 24px 24px 20px;
   border-bottom: 1px solid var(--linha);
   display: flex;
   align-items: flex-start;
@@ -1437,22 +1673,23 @@ body {
   flex: 1;
 }
 .md-titulo {
-  font-size: 18px;
+  font-size: 22px;
   font-weight: 700;
-  letter-spacing: -0.4px;
-  line-height: 1.25;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
 }
 .md-sub {
-  font-size: 12.5px;
+  font-size: 15px;
   color: var(--tinta-3);
-  margin-top: 5px;
+  margin-top: 6px;
   line-height: 1.5;
 }
 .md-fechar {
-  width: 32px;
-  height: 32px;
-  min-width: 32px;
-  border-radius: 9px;
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  margin: -4px -6px 0 0;
+  border-radius: var(--r-ctrl);
   border: none;
   background: var(--papel-2);
   color: var(--tinta-3);
@@ -1467,26 +1704,26 @@ body {
   color: var(--tinta);
 }
 .md-corpo {
-  padding: 20px 24px 24px;
+  padding: 24px;
   overflow-y: auto;
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
 }
 .md-pe {
-  padding: 14px 24px;
+  padding: 16px 24px;
   border-top: 1px solid var(--linha);
   background: var(--papel-2);
   display: flex;
-  gap: 9px;
+  gap: 8px;
   justify-content: flex-end;
   flex-shrink: 0;
 }
 .md-duas {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 14px;
+  gap: 16px;
 }
 
 @media (max-width: 900px) {
@@ -1494,16 +1731,26 @@ body {
     padding: 0;
     align-items: flex-end;
   }
+  /* Folha que sobe de baixo, com os cantos da folha da entrada. */
   .md {
     max-width: none;
-    max-height: 92vh;
-    border-radius: 18px 18px 0 0;
+    max-height: 92dvh;
+    border-radius: var(--r-folha) var(--r-folha) 0 0;
+  }
+  .md-head,
+  .md-corpo {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  .md-pe {
+    padding-left: 16px;
+    padding-right: 16px;
   }
   .md-duas {
     grid-template-columns: 1fr;
   }
   .md-pe {
-    padding-bottom: calc(14px + env(safe-area-inset-bottom));
+    padding-bottom: calc(16px + env(safe-area-inset-bottom));
   }
   .md-pe .btn {
     flex: 1;
@@ -1513,7 +1760,7 @@ body {
     width: 44px;
     height: 44px;
     min-width: 44px;
-    margin: -6px -8px 0 0;
+    margin: -6px -6px 0 0;
   }
 }
 
@@ -1628,10 +1875,22 @@ body {
 .faixa.entrada-erro .material-symbols-rounded {
   color: var(--marca-rosa);
 }
+/* A entrada não muda com a fundação visual das telas internas: estes
+   valores eram herdados da regra base e ficam fixos aqui. */
+.faixa.entrada-erro {
+  padding: 13px 16px;
+  gap: 11px;
+  line-height: 1.55;
+}
+.faixa.entrada-erro .material-symbols-rounded {
+  font-size: 18px;
+  margin-top: 1px;
+}
 .entrada-botao {
   width: 100%;
   min-height: 48px;
   justify-content: center;
+  gap: 6px;
   font-size: 16px;
   margin-top: 2px;
 }
@@ -1872,6 +2131,38 @@ body {
 }
 .previa-corpo {
   padding: 18px 20px 24px;
+}
+/* Prévia congelada até a fase 16 do redesenho: segura as medidas
+   antigas de cartão e pílula, para a entrada não mudar enquanto as
+   telas internas mudam. */
+.previa .cartao {
+  padding: 17px 19px;
+}
+.previa .cartao-liso {
+  padding: 0;
+}
+.previa .cartao-cab {
+  margin-bottom: 0;
+}
+.previa .cartao-liso > .cartao-cab {
+  padding: 17px 19px 0;
+  margin-bottom: 0;
+}
+.previa .cartao-t {
+  font-size: 13px;
+  line-height: 1.5;
+  letter-spacing: -0.15px;
+  margin-bottom: 3px;
+}
+.previa .cartao-d {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.previa .pil {
+  font-size: 12px;
+  line-height: 1.5;
 }
 .previa .kpis {
   grid-template-columns: repeat(3, minmax(0, 1fr));

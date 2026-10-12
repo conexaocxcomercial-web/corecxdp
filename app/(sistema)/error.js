@@ -4,7 +4,7 @@
 // fonte de dados. Ela fica no log do servidor.
 export default function ErroDoSistema({ reset }) {
   return (
-    <div className="wrap">
+    <div className="wrap pt-10">
       <div className="cartao">
         <div className="cartao-t">A ação não foi concluída</div>
         <div className="cartao-d">

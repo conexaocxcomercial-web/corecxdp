@@ -10,13 +10,13 @@ import { calcularIndicadores } from '@/lib/indicadores';
 import { dataPorExtenso, diasAtras, formatarData, paraData, plural } from '@/lib/formato';
 import {
   Cartao,
+  Cabecalho,
   Celula,
-  Comando,
   Faixa,
-  Kpi,
-  Kpis,
   LinhaTabela,
   Nome,
+  Numero,
+  Numeros,
   Secao,
   Tabela,
   Vazio,
@@ -53,7 +53,7 @@ export default async function Painel() {
   } catch (erro) {
     return (
       <>
-        <Comando titulo="Painel" />
+        <Cabecalho titulo="Painel" />
         <Wrap>
           <Faixa tom="erro">
             {mensagemParaTela(
@@ -69,7 +69,7 @@ export default async function Painel() {
   if (pessoas.length === 0) {
     return (
       <>
-        <Comando titulo="Painel" />
+        <Cabecalho titulo="Painel" />
         <Wrap>
           <Cartao>
             <Vazio
@@ -170,39 +170,43 @@ export default async function Painel() {
 
   return (
     <>
-      <Comando titulo="Painel" contador={`${ativos.length} no quadro`}>
-        <BotaoLink href="/indicadores" variante="fant" icone="monitoring">
-          Ver indicadores
-        </BotaoLink>
-      </Comando>
+      <Cabecalho
+        titulo="Painel"
+        subtitulo={`${ativos.length} no quadro`}
+        acoes={
+          <BotaoLink href="/indicadores" variante="fant" icone="monitoring">
+            Ver indicadores
+          </BotaoLink>
+        }
+      />
 
       <Wrap>
-        <Kpis>
-          <Kpi
+        <Numeros>
+          <Numero
             rotulo="Pessoas ativas"
             valor={ativos.length}
             apoio={`em ${porArea.length} ${plural(porArea.length, 'área', 'áreas')}`}
             href="/colaboradores?status=Ativo"
           />
-          <Kpi
+          <Numero
             rotulo="Pendências"
             valor={totalPendente}
-            cor={totalPendente ? 'var(--atencao)' : undefined}
+            tom={totalPendente ? 'var(--atencao)' : undefined}
             apoio={totalPendente === 0 ? 'nada esperando o DP' : 'esperando o DP hoje'}
           />
-          <Kpi
+          <Numero
             rotulo="Absenteísmo no mês"
             valor={`${decimal(mes.absenteismo)}%`}
             apoio={`${mes.diasPerdidos} ${plural(mes.diasPerdidos, 'dia perdido', 'dias perdidos')}`}
             href="/indicadores"
           />
-          <Kpi
+          <Numero
             rotulo="Turnover no mês"
             valor={`${decimal(mes.turnover)}%`}
             apoio={`${mes.admissoes} ${plural(mes.admissoes, 'entrada', 'entradas')}, ${mes.saidas} ${plural(mes.saidas, 'saída', 'saídas')}`}
             href="/indicadores"
           />
-        </Kpis>
+        </Numeros>
 
         <Secao titulo="O que depende de você" nota={`situação em ${dataPorExtenso(new Date())}`}>
           <div className="duas">
@@ -215,21 +219,21 @@ export default async function Painel() {
               ) : (
                 <ul>
                   {pendencias.map((pendencia) => (
-                    <li key={pendencia.href} className="border-b border-[var(--papel-2)] last:border-0">
+                    <li key={pendencia.href} className="border-b border-[var(--linha)] last:border-0">
                       <Link
                         href={pendencia.href}
-                        className="group flex items-center gap-3.5 px-[19px] py-[15px] transition-colors hover:bg-[var(--papel-2)]"
+                        className="group flex min-h-[72px] items-center gap-4 px-4 py-4 transition-colors hover:bg-[var(--papel-2)] min-[901px]:px-6"
                       >
-                        <span className={`pil ${pendencia.tom} h-8 w-8 justify-center p-0`}>
-                          <Icone nome={pendencia.icone} tamanho={17} />
+                        <span className={`pil ${pendencia.tom} h-10 w-10 shrink-0 justify-center p-0`}>
+                          <Icone nome={pendencia.icone} tamanho={20} />
                         </span>
-                        <span className="num text-[17px] font-bold">{pendencia.quantidade}</span>
-                        <span className="flex-1 text-[12.5px] leading-snug text-[var(--tinta-2)]">
+                        <span className="num text-[22px] font-bold tracking-[-0.02em]">{pendencia.quantidade}</span>
+                        <span className="flex-1 text-[14px] leading-snug text-[var(--tinta-2)]">
                           {pendencia.texto}
                         </span>
                         <Icone
                           nome="arrow_forward"
-                          tamanho={17}
+                          tamanho={20}
                           className="text-[var(--tinta-3)] transition-colors group-hover:text-[var(--acao-texto)]"
                         />
                       </Link>
@@ -271,42 +275,40 @@ export default async function Painel() {
                 movimentação, o histórico aparece aqui.
               </Vazio>
             ) : (
-              <div className="p-[10px]">
-                <Tabela
-                  grade={GRADE}
-                  colunas={[
-                    { rotulo: 'Pessoa' },
-                    { rotulo: 'Tipo' },
-                    { rotulo: 'Data', alinha: 'd' },
-                    { rotulo: 'Registro' },
-                  ]}
-                >
-                  {lancamentos.map((item, indice) => (
-                    <LinhaTabela key={`${item.livro}-${item.matricula}-${indice}`} grade={GRADE}>
-                      <Celula>
-                        <Nome href={`/colaboradores/${item.matricula}`}>
-                          {nomePorMatricula.get(item.matricula) || item.matricula}
-                        </Nome>
-                      </Celula>
-                      <Celula rotulo="Tipo" alinha="c">
-                        <span className="inline-flex items-center gap-1.5 text-[var(--tinta-2)]">
-                          <span
-                            className="graf-ponto h-2 w-2 shrink-0 rounded-full"
-                            style={{ background: CORES_DO_LIVRO[item.livro] }}
-                          />
-                          {item.livro}
-                        </span>
-                      </Celula>
-                      <Celula rotulo="Data" alinha="d">
-                        <span className="num">{formatarData(item.data)}</span>
-                      </Celula>
-                      <Celula rotulo="Registro" alinha="c">
-                        <span className="text-[var(--tinta-2)]">{item.descricao}</span>
-                      </Celula>
-                    </LinhaTabela>
-                  ))}
-                </Tabela>
-              </div>
+              <Tabela
+                grade={GRADE}
+                colunas={[
+                  { rotulo: 'Pessoa' },
+                  { rotulo: 'Tipo' },
+                  { rotulo: 'Data', alinha: 'd' },
+                  { rotulo: 'Registro' },
+                ]}
+              >
+                {lancamentos.map((item, indice) => (
+                  <LinhaTabela key={`${item.livro}-${item.matricula}-${indice}`} grade={GRADE}>
+                    <Celula>
+                      <Nome href={`/colaboradores/${item.matricula}`}>
+                        {nomePorMatricula.get(item.matricula) || item.matricula}
+                      </Nome>
+                    </Celula>
+                    <Celula rotulo="Tipo" alinha="c">
+                      <span className="inline-flex items-center gap-1.5 text-[var(--tinta-2)]">
+                        <span
+                          className="graf-ponto h-2 w-2 shrink-0 rounded-full"
+                          style={{ background: CORES_DO_LIVRO[item.livro] }}
+                        />
+                        {item.livro}
+                      </span>
+                    </Celula>
+                    <Celula rotulo="Data" alinha="d">
+                      <span className="num">{formatarData(item.data)}</span>
+                    </Celula>
+                    <Celula rotulo="Registro" alinha="c">
+                      <span className="text-[var(--tinta-2)]">{item.descricao}</span>
+                    </Celula>
+                  </LinhaTabela>
+                ))}
+              </Tabela>
             )}
           </Cartao>
         </Secao>

@@ -64,7 +64,7 @@ export function PainelDeRegistro({ abrir, titulo, descricao, acao, enviar, envia
               </div>
 
               {estado?.erro ? (
-                <div className="px-6 pb-1">
+                <div className="px-4 pb-1 min-[901px]:px-6">
                   <div className="faixa erro" style={{ marginBottom: 0 }}>
                     <Icone nome="error" />
                     <span>{estado.erro}</span>

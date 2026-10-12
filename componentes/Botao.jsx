@@ -22,11 +22,11 @@ export function BotaoLink({ variante = 'acao', icone, children, className = '', 
   );
 }
 
-export function BotaoEnviar({ children, enviando, icone = 'check', className = '' }) {
+export function BotaoEnviar({ children, enviando, icone = 'check', variante = 'acao', className = '' }) {
   const { pending } = useFormStatus();
 
   return (
-    <button type="submit" disabled={pending} className={`btn btn-acao ${className}`}>
+    <button type="submit" disabled={pending} className={`btn btn-${variante} ${className}`}>
       <Icone nome={pending ? 'hourglass_empty' : icone} />
       {pending ? enviando || 'Salvando…' : children}
     </button>

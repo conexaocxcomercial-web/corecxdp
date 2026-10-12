@@ -11,8 +11,8 @@ export const ICONES = [
   'history', 'hourglass_empty', 'inbox', 'info', 'keep', 'keyboard_capslock',
   'left_panel_close', 'light_mode', 'login', 'logout', 'mail', 'menu', 'monitoring',
   'schedule', 'search_off', 'sentiment_satisfied', 'space_dashboard',
-  'supervisor_account', 'swap_horiz', 'task_alt', 'visibility', 'visibility_off',
-  'warning',
+  'supervisor_account', 'swap_horiz', 'task_alt', 'trending_down', 'trending_flat',
+  'trending_up', 'visibility', 'visibility_off', 'warning',
 ];
 
 /* Eixos fixos nos valores do globals.css (FILL 0, wght 400, GRAD 0,

@@ -1,7 +1,7 @@
 import { OPCOES, listarAtestados, listarColaboradores, mensagemParaTela } from '@/lib/registros';
 import { formatarData, hojeISO, plural } from '@/lib/formato';
 import {
-  Cartao, Celula, Comando, Faixa, LinhaTabela, Nome, Tabela, Vazio, Wrap,
+  Cabecalho, Cartao, Celula, Faixa, LinhaTabela, Nome, Tabela, Vazio, Wrap,
 } from '@/componentes/Estrutura';
 import { Status } from '@/componentes/Sinais';
 import { Busca, Seletor } from '@/componentes/Filtros';
@@ -12,13 +12,13 @@ import { salvarAtestado, validarAtestado } from '@/app/acoes';
 
 export const metadata = { title: 'Atestados' };
 
-const GRADE = '1.5fr 104px 74px 84px 1fr 168px';
+const GRADE = '1.5fr 112px 64px 84px 1fr 204px';
 
 function Validacao({ item }) {
   if (item.status !== 'Pendente') return <Status>{item.status}</Status>;
 
   return (
-    <span className="flex flex-wrap items-center gap-1.5">
+    <span className="flex flex-wrap items-center gap-2">
       <form action={validarAtestado}>
         <input type="hidden" name="linha" value={item.linha} />
         <input type="hidden" name="status" value="Aprovado" />
@@ -55,7 +55,7 @@ export default async function Atestados({ searchParams }) {
   } catch (erro) {
     return (
       <>
-        <Comando titulo="Atestados" />
+        <Cabecalho titulo="Atestados" />
         <Wrap>
           <Faixa tom="erro">
             {mensagemParaTela(
@@ -127,14 +127,14 @@ export default async function Atestados({ searchParams }) {
 
   return (
     <>
-      <Comando
+      <Cabecalho
         titulo="Atestados"
-        contador={pendentes > 0 ? `${pendentes} ${plural(pendentes, 'pendente', 'pendentes')}` : `${atestados.length} no total`}
+        subtitulo={pendentes > 0 ? `${pendentes} ${plural(pendentes, 'pendente', 'pendentes')}` : `${atestados.length} no total`}
+        acoes={registro}
       >
         <Busca placeholder="Buscar por pessoa, matrícula ou CID" />
         <Seletor chave="status" rotulo="Todas as validações" opcoes={OPCOES.statusAtestado} />
-        {registro}
-      </Comando>
+      </Cabecalho>
 
       <Wrap>
         {pendentes > 0 ? (
@@ -152,42 +152,40 @@ export default async function Atestados({ searchParams }) {
                 : 'Nenhum atestado corresponde à busca. Limpe os filtros ou tente outro termo.'}
             </Vazio>
           ) : (
-            <div className="p-[10px]">
-              <Tabela
-                grade={GRADE}
-                colunas={[
-                  { rotulo: 'Pessoa' },
-                  { rotulo: 'Início', alinha: 'd' },
-                  { rotulo: 'Dias', alinha: 'd' },
-                  { rotulo: 'CID', alinha: 'd' },
-                  { rotulo: 'Documento' },
-                  { rotulo: 'Validação' },
-                ]}
-              >
-                {filtrados.map((item) => (
-                  <LinhaTabela key={item.id} grade={GRADE}>
-                    <Celula>
-                      <Nome href={`/colaboradores/${item.matricula}`}>{nomeDe(item.matricula)}</Nome>
-                    </Celula>
-                    <Celula rotulo="Início" alinha="d">
-                      <span className="num">{formatarData(item.inicio)}</span>
-                    </Celula>
-                    <Celula rotulo="Dias" alinha="d">
-                      <span className="num">{item.dias}</span>
-                    </Celula>
-                    <Celula rotulo="CID" alinha="d">
-                      <span className="num text-[var(--tinta-2)]">{item.cid || '—'}</span>
-                    </Celula>
-                    <Celula rotulo="Documento" alinha="c">
-                      <Anexo url={item.anexo} />
-                    </Celula>
-                    <Celula rotulo="Validação" alinha="c">
-                      <Validacao item={item} />
-                    </Celula>
-                  </LinhaTabela>
-                ))}
-              </Tabela>
-            </div>
+            <Tabela
+              grade={GRADE}
+              colunas={[
+                { rotulo: 'Pessoa' },
+                { rotulo: 'Início', alinha: 'd' },
+                { rotulo: 'Dias', alinha: 'd' },
+                { rotulo: 'CID', alinha: 'd' },
+                { rotulo: 'Documento' },
+                { rotulo: 'Validação' },
+              ]}
+            >
+              {filtrados.map((item) => (
+                <LinhaTabela key={item.id} grade={GRADE}>
+                  <Celula>
+                    <Nome href={`/colaboradores/${item.matricula}`}>{nomeDe(item.matricula)}</Nome>
+                  </Celula>
+                  <Celula rotulo="Início" alinha="d">
+                    <span className="num">{formatarData(item.inicio)}</span>
+                  </Celula>
+                  <Celula rotulo="Dias" alinha="d">
+                    <span className="num">{item.dias}</span>
+                  </Celula>
+                  <Celula rotulo="CID" alinha="d">
+                    <span className="num text-[var(--tinta-2)]">{item.cid || '—'}</span>
+                  </Celula>
+                  <Celula rotulo="Documento" alinha="c">
+                    <Anexo url={item.anexo} />
+                  </Celula>
+                  <Celula rotulo="Validação" alinha="c">
+                    <Validacao item={item} />
+                  </Celula>
+                </LinhaTabela>
+              ))}
+            </Tabela>
           )}
         </Cartao>
       </Wrap>

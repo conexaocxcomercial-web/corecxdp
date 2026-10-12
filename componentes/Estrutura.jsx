@@ -1,20 +1,33 @@
 import Link from 'next/link';
 import { Icone } from '@/componentes/Icones';
+import { TituloNaBarra } from '@/componentes/TituloNaBarra';
 
 /* --------------------------------------------------------- estrutura */
 
-export function Comando({ titulo, contador, children }) {
+/**
+ * Título da página no tamanho do "Entrar" (32px; 28px no celular), com
+ * subtítulo, ações à direita e, como filhos, a linha de filtros. Rola
+ * com a página: quando o título some, ele aparece pequeno na barra do topo.
+ */
+export function Cabecalho({ titulo, subtitulo, acoes, voltar, children }) {
   return (
-    <div className="cmd">
-      <span className="cmd-tit">{titulo}</span>
-      {contador ? (
-        <>
-          <div className="cmd-sep" />
-          <span className="cmd-cont">{contador}</span>
-        </>
+    <header className="cab">
+      {voltar ? (
+        <Link href={voltar.href} className="cab-voltar">
+          <Icone nome="arrow_back" />
+          {voltar.rotulo}
+        </Link>
       ) : null}
-      {children ? <div className="cmd-dir">{children}</div> : null}
-    </div>
+      <div className="cab-linha">
+        <div className="cab-txt">
+          <h1 className="cab-tit">{titulo}</h1>
+          <TituloNaBarra titulo={titulo} />
+          {subtitulo ? <p className="cab-sub">{subtitulo}</p> : null}
+        </div>
+        {acoes ? <div className="cab-acoes">{acoes}</div> : null}
+      </div>
+      {children ? <div className="cab-filtros">{children}</div> : null}
+    </header>
   );
 }
 
@@ -26,9 +39,8 @@ export function Secao({ titulo, nota, children }) {
   return (
     <section className="sec">
       <div className="sec-cab">
-        <span className="sec-tit">{titulo}</span>
-        <span className="sec-linha" />
-        {nota ? <span className="sec-nota">{nota}</span> : null}
+        <h2 className="sec-tit">{titulo}</h2>
+        {nota ? <p className="sec-nota">{nota}</p> : null}
       </div>
       {children}
     </section>
@@ -39,9 +51,9 @@ export function Cartao({ titulo, descricao, liso, className = '', children }) {
   return (
     <div className={`cartao ${liso ? 'cartao-liso' : ''} ${className}`}>
       {titulo ? (
-        <div className={liso ? 'px-[19px] pt-[17px]' : ''}>
-          <div className="cartao-t">{titulo}</div>
-          {descricao ? <div className="cartao-d">{descricao}</div> : null}
+        <div className="cartao-cab">
+          <h3 className="cartao-t">{titulo}</h3>
+          {descricao ? <p className="cartao-d">{descricao}</p> : null}
         </div>
       ) : null}
       {children}
@@ -49,8 +61,55 @@ export function Cartao({ titulo, descricao, liso, className = '', children }) {
   );
 }
 
+/* ---------------------------------------------------------- números */
+
+export function Numeros({ children }) {
+  return <div className="numeros">{children}</div>;
+}
+
+const SETAS = { sobe: 'trending_up', desce: 'trending_down', igual: 'trending_flat' };
+
+/**
+ * Número de um tema. `tom` é uma cor de situação (ex.: 'var(--atencao)'),
+ * mostrada como ponto ao lado do rótulo. `variacao` é
+ * `{ texto, sentido: 'sobe' | 'desce' | 'igual', leitura: 'bom' | 'ruim' | 'neutro' }`;
+ * o texto diz a comparação por extenso (ex.: "+0,4 p.p. sobre setembro").
+ * Com `href`, o cartão inteiro leva ao detalhe.
+ */
+export function Numero({ rotulo, valor, apoio, tom, variacao, href }) {
+  const conteudo = (
+    <>
+      <span className="numero-r">
+        {tom ? <span className="numero-tom" style={{ background: tom }} aria-hidden="true" /> : null}
+        {rotulo}
+      </span>
+      <span className="numero-v">{valor}</span>
+      {apoio ? <span className="numero-p">{apoio}</span> : null}
+      {variacao ? (
+        <span className={`numero-var ${variacao.leitura || ''}`}>
+          <Icone nome={SETAS[variacao.sentido] || SETAS.igual} />
+          {variacao.texto}
+        </span>
+      ) : null}
+      {href ? <Icone nome="arrow_forward" className="numero-ir" /> : null}
+    </>
+  );
+
+  if (href) {
+    return (
+      <Link href={href} className="numero">
+        {conteudo}
+      </Link>
+    );
+  }
+
+  return <div className="numero">{conteudo}</div>;
+}
+
 /* ------------------------------------------------------------- KPIs */
 
+/* Kpi antigo, com tarja lateral: só a prévia da entrada usa, até a
+   fase 16 do redesenho. Nas telas internas, use Numero. */
 export function Kpis({ children }) {
   return <div className="kpis">{children}</div>;
 }

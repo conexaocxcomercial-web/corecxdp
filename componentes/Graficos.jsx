@@ -65,7 +65,7 @@ export function SerieDupla({ itens, series }) {
     <>
       <div className="mb-3 flex flex-wrap gap-4">
         {series.map((s) => (
-          <span key={s.campo} className="flex items-center gap-1.5 text-[12px] text-[var(--tinta-2)]">
+          <span key={s.campo} className="flex items-center gap-1.5 text-[13px] text-[var(--tinta-2)]">
             <span className="graf-ponto h-2.5 w-2.5 rounded-full" style={{ background: s.cor }} />
             {s.nome}
           </span>
@@ -180,20 +180,20 @@ export function Rosca({ itens, total, rotulo = 'pessoas' }) {
         <div className="pointer-events-none absolute inset-0 grid place-items-center text-center">
           <div>
             <p className="num text-[26px] font-bold leading-none tracking-[-0.9px]">{soma}</p>
-            <p className="mt-1 text-[12px] font-medium uppercase tracking-[0.3px] text-[var(--tinta-3)]">
+            <p className="mt-1 text-[13px] font-medium text-[var(--tinta-3)]">
               {rotulo}
             </p>
           </div>
         </div>
       </div>
 
-      <ul className="w-full flex-1 space-y-2">
+      <ul className="w-full flex-1 space-y-2.5">
         {fatias.map((fatia) => (
-          <li key={fatia.rotulo} className="flex items-center gap-2.5 text-[12.5px]">
+          <li key={fatia.rotulo} className="flex items-center gap-2.5 text-[14px]">
             <span className="graf-ponto h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: fatia.cor }} />
             <span className="flex-1 truncate text-[var(--tinta-2)]">{fatia.rotulo}</span>
             <span className="num font-semibold">{fatia.valor}</span>
-            <span className="num w-10 text-right text-[12px] text-[var(--tinta-3)]">
+            <span className="num w-10 text-right text-[13px] text-[var(--tinta-3)]">
               {Math.round(fatia.fracao)}%
             </span>
           </li>

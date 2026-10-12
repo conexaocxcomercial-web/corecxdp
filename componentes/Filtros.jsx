@@ -28,8 +28,7 @@ export function Busca({ placeholder }) {
       onChange={aoDigitar}
       placeholder={placeholder}
       aria-label={placeholder}
-      className="sel"
-      style={{ width: 230, maxWidth: '100%' }}
+      className="sel busca"
     />
   );
 }

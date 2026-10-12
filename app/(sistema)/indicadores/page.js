@@ -5,7 +5,7 @@ import {
 import { calcularIndicadores } from '@/lib/indicadores';
 import { plural } from '@/lib/formato';
 import {
-  Cartao, Comando, Faixa, Kpi, Kpis, Secao, Vazio, Wrap,
+  Cabecalho, Cartao, Faixa, Numero, Numeros, Secao, Vazio, Wrap,
 } from '@/componentes/Estrutura';
 import { BotaoLink } from '@/componentes/Botao';
 import { BarrasH, PALETA, Rosca, Serie, SerieDupla } from '@/componentes/Graficos';
@@ -31,7 +31,7 @@ export default async function Indicadores({ searchParams }) {
   } catch (erro) {
     return (
       <>
-        <Comando titulo="Indicadores" />
+        <Cabecalho titulo="Indicadores" />
         <Wrap>
           <Faixa tom="erro">
             {mensagemParaTela(
@@ -63,7 +63,7 @@ export default async function Indicadores({ searchParams }) {
   if (pessoas.length === 0) {
     return (
       <>
-        <Comando titulo="Indicadores">{seletor}</Comando>
+        <Cabecalho titulo="Indicadores" acoes={seletor} />
         <Wrap>
           <Cartao>
             <Vazio icone="monitoring" acao={<BotaoLink href="/colaboradores" icone="add">Cadastrar colaborador</BotaoLink>}>
@@ -84,9 +84,7 @@ export default async function Indicadores({ searchParams }) {
 
   return (
     <>
-      <Comando titulo="Indicadores" contador={`últimos ${meses} meses`}>
-        {seletor}
-      </Comando>
+      <Cabecalho titulo="Indicadores" subtitulo={`últimos ${meses} meses`} acoes={seletor} />
 
       <Wrap>
         {resumo.lancamentos < 12 ? (
@@ -98,29 +96,29 @@ export default async function Indicadores({ searchParams }) {
           </Faixa>
         ) : null}
 
-        <Kpis>
-          <Kpi
+        <Numeros>
+          <Numero
             rotulo="Turnover"
             valor={`${decimal(resumo.turnover)}%`}
             apoio={`${resumo.admissoes} ${plural(resumo.admissoes, 'entrada', 'entradas')} e ${resumo.saidas} ${plural(resumo.saidas, 'saída', 'saídas')}`}
           />
-          <Kpi
+          <Numero
             rotulo="Absenteísmo"
             valor={`${decimal(resumo.absenteismo)}%`}
             apoio={`${resumo.diasPerdidos} ${plural(resumo.diasPerdidos, 'dia perdido', 'dias perdidos')}`}
           />
-          <Kpi
+          <Numero
             rotulo="Quadro hoje"
             valor={resumo.quadroAtual}
-            cor="var(--ok)"
+            tom="var(--ok)"
             apoio={`saldo de ${resumo.saldo > 0 ? '+' : ''}${resumo.saldo} no período`}
           />
-          <Kpi
+          <Numero
             rotulo="Dias de atestado"
             valor={resumo.diasDeAtestado}
             apoio={`${resumo.atestados} ${plural(resumo.atestados, 'atestado', 'atestados')}, média de ${decimal(resumo.mediaDiasPorAtestado)}`}
           />
-        </Kpis>
+        </Numeros>
 
         <Secao titulo="Como o quadro se moveu" nota="mês a mês">
           <div className="duas">
@@ -176,12 +174,12 @@ export default async function Indicadores({ searchParams }) {
 
             <Cartao titulo="Reincidência" descricao="Quem mais acumulou ocorrências no período.">
               {reincidentes.length ? (
-                <ul className="-mx-[19px] -mb-[17px]">
+                <ul className="-mx-4 -mb-4 min-[901px]:-mx-6 min-[901px]:-mb-6">
                   {reincidentes.map((pessoa) => (
-                    <li key={pessoa.matricula} className="border-b border-[var(--papel-2)] last:border-0">
+                    <li key={pessoa.matricula} className="border-t border-[var(--linha)]">
                       <Link
                         href={`/colaboradores/${pessoa.matricula}`}
-                        className="flex items-center justify-between gap-4 px-[19px] py-3 text-[12.5px] transition-colors hover:bg-[var(--papel-2)]"
+                        className="flex min-h-[52px] items-center justify-between gap-4 px-4 py-3 text-[14px] transition-colors hover:bg-[var(--papel-2)] min-[901px]:px-6"
                       >
                         <span className="font-semibold">{pessoa.rotulo}</span>
                         <span className="num text-[var(--tinta-2)]">

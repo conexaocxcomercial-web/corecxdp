@@ -3,7 +3,7 @@ import {
 } from '@/lib/registros';
 import { formatarData, hojeISO } from '@/lib/formato';
 import {
-  Cartao, Celula, Comando, Faixa, LinhaTabela, Nome, Tabela, Vazio, Wrap,
+  Cabecalho, Cartao, Celula, Faixa, LinhaTabela, Nome, Tabela, Vazio, Wrap,
 } from '@/componentes/Estrutura';
 import { Status } from '@/componentes/Sinais';
 import { Busca, Seletor } from '@/componentes/Filtros';
@@ -28,7 +28,7 @@ export default async function Ocorrencias({ searchParams }) {
   } catch (erro) {
     return (
       <>
-        <Comando titulo="Ocorrências" />
+        <Cabecalho titulo="Ocorrências" />
         <Wrap>
           <Faixa tom="erro">
             {mensagemParaTela(
@@ -85,11 +85,14 @@ export default async function Ocorrencias({ searchParams }) {
 
   return (
     <>
-      <Comando titulo="Ocorrências e faltas" contador={`${filtradas.length} de ${ocorrencias.length}`}>
+      <Cabecalho
+        titulo="Ocorrências e faltas"
+        subtitulo={`${filtradas.length} de ${ocorrencias.length}`}
+        acoes={registro}
+      >
         <Busca placeholder="Buscar por pessoa, matrícula ou motivo" />
         <Seletor chave="tipo" rotulo="Todos os tipos" opcoes={OPCOES.tiposDeOcorrencia} />
-        {registro}
-      </Comando>
+      </Cabecalho>
 
       <Wrap>
         <Cartao liso>
@@ -100,38 +103,36 @@ export default async function Ocorrencias({ searchParams }) {
                 : 'Nenhuma ocorrência corresponde à busca. Limpe os filtros ou tente outro termo.'}
             </Vazio>
           ) : (
-            <div className="p-[10px]">
-              <Tabela
-                grade={GRADE}
-                colunas={[
-                  { rotulo: 'Pessoa' },
-                  { rotulo: 'Tipo' },
-                  { rotulo: 'Data', alinha: 'd' },
-                  { rotulo: 'Justificada' },
-                  { rotulo: 'Motivo' },
-                ]}
-              >
-                {filtradas.map((item) => (
-                  <LinhaTabela key={item.id} grade={GRADE}>
-                    <Celula>
-                      <Nome href={`/colaboradores/${item.matricula}`}>{nomeDe(item.matricula)}</Nome>
-                    </Celula>
-                    <Celula rotulo="Tipo" alinha="c">
-                      <span className="text-[var(--tinta-2)]">{item.tipo}</span>
-                    </Celula>
-                    <Celula rotulo="Data" alinha="d">
-                      <span className="num">{formatarData(item.data)}</span>
-                    </Celula>
-                    <Celula rotulo="Justificada" alinha="c">
-                      <Status>{item.justificada}</Status>
-                    </Celula>
-                    <Celula rotulo="Motivo" alinha="c">
-                      <span className="text-[var(--tinta-2)]">{item.motivo || '—'}</span>
-                    </Celula>
-                  </LinhaTabela>
-                ))}
-              </Tabela>
-            </div>
+            <Tabela
+              grade={GRADE}
+              colunas={[
+                { rotulo: 'Pessoa' },
+                { rotulo: 'Tipo' },
+                { rotulo: 'Data', alinha: 'd' },
+                { rotulo: 'Justificada' },
+                { rotulo: 'Motivo' },
+              ]}
+            >
+              {filtradas.map((item) => (
+                <LinhaTabela key={item.id} grade={GRADE}>
+                  <Celula>
+                    <Nome href={`/colaboradores/${item.matricula}`}>{nomeDe(item.matricula)}</Nome>
+                  </Celula>
+                  <Celula rotulo="Tipo" alinha="c">
+                    <span className="text-[var(--tinta-2)]">{item.tipo}</span>
+                  </Celula>
+                  <Celula rotulo="Data" alinha="d">
+                    <span className="num">{formatarData(item.data)}</span>
+                  </Celula>
+                  <Celula rotulo="Justificada" alinha="c">
+                    <Status>{item.justificada}</Status>
+                  </Celula>
+                  <Celula rotulo="Motivo" alinha="c">
+                    <span className="text-[var(--tinta-2)]">{item.motivo || '—'}</span>
+                  </Celula>
+                </LinhaTabela>
+              ))}
+            </Tabela>
           )}
         </Cartao>
       </Wrap>

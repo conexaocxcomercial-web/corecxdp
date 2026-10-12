@@ -18,7 +18,10 @@ export default async function LayoutDoSistema({ children }) {
       <Navegacao empresa={usuario.empresa} />
 
       <div className="top-bar">
-        <Marca />
+        <div className="top-esq">
+          <Marca />
+          <span id="titulo-na-barra" className="top-tit" aria-hidden="true" />
+        </div>
 
         <div className="usermenu">
           <BotaoDeTema />

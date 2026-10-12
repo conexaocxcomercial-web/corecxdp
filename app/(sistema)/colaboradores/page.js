@@ -1,9 +1,9 @@
 import { OPCOES, listarColaboradores, mensagemParaTela } from '@/lib/registros';
 import { apenasDigitos, formatarData, hojeISO, plural } from '@/lib/formato';
 import {
+  Cabecalho,
   Cartao,
   Celula,
-  Comando,
   Faixa,
   LinhaTabela,
   Nome,
@@ -33,7 +33,7 @@ export default async function Colaboradores({ searchParams }) {
   } catch (erro) {
     return (
       <>
-        <Comando titulo="Colaboradores" />
+        <Cabecalho titulo="Colaboradores" />
         <Wrap>
           <Faixa tom="erro">
             {mensagemParaTela(
@@ -96,15 +96,15 @@ export default async function Colaboradores({ searchParams }) {
 
   return (
     <>
-      <Comando
+      <Cabecalho
         titulo="Colaboradores"
-        contador={`${filtradas.length} de ${pessoas.length}`}
+        subtitulo={`${filtradas.length} de ${pessoas.length}`}
+        acoes={cadastro}
       >
         <Busca placeholder="Buscar por nome, matrícula, cargo ou CPF" />
         <Seletor chave="area" rotulo="Todas as áreas" opcoes={areas} />
         <Seletor chave="status" rotulo="Todas as situações" opcoes={OPCOES.statusColaborador} />
-        {cadastro}
-      </Comando>
+      </Cabecalho>
 
       <Wrap>
         <Cartao liso>
@@ -115,42 +115,40 @@ export default async function Colaboradores({ searchParams }) {
                 : 'Nenhum colaborador corresponde à busca. Limpe os filtros ou tente outro termo.'}
             </Vazio>
           ) : (
-            <div className="p-[10px]">
-              <Tabela
-                grade={GRADE}
-                colunas={[
-                  { rotulo: 'Nome' },
-                  { rotulo: 'Matrícula', alinha: 'd' },
-                  { rotulo: 'Área' },
-                  { rotulo: 'Cargo' },
-                  { rotulo: 'Admissão', alinha: 'd' },
-                  { rotulo: 'Situação' },
-                ]}
-              >
-                {filtradas.map((pessoa) => (
-                  <LinhaTabela key={pessoa.matricula} grade={GRADE}>
-                    <Celula>
-                      <Nome href={`/colaboradores/${pessoa.matricula}`}>{pessoa.nome}</Nome>
-                    </Celula>
-                    <Celula rotulo="Matrícula" alinha="d">
-                      <span className="num text-[var(--tinta-2)]">{pessoa.matricula}</span>
-                    </Celula>
-                    <Celula rotulo="Área" alinha="c">
-                      <span className="text-[var(--tinta-2)]">{pessoa.departamento || '—'}</span>
-                    </Celula>
-                    <Celula rotulo="Cargo" alinha="c">
-                      <span className="text-[var(--tinta-2)]">{pessoa.cargo || '—'}</span>
-                    </Celula>
-                    <Celula rotulo="Admissão" alinha="d">
-                      <span className="num">{formatarData(pessoa.admissao)}</span>
-                    </Celula>
-                    <Celula rotulo="Situação" alinha="c">
-                      <Status>{pessoa.status}</Status>
-                    </Celula>
-                  </LinhaTabela>
-                ))}
-              </Tabela>
-            </div>
+            <Tabela
+              grade={GRADE}
+              colunas={[
+                { rotulo: 'Nome' },
+                { rotulo: 'Matrícula', alinha: 'd' },
+                { rotulo: 'Área' },
+                { rotulo: 'Cargo' },
+                { rotulo: 'Admissão', alinha: 'd' },
+                { rotulo: 'Situação' },
+              ]}
+            >
+              {filtradas.map((pessoa) => (
+                <LinhaTabela key={pessoa.matricula} grade={GRADE}>
+                  <Celula>
+                    <Nome href={`/colaboradores/${pessoa.matricula}`}>{pessoa.nome}</Nome>
+                  </Celula>
+                  <Celula rotulo="Matrícula" alinha="d">
+                    <span className="num text-[var(--tinta-2)]">{pessoa.matricula}</span>
+                  </Celula>
+                  <Celula rotulo="Área" alinha="c">
+                    <span className="text-[var(--tinta-2)]">{pessoa.departamento || '—'}</span>
+                  </Celula>
+                  <Celula rotulo="Cargo" alinha="c">
+                    <span className="text-[var(--tinta-2)]">{pessoa.cargo || '—'}</span>
+                  </Celula>
+                  <Celula rotulo="Admissão" alinha="d">
+                    <span className="num">{formatarData(pessoa.admissao)}</span>
+                  </Celula>
+                  <Celula rotulo="Situação" alinha="c">
+                    <Status>{pessoa.status}</Status>
+                  </Celula>
+                </LinhaTabela>
+              ))}
+            </Tabela>
           )}
         </Cartao>
       </Wrap>
