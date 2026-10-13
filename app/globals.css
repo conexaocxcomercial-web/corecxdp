@@ -4711,3 +4711,28 @@ html.com-folha {
 .folha-graficos {
   margin-bottom: 40px;
 }
+
+/* ------------------------------------------------- benefícios (fase 13) */
+
+/* Quem tem: uma barra fina de cobertura ao lado do número. */
+.ben-quem {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+.ben-barra {
+  flex: 1;
+  max-width: 120px;
+  height: 6px;
+  border-radius: var(--r-pill);
+  background: var(--papel-2);
+  box-shadow: inset 0 0 0 1px var(--linha);
+  overflow: hidden;
+}
+.ben-barra > span {
+  display: block;
+  height: 100%;
+  border-radius: var(--r-pill);
+  background: var(--acao);
+}

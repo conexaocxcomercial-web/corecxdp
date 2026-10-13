@@ -6,7 +6,7 @@
  */
 export const ICONES = [
   'add', 'arrow_back', 'arrow_forward', 'badge', 'beach_access', 'chat', 'check', 'checklist',
-  'chevron_right', 'clinical_notes', 'close', 'contrast', 'dark_mode', 'description', 'domain', 'error', 'event',
+  'chevron_right', 'clinical_notes', 'close', 'contrast', 'dark_mode', 'description', 'domain', 'edit', 'error', 'event',
   'event_available', 'event_busy', 'expand_more', 'fact_check', 'group', 'group_add', 'healing',
   'history', 'home', 'hourglass_empty', 'inbox', 'info', 'keep', 'keyboard_capslock',
   'left_panel_close', 'light_mode', 'lock', 'login', 'logout', 'mail', 'menu', 'monitoring',

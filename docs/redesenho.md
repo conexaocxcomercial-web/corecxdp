@@ -265,7 +265,7 @@ Toda fase é testada em 375px e 1440px, nos temas claro e escuro, e termina com 
 | 10 | **Estrutura de indicadores** ✅ concluída em 13/10/2026 | Central, modelo de painel e de detalhe; Quadro, Absenteísmo e Saúde, Movimentações; regra dos menos de 3 | Do número à pessoa em 3 cliques; grupo pequeno oculto |
 | 11 | **Férias** + painel Férias ✅ concluída em 13/10/2026 | Períodos, programação e aprovação, dobra, prazos | Vencidas, vencendo e programadas batem com a ficha |
 | 12 | **Folha gerencial, encargos e 13º** + painel Custos ✅ concluída em 13/10/2026 | Competência, composição, fator de custo, provisões e parcelas, selo de estimativa | Totais batem com os cálculos testados; trocar o regime ou o percentual da empresa muda os encargos |
-| 13 | **Benefícios** + painel Benefícios | Catálogo, empresa paga e desconto, quem não tem | Custo entra na folha gerencial |
+| 13 | **Benefícios** + painel Benefícios ✅ concluída em 13/10/2026 | Catálogo, empresa paga e desconto, quem não tem | Custo entra na folha gerencial |
 | 14 | **Documentos e Empresa** | Validade, completude, CNPJs, departamentos (com o anexo do Simples Nacional), usuários, importação da planilha modelo (abas e erros por linha, ver § 9 › Implantação), histórico | Subir uma planilha com erros e ver o que corrigir |
 | 15 | **Parceiro** | Carteira, consulta de um cliente, comparação, exportação (CSV e página para imprimir), white-label com checagem de contraste | Login de parceiro não vê nada de outro parceiro; marca troca |
 | 16 | **Administração e fechamento** | Parceiros, clientes, usuários, suporte; prévia da entrada redesenhada; `/painel` redireciona para `/inicio`; revisão final | Revisão final em todas as telas |
@@ -373,6 +373,20 @@ O que cada fase entregou e o que ficou decidido no caminho, para a fase seguinte
 - Nada disso vai para as telas antes da conferência do usuário (fases 9, 11 e 12).
 - Conferência do usuário em 13/10/2026: as sete escolhas aprovadas, com dois acréscimos: o saldo real do FGTS informado na ficha substitui a estimativa (o campo entra na fase 9, com o custo de desligar), e a rescisão desconta a 1ª parcela do 13º quando ela já foi paga (pelo valor informado ou pelo prazo legal). O 13º sobre o aviso que passa do fim do ano agora leva os avos do ano seguinte. `npm test`: 66 casos.
 - Antes do uso com clientes reais, a contabilidade parceira revisa as tabelas e os cálculos (`docs/tabelas.md`).
+
+### Fase 13: Benefícios (13/10/2026)
+
+- **`/beneficios`:** o catálogo com quanto a empresa paga por pessoa, o desconto no salário, quem tem (barra de cobertura) e o custo mensal de cada benefício; os números (custo mensal, por pessoa, com algum benefício, peso no custo estimado de pessoal); e quem está no quadro sem nenhum benefício.
+- **`/beneficios/[id]`:** os valores, quem tem (desde quando, com "Encerrar" e o último dia) e quem não tem (com "Incluir", a partir de hoje).
+- **Cadastro:** "Novo benefício" e "Mudar valores" com tipo, nome, valor que a empresa paga e desconto (o vale-transporte só até 6%, Lei 7.418/1985).
+- **Custo na folha gerencial:** é a soma do que a empresa paga nas adesões em vigor. Mudar o valor, incluir e encerrar mudam a folha na hora, como mostram os testes e o navegador (VR de R$ 660 para R$ 760 em 41 pessoas: +R$ 4.100 na folha).
+- **Regras** (`lib/beneficios.js`, puro, testado em `testes/beneficios.test.js`):
+  - benefício sem nome repetido;
+  - adesão sem repetir a que está em vigor, e não antes da admissão;
+  - encerramento não antes do começo.
+- As adesões ganharam `id` e `ate`; a ficha mostra só os benefícios em vigor.
+- **Painel Benefícios** nos indicadores: custo mensal (com a série e a distribuição por benefício), por pessoa, quadro com algum benefício e sem nenhum (com as pessoas).
+- `npm test`: 94 casos.
 
 ### Fase 12: Folha gerencial, encargos e 13º (13/10/2026)
 

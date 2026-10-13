@@ -21,6 +21,7 @@ import {
   registrarRetorno,
   validarAfastamento,
 } from '@/lib/dados/lancamentos';
+import { encerrarAdesao, incluirNoBeneficio, salvarBeneficio } from '@/lib/dados/beneficios';
 import { inicioDoPerfil } from '@/lib/navegacao';
 import { PERFIS } from '@/lib/permissoes';
 import { listarColaboradores, mensagemParaTela } from '@/lib/registros';
@@ -382,3 +383,40 @@ export async function opcoesParaLancar() {
   }
 }
 
+
+/* ------------------------------------------------------------- benefícios */
+
+export async function salvarBeneficioDaEmpresa(_estado, dados) {
+  try {
+    const resultado = await salvarBeneficio(ler(dados, 'id') || null, {
+      tipo: ler(dados, 'tipo'),
+      nome: ler(dados, 'nome'),
+      valor: ler(dados, 'valor'),
+      desconto: ler(dados, 'desconto'),
+    });
+    revalidarTudo();
+    return { ok: true, ...resultado, quando: Date.now() };
+  } catch (erro) {
+    return { erro: mensagemDeFalha(erro) };
+  }
+}
+
+export async function incluirPessoaNoBeneficio({ beneficio, matricula, desde } = {}) {
+  try {
+    await incluirNoBeneficio(String(beneficio || ''), String(matricula || ''), { desde: String(desde || '') });
+    revalidarTudo();
+    return { ok: true };
+  } catch (erro) {
+    return { erro: mensagemDeFalha(erro) };
+  }
+}
+
+export async function encerrarAdesaoDoBeneficio({ adesao, ate } = {}) {
+  try {
+    await encerrarAdesao(String(adesao || ''), { ate: String(ate || '') });
+    revalidarTudo();
+    return { ok: true };
+  } catch (erro) {
+    return { erro: mensagemDeFalha(erro) };
+  }
+}
