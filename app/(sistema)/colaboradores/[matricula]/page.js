@@ -160,11 +160,8 @@ function AbaRemuneracao({ ficha }) {
         </Cartao>
       </Secao>
       {ficha.custoDoMes ? (
-        <Secao titulo="Custo estimado do mês" nota="folha gerencial">
+        <Secao titulo="Custo estimado do mês" nota="folha gerencial" acao={<SeloDeEstimativa {...ficha.custoDoMes.estimativa} />}>
           <Cartao>
-            <div className="ficha-custo-cab">
-              <SeloDeEstimativa {...ficha.custoDoMes.estimativa} />
-            </div>
             <Dados
               itens={[
                 { rotulo: 'Provisões de férias e 13º', valor: <ValorProtegido valor={emReais(ficha.custoDoMes.provisoes.total)} mascara="R$ •••••" rotulo="Provisões" comOlho /> },

@@ -56,11 +56,8 @@ export default async function Empresa() {
           </Faixa>
         ) : null}
 
-        <Secao titulo="Regime e encargos" nota="entram no custo estimado de pessoal">
+        <Secao titulo="Regime e encargos" nota="entram no custo estimado de pessoal" acao={<SeloDeEstimativa {...estimativa} />}>
           <Cartao>
-            <div className="ficha-custo-cab">
-              <SeloDeEstimativa {...estimativa} />
-            </div>
             <Dados
               itens={[
                 { rotulo: 'Regime tributário', valor: cliente?.regime || 'regime a conferir' },

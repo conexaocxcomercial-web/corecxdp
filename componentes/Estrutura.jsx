@@ -35,12 +35,18 @@ export function Wrap({ children }) {
   return <div className="wrap">{children}</div>;
 }
 
-export function Secao({ titulo, nota, children }) {
+/** Seção com título; `nota` é o texto de apoio à direita e `acao`, um controle ao lado dele (o selo de estimativa, por exemplo). */
+export function Secao({ titulo, nota, acao, children }) {
   return (
     <section className="sec">
       <div className="sec-cab">
         <h2 className="sec-tit">{titulo}</h2>
-        {nota ? <p className="sec-nota">{nota}</p> : null}
+        {nota || acao ? (
+          <span className="sec-lado">
+            {nota ? <p className="sec-nota">{nota}</p> : null}
+            {acao}
+          </span>
+        ) : null}
       </div>
       {children}
     </section>

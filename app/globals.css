@@ -2988,6 +2988,10 @@ html.com-folha {
   .alcance-parte:not(:last-child) {
     display: none;
   }
+  /* Só o último nível aparece: sem o separador antes dele. */
+  .alcance-parte:last-child::before {
+    content: none;
+  }
   .alcance-botao > .alcance-botao-ic:first-child {
     display: none;
   }
@@ -4670,11 +4674,6 @@ html.com-folha {
   line-height: 1.55;
   color: var(--tinta-2);
 }
-.ficha-custo-cab {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 12px;
-}
 .faixa a {
   font-weight: 600;
   text-decoration: underline;
@@ -5024,4 +5023,16 @@ html.com-folha {
     gap: 8px;
     padding: 16px;
   }
+}
+
+/* Revisão final (fases 10 a 16): a nota e o controle ao lado do título da
+   seção, e as abas de Empresa e Administração com respiro antes do conteúdo. */
+.sec-lado {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+}
+.wrap > .abas {
+  margin-bottom: 28px;
 }
