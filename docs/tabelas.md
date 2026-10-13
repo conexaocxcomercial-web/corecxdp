@@ -32,6 +32,10 @@ Os valores são arredondados em centavos, meio para cima.
 - **Percentual da empresa:** quando a empresa tem o percentual configurado, ele substitui o padrão. Fica entre 0% e 80%, para barrar erro de digitação.
 - **Dado faltando:** se faltar o anexo do Simples, vale 8% com o aviso **"anexo a conferir"**. Se faltar o regime tributário, vale 8% com o aviso **"regime a conferir"**. A estimativa nunca deixa de aparecer, e o aviso aparece no cadastro da empresa e no selo de estimativa.
 
+## 13º estimado
+
+Na folha gerencial (aba Provisões e 13º): salário de hoje × avos ÷ 12, em que os avos são os meses do ano com 15 dias ou mais de trabalho. Metade vai na 1ª parcela (até 30/11) e o resto na 2ª (até 20/12), com o vencimento no dia útil anterior. Não tira INSS nem IRRF: esses ficam com a contabilidade.
+
 ## Custos admissionais e demissionais
 
 São **valores informados pela empresa**, sem cálculo:

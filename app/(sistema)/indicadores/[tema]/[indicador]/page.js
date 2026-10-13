@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { filtrosDoEndereco, lerDetalhe } from '@/lib/dados/indicadores';
 import { mensagemParaTela } from '@/lib/avisos';
@@ -8,6 +9,7 @@ import {
 import { Seletor } from '@/componentes/Filtros';
 import { BarrasH, Serie } from '@/componentes/Graficos';
 import { SeletorDePeriodo, TabelaDeRecortes, ValorDoIndicador, enderecoDe } from '@/componentes/Indicadores';
+import { SeloDeEstimativa } from '@/componentes/Estimativa';
 
 export async function generateMetadata({ params }) {
   const { tema, indicador } = await params;
@@ -54,7 +56,12 @@ export default async function DetalheDoIndicador({ params, searchParams }) {
         titulo={lido.nome}
         subtitulo={`${tema.nome} · ${lido.departamento || 'todos os departamentos'} · últimos ${filtros.meses} meses`}
         voltar={voltar}
-        acoes={<SeletorDePeriodo base={base} filtros={atuais} />}
+        acoes={
+          <>
+            {lido.estimativa ? <SeloDeEstimativa {...lido.estimativa} /> : null}
+            <SeletorDePeriodo base={base} filtros={atuais} />
+          </>
+        }
       >
         {lido.departamentos.length > 1 ? <Seletor chave="departamento" rotulo="Todos os departamentos" opcoes={lido.departamentos} /> : null}
       </Cabecalho>
@@ -98,7 +105,7 @@ export default async function DetalheDoIndicador({ params, searchParams }) {
         ) : null}
 
         {lido.recortes.departamento.length && !lido.departamento ? (
-          <Secao titulo="Por departamento" nota={lido.saude ? 'grupos com menos de 3 pessoas ficam ocultos' : 'toque no departamento para filtrar'}>
+          <Secao titulo="Por departamento" nota={lido.saude || lido.estimativa ? 'grupos com menos de 3 pessoas ficam ocultos' : 'toque no departamento para filtrar'}>
             <Cartao liso>
               <TabelaDeRecortes
                 titulo="Departamento"
@@ -113,6 +120,10 @@ export default async function DetalheDoIndicador({ params, searchParams }) {
         {lido.saude ? (
           <Faixa icone="lock">
             Indicadores de saúde são sempre de grupo, sem a lista de pessoas (LGPD). Os atestados de cada pessoa ficam na ficha, para a Gestão da empresa.
+          </Faixa>
+        ) : lido.estimativa ? (
+          <Faixa icone="lock">
+            O custo de cada pessoa revela o salário: os valores individuais ficam na <Link href="/folha?aba=pessoas">folha gerencial</Link>, mascarados.
           </Faixa>
         ) : lido.pessoas ? (
           <Secao titulo="Quem está por trás do número" nota={lido.notaDasPessoas || `${lido.pessoas.length} ${lido.pessoas.length === 1 ? 'pessoa' : 'pessoas'}`}>

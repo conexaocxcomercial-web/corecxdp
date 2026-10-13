@@ -264,7 +264,7 @@ Toda fase é testada em 375px e 1440px, nos temas claro e escuro, e termina com 
 | 9 | **Admissões e Desligamentos** ✅ concluída em 13/10/2026 | Admissão completa no Lançar com custos admissionais informados, passos, experiência; desligamento com custos demissionais informados e prazo da rescisão | Desligar alguém e ver custo informado, prazo e alerta |
 | 10 | **Estrutura de indicadores** ✅ concluída em 13/10/2026 | Central, modelo de painel e de detalhe; Quadro, Absenteísmo e Saúde, Movimentações; regra dos menos de 3 | Do número à pessoa em 3 cliques; grupo pequeno oculto |
 | 11 | **Férias** + painel Férias ✅ concluída em 13/10/2026 | Períodos, programação e aprovação, dobra, prazos | Vencidas, vencendo e programadas batem com a ficha |
-| 12 | **Folha gerencial, encargos e 13º** + painel Custos | Competência, composição, fator de custo, provisões e parcelas, selo de estimativa | Totais batem com os cálculos testados; trocar o regime ou o percentual da empresa muda os encargos |
+| 12 | **Folha gerencial, encargos e 13º** + painel Custos ✅ concluída em 13/10/2026 | Competência, composição, fator de custo, provisões e parcelas, selo de estimativa | Totais batem com os cálculos testados; trocar o regime ou o percentual da empresa muda os encargos |
 | 13 | **Benefícios** + painel Benefícios | Catálogo, empresa paga e desconto, quem não tem | Custo entra na folha gerencial |
 | 14 | **Documentos e Empresa** | Validade, completude, CNPJs, departamentos (com o anexo do Simples Nacional), usuários, importação da planilha modelo (abas e erros por linha, ver § 9 › Implantação), histórico | Subir uma planilha com erros e ver o que corrigir |
 | 15 | **Parceiro** | Carteira, consulta de um cliente, comparação, exportação (CSV e página para imprimir), white-label com checagem de contraste | Login de parceiro não vê nada de outro parceiro; marca troca |
@@ -373,6 +373,30 @@ O que cada fase entregou e o que ficou decidido no caminho, para a fase seguinte
 - Nada disso vai para as telas antes da conferência do usuário (fases 9, 11 e 12).
 - Conferência do usuário em 13/10/2026: as sete escolhas aprovadas, com dois acréscimos: o saldo real do FGTS informado na ficha substitui a estimativa (o campo entra na fase 9, com o custo de desligar), e a rescisão desconta a 1ª parcela do 13º quando ela já foi paga (pelo valor informado ou pelo prazo legal). O 13º sobre o aviso que passa do fim do ano agora leva os avos do ano seguinte. `npm test`: 66 casos.
 - Antes do uso com clientes reais, a contabilidade parceira revisa as tabelas e os cálculos (`docs/tabelas.md`).
+
+### Fase 12: Folha gerencial, encargos e 13º (13/10/2026)
+
+- **`/folha`**, sempre identificada como estimativa, com três abas:
+  - Resumo do mês: custo estimado de pessoal com a variação sobre o mês anterior, fator de custo, salários, encargos (o percentual à mostra), composição do custo, evolução de 12 meses, por unidade e por departamento;
+  - Por colaborador: salário, provisões, encargos, benefícios, custo e fator, com os valores mascarados e "Mostrar valores";
+  - Provisões e 13º: provisões do mês, as duas parcelas do 13º com o vencimento no dia útil anterior (em 2026, 30/11 e 18/12) e o 13º de cada pessoa.
+- **Competência:**
+  - o mês atual (o quadro de hoje) e os 11 anteriores (o quadro no fim do mês);
+  - o salário é o vigente na data, porque o recorte guarda o salário do cadastro (`salario_cadastro`) e a folha aplica só as alterações já em vigor.
+- **Contas** (`lib/folha.js`, puro, testado em `testes/folha.test.js`):
+  - usa `custoEstimado` de `lib/calculos/custo.js`;
+  - benefícios: o que a empresa paga (`valor_empresa`) nas adesões da data;
+  - 13º estimado: salário × avos (meses com 15 dias ou mais no ano) ÷ 12, metade em cada parcela, sem descontos;
+  - percentual inválido configurado vira o padrão, com "percentual a conferir".
+- **Selo de estimativa** (`componentes/Estimativa.jsx`): pílula que abre como o custo é formado e de onde veio o percentual; com dado faltando, mostra "anexo a conferir" ou "regime a conferir" no próprio selo. Está na folha, no painel Custos e na ficha.
+- **Painel Custos** nos indicadores, com selo e séries de 12 meses:
+  - custo estimado de pessoal, fator de custo, salários, encargos, provisões e benefícios;
+  - sem lista de pessoas (o custo de cada uma revela o salário: os valores individuais ficam na folha, mascarados).
+- **Privacidade dos custos:** como na saúde, grupo com menos de 3 pessoas fica oculto, no painel, nos recortes e nas tabelas da folha (a Diretoria, com uma pessoa, não mostra custo).
+- **Ficha › Remuneração:** custo estimado do mês da pessoa, com o selo e os valores protegidos.
+- **Composição do custo:** a paleta da marca não passa no validador da skill `dataviz` para cores por categoria (lilás e lima claros demais sobre o papel). Por isso a composição é feita de barras horizontais numa cor só, com rótulo, valor e percentual: a identidade está no texto.
+- Trocar o regime ou o percentual muda os encargos, coberto nos testes. A tela para mudar esses dados chega com Dados da empresa, na fase 14.
+- `npm test`: 90 casos.
 
 ### Fase 11: Férias (13/10/2026)
 

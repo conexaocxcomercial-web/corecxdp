@@ -17,6 +17,7 @@ import { InformarCustos } from '@/componentes/Custos';
 import { ConcluirDesligamento } from '@/componentes/Desligamentos';
 import { Passos } from '@/componentes/Passos';
 import { nomeDoCusto } from '@/lib/lancamentos';
+import { SeloDeEstimativa } from '@/componentes/Estimativa';
 
 export async function generateMetadata({ params }) {
   const { matricula } = await params;
@@ -158,6 +159,24 @@ function AbaRemuneracao({ ficha }) {
           )}
         </Cartao>
       </Secao>
+      {ficha.custoDoMes ? (
+        <Secao titulo="Custo estimado do mês" nota="folha gerencial">
+          <Cartao>
+            <div className="ficha-custo-cab">
+              <SeloDeEstimativa {...ficha.custoDoMes.estimativa} />
+            </div>
+            <Dados
+              itens={[
+                { rotulo: 'Provisões de férias e 13º', valor: <ValorProtegido valor={emReais(ficha.custoDoMes.provisoes.total)} mascara="R$ •••••" rotulo="Provisões" comOlho /> },
+                { rotulo: `Encargos (${ficha.custoDoMes.estimativa.percentual})`, valor: <ValorProtegido valor={emReais(ficha.custoDoMes.encargos)} mascara="R$ •••••" rotulo="Encargos" comOlho /> },
+                { rotulo: 'Benefícios (parte da empresa)', valor: <ValorProtegido valor={emReais(ficha.custoDoMes.beneficios)} mascara="R$ •••••" rotulo="Benefícios" comOlho /> },
+                { rotulo: 'Custo estimado', valor: <ValorProtegido valor={emReais(ficha.custoDoMes.total)} mascara="R$ •••••" rotulo="Custo estimado" comOlho /> },
+                { rotulo: 'Fator de custo', valor: String(ficha.custoDoMes.fatorDeCusto ?? '—').replace('.', ',') },
+              ]}
+            />
+          </Cartao>
+        </Secao>
+      ) : null}
       <Secao titulo="Reajustes e mudanças de cargo" nota={`${eventos.reajustes.length} ${plural(eventos.reajustes.length, 'registro', 'registros')}`}>
         <Cartao liso>
           {eventos.reajustes.length === 0 ? (

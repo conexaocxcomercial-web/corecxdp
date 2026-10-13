@@ -4663,3 +4663,51 @@ html.com-folha {
     grid-template-columns: 1fr;
   }
 }
+
+/* ------------------------------------------- folha gerencial (fase 12) */
+
+/* Selo de estimativa: pílula que abre a explicação do cálculo. */
+.selo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 14px;
+  border-radius: var(--r-pill);
+  background: var(--acao-fraco);
+  color: var(--acao-texto);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.selo:hover {
+  background: color-mix(in srgb, var(--acao-fraco) 70%, var(--marca-lilas));
+}
+.selo.com-aviso {
+  background: color-mix(in srgb, var(--marca-rosa) 18%, var(--papel));
+  color: var(--tinta);
+}
+.selo-aviso {
+  font-weight: 500;
+}
+.selo-texto {
+  max-width: 62ch;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--tinta-2);
+}
+.ficha-custo-cab {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 12px;
+}
+.faixa a {
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.folha-graficos {
+  margin-bottom: 40px;
+}

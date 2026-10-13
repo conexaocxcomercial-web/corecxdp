@@ -6,7 +6,14 @@ import Link from 'next/link';
  * um tablist: cada aba é uma página da mesma ficha. No celular, rolam de
  * lado e ficam presas logo abaixo da barra do topo.
  */
-export function Abas({ abas, atual, base, rotulo }) {
+export function Abas({ abas, atual, base, rotulo, consulta = '' }) {
+  // `consulta` guarda outros parâmetros do endereço (a competência da folha, por exemplo).
+  const href = (chave) => {
+    const parametros = new URLSearchParams(consulta);
+    if (chave !== abas[0].chave) parametros.set('aba', chave);
+    const texto = parametros.toString();
+    return texto ? `${base}?${texto}` : base;
+  };
   return (
     <nav className="abas" aria-label={rotulo}>
       <ul className="abas-l">
@@ -15,7 +22,7 @@ export function Abas({ abas, atual, base, rotulo }) {
           return (
             <li key={aba.chave}>
               <Link
-                href={aba.chave === abas[0].chave ? base : `${base}?aba=${aba.chave}`}
+                href={href(aba.chave)}
                 scroll={false}
                 className={`aba ${ativa ? 'ativa' : ''}`}
                 aria-current={ativa ? 'page' : undefined}

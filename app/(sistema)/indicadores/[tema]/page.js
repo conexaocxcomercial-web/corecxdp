@@ -6,6 +6,7 @@ import { Cabecalho, Cartao, Faixa, Numero, Numeros, Secao, Wrap } from '@/compon
 import { Seletor } from '@/componentes/Filtros';
 import { Serie } from '@/componentes/Graficos';
 import { SeletorDePeriodo, TabelaDeRecortes, ValorDoIndicador, enderecoDe } from '@/componentes/Indicadores';
+import { SeloDeEstimativa } from '@/componentes/Estimativa';
 
 export async function generateMetadata({ params }) {
   const { tema } = await params;
@@ -51,7 +52,12 @@ export default async function PainelDoTema({ params, searchParams }) {
         titulo={tema.nome}
         subtitulo={`${lido.departamento || 'Todos os departamentos'} · últimos ${filtros.meses} meses`}
         voltar={voltar}
-        acoes={<SeletorDePeriodo base={base} filtros={atuais} />}
+        acoes={
+          <>
+            {lido.estimativa ? <SeloDeEstimativa {...lido.estimativa} /> : null}
+            <SeletorDePeriodo base={base} filtros={atuais} />
+          </>
+        }
       >
         {departamentos.length > 1 ? <Seletor chave="departamento" rotulo="Todos os departamentos" opcoes={departamentos} /> : null}
       </Cabecalho>
@@ -59,7 +65,7 @@ export default async function PainelDoTema({ params, searchParams }) {
       <Wrap>
         {oculto ? (
           <Faixa icone="lock">
-            Este grupo tem menos de 3 pessoas: os números de saúde ficam ocultos para ninguém ser identificado (LGPD).
+            Este grupo tem menos de 3 pessoas: os números de {tema.chave === 'custos' ? 'custo' : 'saúde'} ficam ocultos para ninguém ser identificado (LGPD).
           </Faixa>
         ) : null}
 
@@ -96,7 +102,7 @@ export default async function PainelDoTema({ params, searchParams }) {
         ) : null}
 
         {tabela.departamento.length && !lido.departamento ? (
-          <Secao titulo="Por departamento" nota={tema.chave === 'saude' ? 'grupos com menos de 3 pessoas ficam ocultos' : 'toque no departamento para filtrar o painel'}>
+          <Secao titulo="Por departamento" nota={['saude', 'custos'].includes(tema.chave) ? 'grupos com menos de 3 pessoas ficam ocultos' : 'toque no departamento para filtrar o painel'}>
             <Cartao liso>
               <TabelaDeRecortes
                 titulo="Departamento"

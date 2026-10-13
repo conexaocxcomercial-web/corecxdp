@@ -27,7 +27,8 @@ function fmt(valor, casas) {
  * Barras por mês, com o valor impresso acima. Num toque não existe
  * passar o mouse: sem o rótulo o gráfico vira desenho.
  */
-export function Serie({ itens, cor = 'var(--acao)', casas = 0, sufixo = '', rotulo = 'Série mês a mês' }) {
+export function Serie({ itens, cor = 'var(--acao)', casas = 0, sufixo = '', rotulo = 'Série mês a mês', formatar = null }) {
+  const texto = (valor) => (formatar ? formatar(valor) : `${fmt(valor, casas)}${sufixo}`);
   const { topo } = escala(Math.max(...itens.map((i) => i.valor), 0), casas);
 
   return (
@@ -36,11 +37,8 @@ export function Serie({ itens, cor = 'var(--acao)', casas = 0, sufixo = '', rotu
       <div className="serie-rolagem" tabIndex={0} role="region" aria-label={rotulo}>
         <div className="serie">
           {itens.map((item) => (
-            <div key={item.rotulo} className="sb" title={`${item.rotulo}: ${fmt(item.valor, casas)}${sufixo}`}>
-              <span className="sb-n num">
-                {fmt(item.valor, casas)}
-                {sufixo}
-              </span>
+            <div key={item.rotulo} className="sb" title={`${item.rotulo}: ${texto(item.valor)}`}>
+              <span className="sb-n num">{texto(item.valor)}</span>
               <span
                 className="sb-b"
                 style={{ height: `${Math.max(2, (item.valor / topo) * 108)}px`, background: cor }}
@@ -104,7 +102,7 @@ export function SerieDupla({ itens, series, rotulo = 'Série mês a mês' }) {
 
 /* -------------------------------------------- barras horizontais */
 
-export function BarrasH({ itens, cor = 'var(--acao)', sufixo = '' }) {
+export function BarrasH({ itens, cor = 'var(--acao)', sufixo = '', formatar = null }) {
   const maximo = Math.max(...itens.map((item) => item.valor), 1);
 
   return (
@@ -121,8 +119,8 @@ export function BarrasH({ itens, cor = 'var(--acao)', sufixo = '' }) {
             </span>
           </span>
           <span className="bh-v num">
-            {item.valor}
-            {sufixo}
+            {formatar ? formatar(item.valor) : item.valor}
+            {formatar ? '' : sufixo}
             {item.sub ? <small>{item.sub}</small> : null}
           </span>
         </div>
