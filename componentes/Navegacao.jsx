@@ -12,7 +12,7 @@ import { estaAtiva } from '@/lib/navegacao';
  * a 248px no hover ou fica fixo aberto. Os grupos vêm de lib/navegacao.js.
  * No celular quem navega é a BarraInferior.
  */
-export function Navegacao({ empresa, grupos, inicio = '/painel' }) {
+export function Navegacao({ empresa, grupos, inicio = '/painel', parceiro = null }) {
   const caminho = usePathname();
   const [fixa, setFixa] = useState(false);
   const [fechados, setFechados] = useState({});
@@ -129,7 +129,8 @@ export function Navegacao({ empresa, grupos, inicio = '/painel' }) {
       </div>
 
       <div className="cxsb-pe">
-        <Assinatura />
+        {/* White-label: o parceiro sem logo aparece pelo nome; a Conexão CX, pela logo. */}
+        {parceiro && !parceiro.logo ? <span className="assinatura-texto">{parceiro.nome}</span> : <Assinatura />}
       </div>
     </nav>
   );

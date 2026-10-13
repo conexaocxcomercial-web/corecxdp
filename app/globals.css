@@ -4923,3 +4923,73 @@ html.com-folha {
     margin-block: -12px;
   }
 }
+
+/* ---------------------------------------------- parceiro (fase 15) */
+
+.assinatura-texto {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--tinta-2);
+}
+.cart-atencao {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 14px;
+  color: var(--tinta);
+}
+.cart-atencao > span::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: 6px;
+  border-radius: 50%;
+  background: var(--critico);
+  vertical-align: middle;
+}
+.exp-cartao {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+/* Página para imprimir: só o conteúdo, sem a casca. */
+.impressao {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.impressao-cab {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+.impressao-t {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+@media print {
+  .cxsidebar,
+  .top-bar,
+  .barra-inf,
+  .pular,
+  .nao-imprime {
+    display: none !important;
+  }
+  body,
+  .mesa,
+  main {
+    background: var(--marca-branco) !important;
+  }
+  .impressao .cartao {
+    box-shadow: none;
+    border: 1px solid var(--linha-2);
+  }
+}

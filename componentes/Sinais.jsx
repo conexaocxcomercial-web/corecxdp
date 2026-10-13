@@ -17,6 +17,7 @@ const TONS = {
   Vencida: 'cr',
   'A vencer': 'at',
   Inativo: '',
+  'Em dia': 'ok',
   // Documentos
   Válido: 'ok',
   Vencido: 'cr',

@@ -1,71 +1,83 @@
 import { notFound } from 'next/navigation';
-import { mensagemParaTela, resumirClientes } from '@/lib/registros';
+import { lerCarteira } from '@/lib/dados/carteira';
 import { alcanceAtual } from '@/lib/dados/alcance';
+import { mensagemParaTela } from '@/lib/avisos';
+import { ORDENS } from '@/lib/carteira';
 import { pode } from '@/lib/permissoes';
-import { plural } from '@/lib/formato';
-import {
-  Cabecalho, Cartao, Faixa, Numero, Numeros, Secao, Vazio, Wrap,
-} from '@/componentes/Estrutura';
-import { TabelaDeClientes } from '@/componentes/EscolhaDeCliente';
+import { emReais, plural } from '@/lib/formato';
+import { Cabecalho, Cartao, Faixa, Numero, Numeros, Secao, Vazio, Wrap } from '@/componentes/Estrutura';
+import { Seletor } from '@/componentes/Filtros';
+import { ComparacaoDeClientes } from '@/componentes/Carteira';
+import { Icone } from '@/componentes/Icones';
 
 export const metadata = { title: 'Carteira' };
 
 /**
- * Carteira do parceiro (versão inicial, fase 3 do redesenho): os clientes
- * dele com os números que já existem e o "Consultar". A carteira completa,
- * com custo, turnover e clientes que pedem atenção, é a fase 15.
- * Módulo novo: só existe na demonstração.
+ * Carteira do parceiro (fase 15 do redesenho): os clientes dele lado a lado
+ * (pessoas, custo estimado, fator, turnover, absenteísmo) com o que pede
+ * atenção primeiro, "Consultar" para abrir as telas do cliente, e a
+ * exportação em CSV e para imprimir. Só na demonstração.
  */
-export default async function Carteira() {
+export default async function Carteira({ searchParams }) {
+  const parametros = await searchParams;
   const alcance = await alcanceAtual();
   if (!alcance?.demonstracao || !pode(alcance.perfil, 'ver-carteira')) notFound();
 
-  let clientes;
+  let carteira;
   try {
-    clientes = await resumirClientes();
+    carteira = await lerCarteira(parametros?.ordem);
   } catch (erro) {
     return (
       <>
         <Cabecalho titulo="Carteira" />
         <Wrap>
-          <Faixa tom="erro">
-            {mensagemParaTela(erro, 'Não foi possível carregar a carteira agora. Recarregue a página em alguns segundos.')}
-          </Faixa>
+          <Faixa tom="erro">{mensagemParaTela(erro, 'Não foi possível carregar a carteira agora. Recarregue a página em alguns segundos.')}</Faixa>
         </Wrap>
       </>
     );
   }
-
-  const ativos = clientes.reduce((soma, cliente) => soma + cliente.ativos, 0);
-  const pendentes = clientes.reduce((soma, cliente) => soma + cliente.pendentes, 0);
+  const { numeros, clientes, parceiro } = carteira;
 
   return (
     <>
       <Cabecalho
         titulo="Carteira"
-        subtitulo={`${clientes.length} ${plural(clientes.length, 'cliente', 'clientes')} de ${alcance.parceiro?.nome || 'seu parceiro'}`}
-      />
+        subtitulo={`${numeros.clientes} ${plural(numeros.clientes, 'cliente', 'clientes')} de ${parceiro?.nome || 'seu parceiro'}`}
+        acoes={
+          <>
+            <a className="btn btn-fant" href="/exportacoes/carteira.csv" download>
+              <Icone nome="download" />
+              Exportar CSV
+            </a>
+            <a className="btn btn-fant" href="/carteira/imprimir" target="_blank" rel="noopener">
+              <Icone nome="print" />
+              Para imprimir
+            </a>
+          </>
+        }
+      >
+        <Seletor chave="ordem" rotulo="Ordenar: o que pede atenção primeiro" opcoes={ORDENS.slice(1)} />
+      </Cabecalho>
       <Wrap>
         <Numeros>
-          <Numero rotulo="Clientes" valor={clientes.length} />
-          <Numero rotulo="Pessoas ativas" valor={ativos} apoio="somando todos os clientes" />
-          <Numero
-            rotulo="Atestados por validar"
-            valor={pendentes}
-            tom={pendentes ? 'var(--atencao)' : undefined}
-            apoio="esperando a Gestão de cada cliente"
-          />
+          <Numero rotulo="Clientes" valor={numeros.clientes} apoio={`${numeros.pedemAtencao} ${plural(numeros.pedemAtencao, 'pede', 'pedem')} atenção`} />
+          <Numero rotulo="Pessoas no quadro" valor={numeros.pessoas} apoio="somando todos os clientes" />
+          <Numero rotulo="Custo estimado de pessoal" valor={emReais(numeros.custo)} apoio="estimativa, no mês" />
+          <Numero rotulo="Prazos vencidos" valor={numeros.vencidos} tom={numeros.vencidos ? 'var(--critico)' : undefined} apoio={`${numeros.aprovacoes} aprovações esperando`} />
         </Numeros>
 
-        <Secao titulo="Clientes" nota="consulte um cliente para ver as telas dele">
+        <Secao titulo="Clientes lado a lado" nota="turnover em 12 meses, absenteísmo em 3; custo e fator são estimativa">
           <Cartao liso>
             {clientes.length === 0 ? (
               <Vazio icone="domain">Nenhum cliente ligado a este parceiro ainda.</Vazio>
             ) : (
-              <TabelaDeClientes clientes={clientes} />
+              <ComparacaoDeClientes clientes={clientes} parceiro={parceiro} />
             )}
           </Cartao>
         </Secao>
+        <p className="nota ind-nota">
+          O parceiro consulta e exporta; lançar e aprovar ficam com a Gestão de cada cliente. As aprovações esperando aparecem aqui para o parceiro saber onde está o atraso.
+        </p>
       </Wrap>
     </>
   );

@@ -267,7 +267,7 @@ Toda fase é testada em 375px e 1440px, nos temas claro e escuro, e termina com 
 | 12 | **Folha gerencial, encargos e 13º** + painel Custos ✅ concluída em 13/10/2026 | Competência, composição, fator de custo, provisões e parcelas, selo de estimativa | Totais batem com os cálculos testados; trocar o regime ou o percentual da empresa muda os encargos |
 | 13 | **Benefícios** + painel Benefícios ✅ concluída em 13/10/2026 | Catálogo, empresa paga e desconto, quem não tem | Custo entra na folha gerencial |
 | 14 | **Documentos e Empresa** ✅ concluída em 13/10/2026 | Validade, completude, CNPJs, departamentos (com o anexo do Simples Nacional), usuários, importação da planilha modelo (abas e erros por linha, ver § 9 › Implantação), histórico | Subir uma planilha com erros e ver o que corrigir |
-| 15 | **Parceiro** | Carteira, consulta de um cliente, comparação, exportação (CSV e página para imprimir), white-label com checagem de contraste | Login de parceiro não vê nada de outro parceiro; marca troca |
+| 15 | **Parceiro** ✅ concluída em 13/10/2026 | Carteira, consulta de um cliente, comparação, exportação (CSV e página para imprimir), white-label com checagem de contraste | Login de parceiro não vê nada de outro parceiro; marca troca |
 | 16 | **Administração e fechamento** | Parceiros, clientes, usuários, suporte; prévia da entrada redesenhada; `/painel` redireciona para `/inicio`; revisão final | Revisão final em todas as telas |
 
 ---
@@ -373,6 +373,28 @@ O que cada fase entregou e o que ficou decidido no caminho, para a fase seguinte
 - Nada disso vai para as telas antes da conferência do usuário (fases 9, 11 e 12).
 - Conferência do usuário em 13/10/2026: as sete escolhas aprovadas, com dois acréscimos: o saldo real do FGTS informado na ficha substitui a estimativa (o campo entra na fase 9, com o custo de desligar), e a rescisão desconta a 1ª parcela do 13º quando ela já foi paga (pelo valor informado ou pelo prazo legal). O 13º sobre o aviso que passa do fim do ano agora leva os avos do ano seguinte. `npm test`: 66 casos.
 - Antes do uso com clientes reais, a contabilidade parceira revisa as tabelas e os cálculos (`docs/tabelas.md`).
+
+### Fase 15: Parceiro (13/10/2026)
+
+- **`/carteira`:**
+  - os clientes do parceiro lado a lado, como comparação: pessoas, custo estimado e fator (estimativa), turnover em 12 meses, absenteísmo em 3 meses (oculto com menos de 3 pessoas) e o que pede atenção (aprovações esperando a Gestão, prazos vencidos, férias vencidas);
+  - ordenação pelo que pede atenção, nome, pessoas, custo, turnover ou absenteísmo;
+  - números consolidados e "Consultar" para abrir as telas do cliente em só consulta.
+  - Contas em `lib/carteira.js` (puro), que usa `resumoDoTema` de `lib/paineis.js`.
+- **Exportação** (`lib/exportacao.js`, rota `/exportacoes/[arquivo]`):
+  - CSV no jeito do Excel em português (";", vírgula decimal, BOM): carteira, indicadores do cliente e colaboradores do cliente, sem CPF, salário nem CID;
+  - `/carteira/imprimir`, a comparação numa página para imprimir ou salvar em PDF (o CSS de impressão tira a casca);
+  - `/exportacoes` reúne tudo, e a barra inferior do parceiro ganhou "Exportar". A Gestão também exporta o próprio cliente; a carteira é só do parceiro e da Administração (a Gestão recebe 403).
+- **White-label com checagem de contraste** (`lib/contraste.js`):
+  - as cores do parceiro do alcance trocam `--marca-violeta` e `--marca-lilas` no layout só se passarem nas checagens WCAG: texto preto sobre o botão (4,5:1), marca sobre o papel claro e o escuro (3:1), texto de ação (4,5:1) e texto sobre o lilás (4,5:1); senão, fica a marca padrão;
+  - o parceiro sem logo aparece pelo nome no pé do menu.
+  - A Contabilidade Horizonte (fictícia) aparece em verde-azulado para o parceiro, para a Gestão da Oficina e para quem consulta os clientes dela.
+- O Início trocou "Salários do mês" pelo custo estimado de pessoal (folha gerencial), com a variação sobre o mês anterior.
+- Conferido no navegador:
+  - `horizonte@demo.test` vê só Transportes Rota Sul e Oficina Bom Motor, na cor dela;
+  - `parceiro@demo.test` vê os 4 clientes da Conexão CX, em violeta;
+  - a Gestão da Oficina vê a marca do parceiro no celular escuro.
+- Testes: `testes/carteira.test.js` (contraste, white-label recusando cor ilegível, carteira só do parceiro, CSV). `npm test`: 110 casos.
 
 ### Fase 14: Documentos e Empresa (13/10/2026)
 

@@ -13,6 +13,7 @@ import { BotaoLancar, ProvedorDoLancar } from '@/componentes/Lancar';
 import { BotaoDoUsuario } from '@/componentes/MenuDoUsuario';
 import { Marca } from '@/componentes/Marca';
 import { Icone } from '@/componentes/Icones';
+import { coresDoParceiro } from '@/lib/contraste';
 
 export const dynamic = 'force-dynamic';
 
@@ -43,13 +44,19 @@ export default async function LayoutDoSistema({ children }) {
     }
   }
 
+  // White-label: as cores do parceiro do alcance trocam o violeta e o lilás
+  // da marca, se passarem na checagem de contraste (lib/contraste.js).
+  const cores = coresDoParceiro(alcance.parceiro?.cores).aplicar;
+  const estiloDaMarca = cores ? `:root{--marca-violeta:${cores.violeta};--marca-lilas:${cores.lilas}}` : null;
+
   return (
     <ProvedorDoLancar tipos={lancamentos} podeLancar={podeLancar && temCliente}>
+      {estiloDaMarca ? <style>{estiloDaMarca}</style> : null}
       <a href="#conteudo" className="pular">
         Pular para o conteúdo
       </a>
       <MarcaDoAlcance chave={alcance.chave} />
-      <Navegacao empresa={alcance.cliente?.nome || sessao.empresa} grupos={grupos} inicio={inicio} />
+      <Navegacao empresa={alcance.cliente?.nome || sessao.empresa} grupos={grupos} inicio={inicio} parceiro={alcance.parceiro ? { nome: alcance.parceiro.nome, logo: alcance.parceiro.id === 'conexao-cx' } : null} />
 
       <header className="top-bar">
         <div className="top-esq">

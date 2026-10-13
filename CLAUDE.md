@@ -9,7 +9,7 @@ Plataforma de departamento pessoal para pequenas e médias empresas, vendida por
 - **Mostrar um plano antes de mudanças grandes** (várias telas, novo módulo, mudança na camada de dados ou no CSS global) e esperar o ok.
 - **Mobile-first.** Pensar primeiro em 375px: campos com fonte ≥ 16px (abaixo disso o iOS dá zoom), alvos de toque ≥ 44px, texto ≥ 12px, nada de rolagem horizontal da página.
 - Cores e fonte da marca são obrigatórias (PRODUCT.md › Brand Commitments). Usar os tokens de [app/globals.css](app/globals.css); não escrever hex solto nas telas.
-- Nada de marca fixo nas telas (white-label): textos e contatos de [lib/marca.js](lib/marca.js), cores dos tokens `--marca-*`, logos de `public/marca/`.
+- Nada de marca fixo nas telas (white-label): textos e contatos de [lib/marca.js](lib/marca.js), cores dos tokens `--marca-*` (as do parceiro entram no layout se passarem em `lib/contraste.js`), logos de `public/marca/`.
 - **A plataforma mostra a ordem de grandeza dos custos para a gestão; cálculos trabalhistas são da contabilidade.** Custo estimado = salários + provisões (férias: salário ÷ 12, mais 1/3; 13º: salário ÷ 12) + encargos (um percentual único por regime, configurável por empresa) + benefícios, com total e fator de custo. Custos admissionais e demissionais são valores informados pela empresa, não calculados.
 - Valor calculado aparece como estimativa ("custo estimado de pessoal" ou "folha gerencial", nunca só "folha"); percentuais e frações ficam num único arquivo de configuração ([lib/tabelas.js](lib/tabelas.js)), nunca soltos no código.
 - Privacidade (LGPD): CID individual só para Gestão da empresa e Administração; indicadores de saúde sempre agregados e ocultos em grupos com menos de 3 pessoas; salário, CPF e dados bancários mascarados nas listas. Detalhes em [docs/conceito.md › 9](docs/conceito.md#9-regras-de-privacidade-lgpd).
@@ -56,7 +56,8 @@ Logins de teste, todos com a senha `demo123`: `teste@gmail.com` e `gestao@demo.t
 | `/documentos` | Validade (vencido, vencendo, sem validade), cadastros incompletos e completude; registrar pelo Lançar › Documento (só na demonstração) |
 | `/empresa` | Dados (regime, anexo, percentual de encargos, unidades, departamentos), Usuários, Importar planilha (modelo, erros por linha, importar) e Histórico (só na demonstração) |
 | `/movimentacoes` | Reajuste, promoção, mudança de cargo e transferência, com "passa a valer em" e o que muda |
-| `/carteira` | Parceiro: clientes do parceiro e "Consultar" (só na demonstração, versão inicial) |
+| `/carteira` | Parceiro: clientes lado a lado (pessoas, custo estimado, fator, turnover, absenteísmo, o que pede atenção), ordenação, "Consultar", CSV e `/carteira/imprimir` (só na demonstração) |
+| `/exportacoes` | CSV da carteira, dos indicadores e dos colaboradores do cliente (sem CPF, salário nem CID) e páginas para imprimir |
 | `/admin` | Administração: parceiros, clientes, usuários e "Consultar" (só na demonstração, versão inicial) |
 
 As telas internas ficam em `app/(sistema)/` (layout com barra do topo, menu lateral no computador e barra inferior no celular). Ações de servidor em [app/acoes.js](app/acoes.js). Acesso protegido por [middleware.js](middleware.js), que também passa a rota ao layout (`x-caminho`). O andamento do redesenho e as decisões de cada fase ficam em [docs/redesenho.md](docs/redesenho.md).
@@ -70,6 +71,7 @@ As telas internas ficam em `app/(sistema)/` (layout com barra do topo, menu late
 - `Botao.jsx` — `Botao`, `BotaoLink`, `BotaoEnviar` (estado de envio, `variante`), `BotaoMini`.
 - `Folha.jsx` — tudo o que abre por cima (`<dialog>`): janela no computador, folha que sobe de baixo no celular, `tipo="popover"` para o menu do usuário.
 - `Lancar.jsx` — **o Lançar em três passos**: `ProvedorDoLancar` (no layout, uma folha para o sistema inteiro), `useLancar`, `BotaoLancar` (barra do topo), `BotaoDeLancar` (abre já num tipo e, da ficha, com a pessoa). Novos tipos de lançamento entram em `lib/navegacao.js` › `LANCAMENTOS` e num formulário aqui. `Afastamentos.jsx` — validar na linha e registrar retorno.
+- `Carteira.jsx` — `ComparacaoDeClientes` (tela, impressão). `Imprimir.jsx` — `BotaoDeImprimir`.
 - `Empresa.jsx` — `FormularioDaEmpresa` e `ImportarPlanilha` (conferir e importar). `AbasDaEmpresa.jsx` — as partes de Empresa.
 - `Beneficios.jsx` — `FormularioDeBeneficio`, `IncluirNoBeneficio`, `EncerrarAdesao`.
 - `Custos.jsx` — `CamposDeCustos` (campos `custo_*` da admissão ou do desligamento) e `InformarCustos` (botão e folha para informar depois). `Passos.jsx` — `Passos` e `ResumoDosPassos` (admissão e desligamento). `Desligamentos.jsx` — `ConcluirDesligamento`.
@@ -88,6 +90,7 @@ As telas internas ficam em `app/(sistema)/` (layout com barra do topo, menu late
 - `dados/` — camada nova, no formato pensado para o Supabase: `regras.js` (alcance e recorte, puros e testados), `estrutura.js` (parceiros → clientes → CNPJs), `alcance.js` (`alcanceAtual`, `resumoDoAlcance`, `permissoesAtuais`; cookie de escolha sempre revalidado no servidor), `usuarios.js`. Os módulos novos ganham repositório aqui.
 - `prazos.js` — aprovações, prazos, implantação e revisão (puro, testado); as regras legais e os feriados ficam em `regrasDePrazo.js`, com a fonte de cada um; `calendario.js` — dia útil e feriados. `dados/pendencias.js` — leitura e decisões de Pendências (permissão e autoria); `dados/inicio.js` — números e assuntos do Início (os dois só na demonstração).
 - `lancamentos.js` — regras do Lançar (afastamento, retorno, ocorrência, movimentação, admissão, desligamento e custos informados), puras e testadas. `dados/lancamentos.js` — gravação nos dois modos e as listas de afastamentos, ocorrências e movimentações.
+- `carteira.js` — a carteira do parceiro, cliente a cliente (puro); `exportacao.js` — CSV para o Excel (puro); `contraste.js` — checagem de contraste do white-label (puro). Repositório: `dados/carteira.js`.
 - `documentos.js` — situação pela validade, completude e documento novo; `empresa.js` — regime, anexo e percentual de encargos; `historico.js` — ações com autor tiradas dos registros; `planilhaModelo.js` — abas do modelo e a conferência linha a linha; `importacao.js` — registros da importação; `xlsx.js` — gravar e ler .xlsx sem dependência (só no servidor). Repositórios: `dados/documentos.js`, `dados/empresa.js` (dados, usuários, importação e histórico).
 - `beneficios.js` — catálogo, adesão e encerramento, quem tem e quem não tem (puro, testado); `dados/beneficios.js` — leitura e mudanças com permissão e autoria.
 - `folha.js` — folha gerencial da competência (salário vigente, benefícios, encargos da empresa, totais, composição, grupos), 13º com avos e parcelas e o texto do selo de estimativa (puro, testado); `dados/folha.js` — leitura da tela.

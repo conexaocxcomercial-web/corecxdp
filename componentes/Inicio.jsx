@@ -85,19 +85,19 @@ function variacao(diferenca, texto) {
   return diferenca === 0 ? texto.igual : texto.mudou;
 }
 
-/** Os números do negócio na faixa violeta: salários, turnover e absenteísmo. */
+/** Os números do negócio na faixa violeta: custo estimado de pessoal, turnover e absenteísmo. */
 export function figurasDoNegocio(numeros) {
-  const salarios = numeros.salarios - numeros.salariosDoMesPassado;
+  const custo = Math.round(numeros.custo - numeros.custoDoMesPassado);
   const figuras = [
     {
-      chave: 'salarios',
-      rotulo: 'Salários do mês',
-      valor: emReaisCurto(numeros.salarios),
-      apoio: variacao(salarios, {
-        igual: `igual a ${numeros.mesPassado}, sem encargos`,
-        mudou: `${salarios > 0 ? '+' : '−'}${emReaisCurto(Math.abs(salarios))} sobre ${numeros.mesPassado}, sem encargos`,
+      chave: 'custo',
+      rotulo: 'Custo estimado de pessoal',
+      valor: emReaisCurto(numeros.custo),
+      apoio: variacao(custo, {
+        igual: `igual a ${numeros.mesPassado}, estimativa`,
+        mudou: `${custo > 0 ? '+' : '−'}${emReaisCurto(Math.abs(custo))} sobre ${numeros.mesPassado}, estimativa`,
       }),
-      href: '/colaboradores',
+      href: '/folha',
     },
     {
       chave: 'turnover',
