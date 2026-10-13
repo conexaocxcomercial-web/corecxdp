@@ -8,19 +8,23 @@ import { Caixa, Data, Paragrafo, Selecao, Texto } from '@/componentes/Campos';
 import { Folha } from '@/componentes/Folha';
 import { Icone } from '@/componentes/Icones';
 import { Status } from '@/componentes/Sinais';
+import { CamposDeCustos } from '@/componentes/Custos';
 import {
+  CONTRATOS,
   PEDEM_ATESTADO,
   TIPOS_DE_AFASTAMENTO,
   TIPOS_DE_DESLIGAMENTO,
   TIPOS_DE_MOVIMENTACAO,
   TIPOS_DE_OCORRENCIA,
 } from '@/lib/lancamentos';
+import { prazoDaRescisao } from '@/lib/prazos';
 import { hojeISO } from '@/lib/formato';
 
 /*
- * Lançar em três passos (fase 8 do redesenho), numa folha só para o
+ * Lançar em três passos (fases 8 e 9 do redesenho), numa folha só para o
  * sistema inteiro: "O que aconteceu?" → "Com quem?" → formulário. Aberto
- * pela ficha (ou com a pessoa no endereço), pula o passo da pessoa. Abre
+ * pela ficha (ou com a pessoa no endereço), pula o passo da pessoa; a
+ * admissão vai direto ao formulário, porque a pessoa ainda não existe. Abre
  * pelo botão da barra do topo, pela barra inferior, pelas ações rápidas
  * da ficha, pelos botões das listas e por ?lancar=afastamento&matricula=…
  */
@@ -164,7 +168,7 @@ function FolhaDoLancar({ aberta, aoFechar, tipos, tipoInicial, pessoaInicial }) 
         <Formulario
           tipo={tipo}
           pessoa={pessoa}
-          aoVoltar={() => (pessoaInicial ? setTipo(null) : setPessoa(null))}
+          aoVoltar={() => (pessoaInicial || !tipo.comPessoa ? setTipo(null) : setPessoa(null))}
           aoTrocarPessoa={pessoaInicial ? null : () => setPessoa(null)}
           aoRegistrar={setFeito}
         />
@@ -288,6 +292,7 @@ const FORMULARIOS = {
   ocorrencia: CamposDaOcorrencia,
   movimentacao: CamposDaMovimentacao,
   desligamento: CamposDoDesligamento,
+  admissao: CamposDaAdmissao,
 };
 
 function Formulario({ tipo, pessoa, aoVoltar, aoTrocarPessoa, aoRegistrar }) {
@@ -498,15 +503,96 @@ function CamposDaMovimentacao() {
   );
 }
 
+const dataCompleta = (valor) => /^\d{4}-\d{2}-\d{2}$/.test(valor || '');
+
 function CamposDoDesligamento() {
+  const [data, setData] = useState(hojeISO());
+  const prazo = dataCompleta(data) ? prazoDaRescisao(data) : null;
   return (
     <>
       <div className="folha-duas">
         <Selecao rotulo="Tipo" nome="tipo" opcoes={TIPOS_DE_DESLIGAMENTO} />
-        <Data rotulo="Último dia de trabalho" nome="data" defaultValue={hojeISO()} required />
+        <Data
+          rotulo="Último dia de trabalho"
+          nome="data"
+          value={data}
+          onChange={(evento) => setData(evento.target.value)}
+          dica={prazo ? `rescisão até ${emBr(prazo.data)}` : undefined}
+          required
+        />
       </div>
       <Paragrafo rotulo="Motivo" nome="motivo" placeholder="Por que a pessoa sai, em poucas palavras" required />
-      <p className="nota">A rescisão vence 10 dias depois do último dia (no dia útil anterior, se cair em fim de semana ou feriado) e fica para concluir em Pendências.</p>
+      <p className="nota">
+        A rescisão vence 10 dias depois do último dia
+        {prazo?.nota ? ` (${prazo.nota}: vale o dia útil anterior)` : ', no dia útil anterior se cair em fim de semana ou feriado'} e fica para
+        concluir em Pendências e em Desligamentos.
+      </p>
+      <CamposDeCustos momento="desligamento" />
+    </>
+  );
+}
+
+function CamposDaAdmissao() {
+  const [opcoes, setOpcoes] = useState({ departamentos: [], cnpjs: [], gestores: [], unidadeAtual: null });
+  const [contrato, setContrato] = useState(CONTRATOS[0].valor);
+  const [admissao, setAdmissao] = useState(hojeISO());
+  useEffect(() => {
+    opcoesParaLancar().then(setOpcoes);
+  }, []);
+  const comExperiencia = contrato === 'experiência' && dataCompleta(admissao);
+
+  return (
+    <>
+      <Texto rotulo="Nome completo" nome="nome" placeholder="Ana Beatriz Moreira" autoComplete="off" required />
+      <div className="folha-duas">
+        <Texto rotulo="CPF" nome="cpf" placeholder="000.000.000-00" inputMode="numeric" autoComplete="off" required />
+        <Data rotulo="Nascimento" nome="nascimento" max={hojeISO()} required />
+      </div>
+      <div className="folha-duas">
+        <Selecao
+          rotulo="Contrato"
+          nome="contrato"
+          opcoes={CONTRATOS}
+          value={contrato}
+          onChange={(evento) => setContrato(evento.target.value)}
+        />
+        <Data rotulo="Primeiro dia" nome="admissao" value={admissao} onChange={(evento) => setAdmissao(evento.target.value)} required />
+      </div>
+      {comExperiencia ? (
+        <p className="nota">
+          Experiência: os 45 dias terminam em {emBr(somarDias(admissao, 45))} e os 90, em {emBr(somarDias(admissao, 90))}. Os dois prazos
+          entram em Pendências.
+        </p>
+      ) : null}
+      {opcoes.cnpjs.length > 1 ? (
+        <Selecao
+          key={opcoes.unidadeAtual || 'unidade'}
+          rotulo="Unidade (CNPJ)"
+          nome="unidade"
+          defaultValue={opcoes.unidadeAtual || opcoes.cnpjs[0].id}
+          opcoes={opcoes.cnpjs.map((item) => ({ valor: item.id, texto: item.nome }))}
+        />
+      ) : null}
+      <div className="folha-duas">
+        <Texto rotulo="Departamento" nome="departamento" list="lancar-departamentos" autoComplete="off" required />
+        <Texto rotulo="Cargo" nome="cargo" placeholder="Auxiliar Administrativo" required />
+      </div>
+      <div className="folha-duas">
+        <Texto rotulo="Salário" nome="salario" inputMode="decimal" placeholder="3.500,00" required />
+        <Texto rotulo="Jornada" nome="jornada" defaultValue="44h semanais" />
+      </div>
+      <Texto rotulo="Gestor imediato" nome="gestor" list="lancar-gestores" autoComplete="off" dica="opcional" />
+      <datalist id="lancar-departamentos">
+        {opcoes.departamentos.map((item) => (
+          <option key={item} value={item} />
+        ))}
+      </datalist>
+      <datalist id="lancar-gestores">
+        {opcoes.gestores.map((item) => (
+          <option key={item} value={item} />
+        ))}
+      </datalist>
+      <CamposDeCustos momento="admissao" />
     </>
   );
 }
@@ -518,12 +604,14 @@ const FEITO = {
   ocorrencia: 'Ocorrência registrada',
   movimentacao: 'Movimentação registrada',
   desligamento: 'Desligamento registrado',
+  admissao: 'Admissão registrada',
 };
 
 function Confirmacao({ feito, tipo, aoFechar, aoLancarOutro }) {
   const botao = useRef(null);
   useEffect(() => botao.current?.focus(), []);
-  const ficha = feito.pessoa ? `/colaboradores/${encodeURIComponent(feito.pessoa.matricula)}?aba=historico` : null;
+  const aba = tipo.chave === 'admissao' ? 'contrato' : 'historico';
+  const ficha = feito.pessoa ? `/colaboradores/${encodeURIComponent(feito.pessoa.matricula)}?aba=${aba}` : null;
   return (
     <div className="folha-corpo lancar-feito" role="status">
       <span className="lancar-feito-ic" aria-hidden="true">
@@ -542,7 +630,27 @@ function Confirmacao({ feito, tipo, aoFechar, aoLancarOutro }) {
         </div>
       ) : null}
       {feito.passaAValer ? <p className="nota">A mudança passa a valer em {feito.passaAValer}; até lá, a ficha mostra o que vale hoje.</p> : null}
-      {tipo.chave === 'desligamento' ? <p className="nota">A rescisão ficou para concluir em Pendências.</p> : null}
+      {feito.rescisao ? (
+        <p className="nota">
+          A rescisão vence em <b>{feito.rescisao.data}</b>
+          {feito.rescisao.nota ? ` (${feito.rescisao.nota})` : ''} e ficou para concluir em Pendências e em Desligamentos.
+        </p>
+      ) : null}
+      {feito.admissao?.comeca ? (
+        <p className="nota">
+          Começa em <b>{feito.admissao.comeca}</b>. O registro da admissão vence na véspera, em <b>{feito.admissao.registroAte}</b>, e já está em
+          Pendências.
+        </p>
+      ) : null}
+      {feito.admissao?.experiencia ? (
+        <p className="nota">
+          Experiência: 45 dias em {feito.admissao.experiencia.primeiroPeriodo} e 90 dias em {feito.admissao.experiencia.fim}.
+        </p>
+      ) : null}
+      {feito.custos || feito.admissao?.custos ? (
+        <p className="nota">Custos informados: {feito.custos || feito.admissao.custos}.</p>
+      ) : null}
+      {feito.nota ? <p className="nota">{feito.nota}</p> : null}
       <div className="lancar-feito-acoes">
         {ficha ? (
           <Link href={ficha} className="btn btn-fant" onClick={aoFechar}>

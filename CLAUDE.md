@@ -42,7 +42,9 @@ Logins de teste, todos com a senha `demo123`: `teste@gmail.com` e `gestao@demo.t
 | `/pendencias` | Revisão da implantação, aprovações na linha (com Desfazer) e prazos, com filtros por assunto e data (só na demonstração) |
 | `/painel` | Início fora da demonstração: quadro de ativos, pendências do DP, séries de 6 meses e últimos lançamentos |
 | `/indicadores` | Turnover, absenteísmo, quadro, reincidência e tempo de casa (3, 6 ou 12 meses) |
-| `/colaboradores` | Lista com busca, filtros (unidade, departamento, contrato, situação) e salário mascarado; cadastro de pessoa |
+| `/colaboradores` | Lista com busca, filtros (unidade, departamento, contrato, situação) e salário mascarado; "Admitir" abre o Lançar › Admissão |
+| `/admissoes` | Quem começa em breve (com os passos), quem está em experiência (45 e 90 dias) e as admissões de 12 meses com os custos informados (só na demonstração) |
+| `/desligamentos` | Para concluir (prazo da rescisão, passos, informar custos e concluir) e os de 12 meses, com os custos informados (só na demonstração) |
 | `/colaboradores/[matricula]` | Ficha: resumo, alertas, ações rápidas e abas com endereço (`?aba=ferias`); a situação vem dos eventos |
 | `/ocorrencias` | Faltas, atrasos e medidas disciplinares, com quem registrou |
 | `/afastamentos` | Atestados e afastamentos: tipos, período, CID (restrito ao Parceiro), validação na linha e retorno; `/atestados` redireciona para cá |
@@ -61,7 +63,7 @@ As telas internas ficam em `app/(sistema)/` (layout com barra do topo, menu late
 - `Botao.jsx` — `Botao`, `BotaoLink`, `BotaoEnviar` (estado de envio, `variante`), `BotaoMini`.
 - `Folha.jsx` — tudo o que abre por cima (`<dialog>`): janela no computador, folha que sobe de baixo no celular, `tipo="popover"` para o menu do usuário.
 - `Lancar.jsx` — **o Lançar em três passos**: `ProvedorDoLancar` (no layout, uma folha para o sistema inteiro), `useLancar`, `BotaoLancar` (barra do topo), `BotaoDeLancar` (abre já num tipo e, da ficha, com a pessoa). Novos tipos de lançamento entram em `lib/navegacao.js` › `LANCAMENTOS` e num formulário aqui. `Afastamentos.jsx` — validar na linha e registrar retorno.
-- `PainelDeRegistro.jsx` — cadastro numa `Folha` (hoje só o de colaborador); `abrirAoCarregar` abre pelo `?lancar=1`.
+- `Custos.jsx` — `CamposDeCustos` (campos `custo_*` da admissão ou do desligamento) e `InformarCustos` (botão e folha para informar depois). `Passos.jsx` — `Passos` e `ResumoDosPassos` (admissão e desligamento). `Desligamentos.jsx` — `ConcluirDesligamento`.
 - `Filtros.jsx` — `Busca` e `Seletor` (parâmetros da URL) e o alcance: `SeletorDeAlcance`, `FolhaDoAlcance`, `useAplicarAlcance`.
 - `Graficos.jsx` — `Serie`, `SerieDupla`, `BarrasH`, `Rosca`.
 - `Sinais.jsx` — `Status` (pílula de situação).
@@ -76,7 +78,8 @@ As telas internas ficam em `app/(sistema)/` (layout com barra do topo, menu late
 - `registros.js` — **porta de entrada das telas atuais**: `listar*`, `buscarColaborador`, `registrar*`, `mudar*`, `contarPendencias`, `resumirClientes`, `OPCOES`. Já devolve tudo recortado pelo alcance (cliente e CNPJ) e confere a permissão antes de gravar.
 - `dados/` — camada nova, no formato pensado para o Supabase: `regras.js` (alcance e recorte, puros e testados), `estrutura.js` (parceiros → clientes → CNPJs), `alcance.js` (`alcanceAtual`, `resumoDoAlcance`, `permissoesAtuais`; cookie de escolha sempre revalidado no servidor), `usuarios.js`. Os módulos novos ganham repositório aqui.
 - `prazos.js` — aprovações, prazos, implantação e revisão (puro, testado); as regras legais e os feriados ficam em `regrasDePrazo.js`, com a fonte de cada um; `calendario.js` — dia útil e feriados. `dados/pendencias.js` — leitura e decisões de Pendências (permissão e autoria); `dados/inicio.js` — números e assuntos do Início (os dois só na demonstração).
-- `lancamentos.js` — regras do Lançar (afastamento, retorno, ocorrência, movimentação, desligamento), puras e testadas. `dados/lancamentos.js` — gravação nos dois modos e as listas de afastamentos, ocorrências e movimentações.
+- `lancamentos.js` — regras do Lançar (afastamento, retorno, ocorrência, movimentação, admissão, desligamento e custos informados), puras e testadas. `dados/lancamentos.js` — gravação nos dois modos e as listas de afastamentos, ocorrências e movimentações.
+- `entradasESaidas.js` — passos e resumos de admissões e desligamentos (puro, testado); `dados/entradasESaidas.js` — leitura das duas telas e os custos da ficha. Os custos informados ficam na coleção `custos` (um registro por pessoa e momento, com os itens e o total).
 - `tabelas.js` — **parâmetros das estimativas** (frações das provisões, percentual padrão de encargos por regime, limites do percentual da empresa, avisos); modelo em [docs/tabelas.md](docs/tabelas.md). `calculos/custo.js` — custo estimado (puro, testado): sem o anexo do Simples ou sem o regime, usa 8% e devolve o aviso "anexo a conferir" ou "regime a conferir", que aparece no cadastro da empresa e no selo de estimativa.
 - `pessoas.js` — situação calculada pelos eventos, tempo de casa, saldo de férias, números e linha do tempo da pessoa (puro, testado). `dados/pessoas.js` — lista e ficha nos dois modos (na demonstração, os dados completos; fora dela, adapta a planilha). `dados/recorte.js` — o recorte do alcance nos dados completos.
 - `permissoes.js` — `pode(perfil, ação)` e os perfis. `navegacao.js` — o que cada perfil vê no menu, na barra inferior e no Lançar (arquivo único).

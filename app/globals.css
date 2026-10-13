@@ -4284,7 +4284,8 @@ html.com-folha {
 }
 
 /* O bloco do atestado: fio fino em volta, legenda em frase. */
-.lancar-atestado {
+.lancar-atestado,
+.lancar-grupo {
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -4293,10 +4294,14 @@ html.com-folha {
   border: 1px solid var(--linha-2);
   border-radius: var(--r-card);
 }
-.lancar-atestado legend {
+.lancar-atestado legend,
+.lancar-grupo legend {
   padding: 0 6px;
   font-size: 14px;
   font-weight: 700;
+}
+.lancar-grupo .nota {
+  margin: 0;
 }
 .folha-corpo .faixa {
   margin-bottom: 0;
@@ -4377,5 +4382,125 @@ html.com-folha {
   }
   .linha-acoes .btn {
     flex: 1;
+  }
+}
+
+/* ------------------------------------- admissões e desligamentos (fase 9) */
+
+/* Cartões de quem começa em breve e de quem falta concluir. */
+.es-lista {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+}
+.es-cartao {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.es-cab {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.es-quem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.es-data {
+  flex-shrink: 0;
+  font-size: 14px;
+  color: var(--tinta-2);
+}
+.es-data b {
+  color: var(--tinta);
+}
+.es-pe {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-top: 16px;
+  border-top: 1px solid var(--linha);
+}
+
+/* Passos: lima feito, anel espera, rosa atrasou (as cores das pílulas). */
+.passos {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.passo {
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  column-gap: 10px;
+  align-items: center;
+  font-size: 15px;
+}
+.passo-d {
+  grid-column: 2;
+  font-size: 13px;
+  color: var(--tinta-2);
+}
+.passo-ic {
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  color: var(--tinta-3);
+  box-shadow: inset 0 0 0 1.5px var(--linha-3);
+}
+.passo.feito .passo-ic,
+.passos-resumo.feito .passo-ic {
+  background: var(--marca-lima);
+  color: var(--marca-grafite);
+  box-shadow: none;
+}
+.passo.atraso .passo-ic,
+.passos-resumo.atraso .passo-ic {
+  background: var(--marca-rosa);
+  color: var(--marca-grafite);
+  box-shadow: none;
+}
+.passo.feito .passo-n {
+  color: var(--tinta-2);
+}
+.passos-resumo {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--tinta-2);
+  white-space: normal;
+}
+.passos-resumo .passo-ic {
+  margin-top: -1px;
+}
+.tb-l > span:has(.passos-resumo) {
+  overflow: visible;
+  white-space: normal;
+}
+
+/* Valor e ação na mesma célula, alinhados à direita no computador. */
+.linha-situacao.fim {
+  justify-content: flex-end;
+}
+
+@media (max-width: 900px) {
+  .es-lista {
+    grid-template-columns: 1fr;
+  }
+  .es-pe .btn {
+    flex: 1 1 auto;
+  }
+  .linha-situacao.fim {
+    justify-content: flex-start;
   }
 }

@@ -1,7 +1,7 @@
 import { OPCOES, mensagemParaTela } from '@/lib/registros';
 import { listarPessoas } from '@/lib/dados/pessoas';
-import { alcanceAtual, permissoesAtuais } from '@/lib/dados/alcance';
-import { apenasDigitos, emReais, formatarData, hojeISO, paraBusca } from '@/lib/formato';
+import { permissoesAtuais } from '@/lib/dados/alcance';
+import { apenasDigitos, emReais, formatarData, paraBusca } from '@/lib/formato';
 import {
   Cabecalho,
   Cartao,
@@ -15,11 +15,9 @@ import {
 } from '@/componentes/Estrutura';
 import { Status } from '@/componentes/Sinais';
 import { Busca, Seletor } from '@/componentes/Filtros';
-import { PainelDeRegistro } from '@/componentes/PainelDeRegistro';
-import { Data, Selecao, Texto } from '@/componentes/Campos';
 import { nomeDoContrato } from '@/componentes/Ficha';
+import { BotaoDeLancar } from '@/componentes/Lancar';
 import { BotaoDeMostrar, ProtecaoDeValores, ValorProtegido } from '@/componentes/Valores';
-import { salvarColaborador } from '@/app/acoes';
 
 export const metadata = { title: 'Colaboradores' };
 
@@ -34,8 +32,7 @@ const CONTRATOS = ['indeterminado', 'experiência', 'estágio', 'aprendiz', 'tem
 export default async function Colaboradores({ searchParams }) {
   const parametros = await searchParams;
   const busca = paraBusca(parametros?.busca || '');
-  const [permissoes, alcance] = await Promise.all([permissoesAtuais(), alcanceAtual()]);
-  const cnpjsDoCadastro = alcance?.opcoes.cnpjs || [];
+  const permissoes = await permissoesAtuais();
 
   let lista;
   try {
@@ -84,38 +81,7 @@ export default async function Colaboradores({ searchParams }) {
   const filtrado = Boolean(busca || area || situacao || contrato || unidade);
   const sairam = pessoas.length - noQuadro;
 
-  const cadastro = (abrirAoCarregar = false) => (
-    <PainelDeRegistro
-      abrirAoCarregar={abrirAoCarregar}
-      abrir="Cadastrar"
-      titulo="Cadastrar colaborador"
-      descricao="A matrícula é gerada automaticamente, na sequência das já cadastradas. A situação vem dos registros: entra como Ativo."
-      acao={salvarColaborador}
-      enviar="Cadastrar colaborador"
-      enviando="Cadastrando…"
-    >
-      <Texto rotulo="Nome completo" nome="nome" placeholder="Ana Beatriz Moreira" required />
-      <div className="folha-duas">
-        <Texto rotulo="CPF" nome="cpf" placeholder="000.000.000-00" inputMode="numeric" required />
-        <Data rotulo="Admissão" nome="admissao" defaultValue={hojeISO()} required />
-      </div>
-      <Texto rotulo="Cargo" nome="cargo" placeholder="Analista de Operações Júnior" required />
-      {cnpjsDoCadastro.length > 1 ? (
-        <Selecao
-          rotulo="CNPJ"
-          nome="cnpj"
-          defaultValue={(alcance.cnpj || cnpjsDoCadastro.find((item) => item.tipo === 'matriz') || cnpjsDoCadastro[0]).cnpj}
-          opcoes={cnpjsDoCadastro.map((item) => ({ valor: item.cnpj, texto: `${item.nome} (${item.cnpj})` }))}
-        />
-      ) : null}
-      <Selecao
-        rotulo="Departamento"
-        nome="departamento"
-        opcoes={[...new Set([...departamentos, ...OPCOES.departamentos])].sort((a, b) => a.localeCompare(b, 'pt-BR'))}
-      />
-      <Texto rotulo="Gestor imediato" nome="gestor" dica="opcional" placeholder="Nome de quem responde pela pessoa" />
-    </PainelDeRegistro>
-  );
+  const admitir = <BotaoDeLancar tipo="admissao" rotulo="Admitir" icone="person_add" />;
 
   const colunas = [
     { rotulo: 'Nome', chave: 'nome', grade: '1.7fr' },
@@ -140,7 +106,7 @@ export default async function Colaboradores({ searchParams }) {
         acoes={
           <>
             {comSalario ? <BotaoDeMostrar rotulo="salários" /> : null}
-            {permissoes.lancar ? cadastro(parametros?.lancar === '1') : null}
+            {permissoes.lancar ? admitir : null}
           </>
         }
       >
@@ -158,10 +124,10 @@ export default async function Colaboradores({ searchParams }) {
       <Wrap>
         <Cartao liso>
           {filtradas.length === 0 ? (
-            <Vazio icone={pessoas.length === 0 ? 'group_add' : 'search_off'} acao={pessoas.length === 0 && permissoes.lancar ? cadastro() : null}>
+            <Vazio icone={pessoas.length === 0 ? 'group_add' : 'search_off'} acao={pessoas.length === 0 && permissoes.lancar ? admitir : null}>
               {pessoas.length === 0
                 ? permissoes.lancar
-                  ? 'Nenhum colaborador cadastrado. Cadastre a primeira pessoa para abrir o registro de pessoal da empresa.'
+                  ? 'Nenhum colaborador cadastrado. Admita a primeira pessoa para abrir o registro de pessoal da empresa.'
                   : 'Nenhum colaborador cadastrado nesta empresa ainda.'
                 : 'Nenhum colaborador corresponde à busca. Limpe os filtros ou tente outro termo.'}
             </Vazio>

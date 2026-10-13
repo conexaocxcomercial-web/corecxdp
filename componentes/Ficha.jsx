@@ -43,7 +43,7 @@ export function ResumoDaPessoa({ ficha }) {
             {pessoa.admissaoFutura
               ? `começa em ${formatarData(pessoa.admissao)}`
               : pessoa.desligamento?.data
-                ? `${numeros.tempoDeCasa} de casa, saiu em ${formatarData(pessoa.desligamento.data)}`
+                ? `${numeros.tempoDeCasa} de casa, ${pessoa.desligamento.data > ficha.hoje ? 'sai' : 'saiu'} em ${formatarData(pessoa.desligamento.data)}`
                 : `${numeros.tempoDeCasa} de casa`}
           </span>
         </div>
@@ -97,7 +97,8 @@ export function AcoesRapidas({ pessoa }) {
     { tipo: 'afastamento', rotulo: 'Atestado', icone: 'clinical_notes' },
     { tipo: 'ocorrencia', rotulo: 'Ocorrência', icone: 'event_busy' },
     { tipo: 'movimentacao', rotulo: 'Movimentação', icone: 'swap_horiz' },
-    { tipo: 'desligamento', rotulo: 'Desligar', icone: 'person_remove' },
+    // Quem já tem desligamento marcado (aviso trabalhado) não é desligado de novo.
+    ...(pessoa.desligamento ? [] : [{ tipo: 'desligamento', rotulo: 'Desligar', icone: 'person_remove' }]),
   ];
   return (
     <nav className="ficha-acoes" aria-label="Lançar para esta pessoa">

@@ -9,6 +9,8 @@ import { emDemonstracao } from '@/lib/dados/estrutura';
 import { usuarioDeExemplo } from '@/lib/dados/usuarios';
 import { concluirRevisao, conferir, decidir, desfazer } from '@/lib/dados/pendencias';
 import {
+  informarCustos,
+  lancarAdmissao,
   lancarAfastamento,
   lancarDesligamento,
   lancarMovimentacao,
@@ -19,12 +21,8 @@ import {
 } from '@/lib/dados/lancamentos';
 import { inicioDoPerfil } from '@/lib/navegacao';
 import { PERFIS } from '@/lib/permissoes';
-import {
-  cadastrarColaborador,
-  listarColaboradores,
-  mensagemParaTela,
-} from '@/lib/registros';
-import { cpfValido, paraBusca } from '@/lib/formato';
+import { listarColaboradores, mensagemParaTela } from '@/lib/registros';
+import { paraBusca } from '@/lib/formato';
 
 function ler(dados, campo) {
   return String(dados.get(campo) ?? '').trim();
@@ -182,48 +180,6 @@ export async function buscarPessoas(termo) {
   }
 }
 
-export async function salvarColaborador(_estado, dados) {
-  const pessoa = {
-    nome: ler(dados, 'nome'),
-    cpf: ler(dados, 'cpf'),
-    departamento: ler(dados, 'departamento'),
-    cargo: ler(dados, 'cargo'),
-    gestor: ler(dados, 'gestor'),
-    admissao: ler(dados, 'admissao'),
-    // A situação vem dos registros: toda pessoa nova entra como Ativo.
-    status: 'Ativo',
-    cnpj: ler(dados, 'cnpj'),
-  };
-
-  if (!pessoa.nome || pessoa.nome.split(/\s+/).length < 2) {
-    return { erro: 'Informe o nome completo do colaborador.' };
-  }
-  if (!cpfValido(pessoa.cpf)) {
-    return { erro: 'O CPF informado não é válido. Confira os 11 dígitos.' };
-  }
-  if (!pessoa.cargo) {
-    return { erro: 'Informe o cargo do colaborador.' };
-  }
-  if (!pessoa.admissao) {
-    return { erro: 'Informe a data de admissão.' };
-  }
-
-  try {
-    const matricula = await cadastrarColaborador(pessoa);
-    revalidatePath('/colaboradores');
-    revalidatePath('/painel');
-    revalidatePath('/indicadores');
-    return { ok: true, matricula };
-  } catch (erro) {
-    return { erro: mensagemDeFalha(erro) };
-  }
-}
-
-
-
-
-
-
 /* -------------------------------------------------------------- pendências */
 
 /*
@@ -330,8 +286,31 @@ const LANCAMENTOS = {
       tipo: ler(dados, 'tipo'),
       data: ler(dados, 'data'),
       motivo: ler(dados, 'motivo'),
+      ...lerCustos(dados),
+    }),
+  admissao: (dados) =>
+    lancarAdmissao({
+      nome: ler(dados, 'nome'),
+      cpf: ler(dados, 'cpf'),
+      nascimento: ler(dados, 'nascimento'),
+      unidade: ler(dados, 'unidade'),
+      departamento: ler(dados, 'departamento'),
+      cargo: ler(dados, 'cargo'),
+      contrato: ler(dados, 'contrato'),
+      admissao: ler(dados, 'admissao'),
+      salario: ler(dados, 'salario'),
+      jornada: ler(dados, 'jornada'),
+      gestor: ler(dados, 'gestor'),
+      ...lerCustos(dados),
     }),
 };
+
+/** Os campos custo_* do formulário (custos informados, não calculados). */
+function lerCustos(dados) {
+  const custos = {};
+  for (const [chave, valor] of dados.entries()) if (chave.startsWith('custo_')) custos[chave] = String(valor ?? '').trim();
+  return custos;
+}
 
 export async function lancar(_estado, dados) {
   const lancamento = ler(dados, 'lancamento');
@@ -366,11 +345,22 @@ export async function validarAfastamentoNaLinha({ id, acao } = {}) {
   }
 }
 
+/** Custos da admissão ou do desligamento, informados depois do registro (Admissões, Desligamentos e ficha). */
+export async function informarCustosDaPessoa(_estado, dados) {
+  try {
+    const resultado = await informarCustos({ matricula: ler(dados, 'matricula'), momento: ler(dados, 'momento'), ...lerCustos(dados) });
+    revalidarTudo();
+    return { ok: true, ...resultado, quando: Date.now() };
+  } catch (erro) {
+    return { erro: mensagemDeFalha(erro) };
+  }
+}
+
 export async function opcoesParaLancar() {
   try {
     return await opcoesDoLancar();
   } catch {
-    return { departamentos: [], cnpjs: [] };
+    return { departamentos: [], cnpjs: [], gestores: [], unidadeAtual: null };
   }
 }
 

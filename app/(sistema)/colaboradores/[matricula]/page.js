@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation';
 import { lerFicha } from '@/lib/dados/pessoas';
 import { permissoesAtuais } from '@/lib/dados/alcance';
 import { mensagemParaTela } from '@/lib/avisos';
-import { emReais, formatarData, plural } from '@/lib/formato';
+import { emReais, emReaisExato, formatarData, plural } from '@/lib/formato';
 import {
   Cabecalho, Cartao, Celula, Faixa, LinhaTabela, Secao, Tabela, Vazio, Wrap,
 } from '@/componentes/Estrutura';
@@ -13,6 +13,10 @@ import {
 import { Prazo } from '@/componentes/Prazos';
 import { Status } from '@/componentes/Sinais';
 import { ValorProtegido } from '@/componentes/Valores';
+import { InformarCustos } from '@/componentes/Custos';
+import { ConcluirDesligamento } from '@/componentes/Desligamentos';
+import { Passos } from '@/componentes/Passos';
+import { nomeDoCusto } from '@/lib/lancamentos';
 
 export async function generateMetadata({ params }) {
   const { matricula } = await params;
@@ -81,33 +85,60 @@ function AbaResumo({ ficha, base }) {
   );
 }
 
-function AbaContrato({ ficha }) {
+/** Os custos informados de um momento, item a item, com o total. */
+function CustosInformados({ custo, momento }) {
+  if (!custo) return <p className="nota">Nenhum custo informado.</p>;
+  return (
+    <Dados
+      itens={[
+        ...custo.itens.map((item) => ({ rotulo: nomeDoCusto(momento, item.item), valor: emReaisExato(item.valor) })),
+        { rotulo: 'Total informado', valor: <b>{emReaisExato(custo.total)}</b> },
+      ]}
+    />
+  );
+}
+
+function AbaContrato({ ficha, permissoes }) {
   const { pessoa, numeros } = ficha;
   const experiencia = pessoa.experiencia;
   return (
-    <Secao titulo="Contrato">
-      <Cartao>
-        <Dados
-          itens={[
-            { rotulo: 'Tipo de contrato', valor: nomeDoContrato(pessoa.contrato) },
-            { rotulo: 'Admissão', valor: pessoa.admissao ? `${formatarData(pessoa.admissao)} (${numeros.tempoDeCasa})` : null },
-            { rotulo: 'Jornada', valor: pessoa.jornada },
-            { rotulo: 'Cargo', valor: pessoa.cargo || null },
-            { rotulo: 'Departamento', valor: pessoa.departamento || null },
-            { rotulo: 'Gestor imediato', valor: pessoa.gestor || null },
-            ...(experiencia
-              ? [
-                  { rotulo: 'Fim dos 45 dias', valor: formatarData(experiencia.primeiroPeriodo) },
-                  {
-                    rotulo: 'Fim da experiência',
-                    valor: `${formatarData(experiencia.fim)}${experiencia.fase === 'encerrado' ? ' (passou: o contrato vira indeterminado)' : ''}`,
-                  },
-                ]
-              : []),
-          ]}
-        />
-      </Cartao>
-    </Secao>
+    <>
+      <Secao titulo="Contrato">
+        <Cartao>
+          <Dados
+            itens={[
+              { rotulo: 'Tipo de contrato', valor: nomeDoContrato(pessoa.contrato) },
+              { rotulo: 'Admissão', valor: pessoa.admissao ? `${formatarData(pessoa.admissao)} (${numeros.tempoDeCasa})` : null },
+              { rotulo: 'Jornada', valor: pessoa.jornada },
+              { rotulo: 'Cargo', valor: pessoa.cargo || null },
+              { rotulo: 'Departamento', valor: pessoa.departamento || null },
+              { rotulo: 'Gestor imediato', valor: pessoa.gestor || null },
+              ...(experiencia
+                ? [
+                    { rotulo: 'Fim dos 45 dias', valor: formatarData(experiencia.primeiroPeriodo) },
+                    {
+                      rotulo: 'Fim da experiência',
+                      valor: `${formatarData(experiencia.fim)}${experiencia.fase === 'encerrado' ? ' (passou: o contrato vira indeterminado)' : ''}`,
+                    },
+                  ]
+                : []),
+            ]}
+          />
+        </Cartao>
+      </Secao>
+      {ficha.completo ? (
+        <Secao titulo="Custos da admissão" nota="informados pela empresa, não calculados">
+          <Cartao>
+            <CustosInformados custo={ficha.custos.admissao} momento="admissao" />
+            {permissoes?.lancar ? (
+              <div className="es-pe">
+                <InformarCustos matricula={pessoa.matricula} nome={pessoa.nome} momento="admissao" custo={ficha.custos.admissao} mini={false} />
+              </div>
+            ) : null}
+          </Cartao>
+        </Secao>
+      ) : null}
+    </>
   );
 }
 
@@ -339,20 +370,48 @@ function AbaHistorico({ ficha, base }) {
   );
 }
 
-function AbaDesligamento({ ficha }) {
-  const { desligamento } = ficha.pessoa;
+function AbaDesligamento({ ficha, permissoes }) {
+  const { pessoa, saida } = ficha;
+  const { desligamento } = pessoa;
   return (
-    <Secao titulo="Desligamento">
-      <Cartao>
-        <Dados
-          itens={[
-            { rotulo: 'Data', valor: desligamento?.data ? formatarData(desligamento.data) : null },
-            { rotulo: 'Tipo', valor: desligamento?.tipo || null },
-            { rotulo: 'Motivo', valor: desligamento?.motivo || null },
-          ]}
-        />
-      </Cartao>
-    </Secao>
+    <>
+      <Secao titulo="Desligamento">
+        <Cartao>
+          <Dados
+            itens={[
+              { rotulo: 'Último dia', valor: desligamento?.data ? formatarData(desligamento.data) : null },
+              { rotulo: 'Tipo', valor: desligamento?.tipo || null },
+              { rotulo: 'Motivo', valor: desligamento?.motivo || null },
+              ...(saida ? [{ rotulo: 'Rescisão até', valor: `${formatarData(saida.prazo.data)}${saida.prazo.nota ? ` (${saida.prazo.nota})` : ''}` }] : []),
+            ]}
+          />
+        </Cartao>
+      </Secao>
+      {saida && ficha.completo ? (
+        <>
+          <Secao titulo="Passos" nota={saida.concluido ? 'concluído' : 'concluir quando a rescisão estiver paga'}>
+            <Cartao>
+              <Passos passos={saida.passos} />
+              {!saida.concluido && permissoes?.aprovar ? (
+                <div className="es-pe">
+                  <ConcluirDesligamento id={saida.id} nome={pessoa.nome} />
+                </div>
+              ) : null}
+            </Cartao>
+          </Secao>
+          <Secao titulo="Custos do desligamento" nota="informados pela empresa, não calculados">
+            <Cartao>
+              <CustosInformados custo={ficha.custos.desligamento} momento="desligamento" />
+              {permissoes?.lancar ? (
+                <div className="es-pe">
+                  <InformarCustos matricula={pessoa.matricula} nome={pessoa.nome} momento="desligamento" custo={ficha.custos.desligamento} mini={false} />
+                </div>
+              ) : null}
+            </Cartao>
+          </Secao>
+        </>
+      ) : null}
+    </>
   );
 }
 
@@ -425,7 +484,7 @@ export default async function Ficha({ params, searchParams }) {
           <div className="ficha-corpo">
             <Abas abas={abas} atual={atual} base={base} rotulo="Seções da ficha" />
             <div className="ficha-aba">
-              <Conteudo ficha={ficha} base={base} />
+              <Conteudo ficha={ficha} base={base} permissoes={permissoes} />
             </div>
           </div>
         </div>

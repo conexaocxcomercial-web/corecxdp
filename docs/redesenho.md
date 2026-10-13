@@ -261,7 +261,7 @@ Toda fase é testada em 375px e 1440px, nos temas claro e escuro, e termina com 
 | 6 | **Ficha e lista de colaboradores** ✅ concluída em 13/10/2026 | Resumo, números, abas com endereço, linha do tempo, valores mascarados, situação calculada | Abrir pelo alerta e cair na aba certa; Parceiro vê o CID como restrito |
 | 7 | **Tabelas e cálculos** ✅ concluída em 13/10/2026; simplificada no mesmo dia para a ordem de grandeza dos custos ([tabelas.md](tabelas.md)) | Parâmetros num arquivo só, cálculo puro do custo estimado, testes | `node --test` passando |
 | 8 | **Lançar, Ocorrências, Atestados e afastamentos, Movimentações** ✅ concluída em 13/10/2026 | Lançar em três passos, autoria, tipos de afastamento, validação com CID, INSS acima de 15 dias; PRODUCT.md com a terminologia nova | Lançar de qualquer tela; aparece no histórico com autor; afastamento muda a situação |
-| 9 | **Admissões e Desligamentos** | Admissão completa no Lançar com custos admissionais informados, passos, experiência; desligamento com custos demissionais informados e prazo da rescisão | Desligar alguém e ver custo informado, prazo e alerta |
+| 9 | **Admissões e Desligamentos** ✅ concluída em 13/10/2026 | Admissão completa no Lançar com custos admissionais informados, passos, experiência; desligamento com custos demissionais informados e prazo da rescisão | Desligar alguém e ver custo informado, prazo e alerta |
 | 10 | **Estrutura de indicadores** | Central, modelo de painel e de detalhe; Quadro, Absenteísmo e Saúde, Movimentações; regra dos menos de 3 | Do número à pessoa em 3 cliques; grupo pequeno oculto |
 | 11 | **Férias** + painel Férias | Períodos, programação e aprovação, dobra, prazos | Vencidas, vencendo e programadas batem com a ficha |
 | 12 | **Folha gerencial, encargos e 13º** + painel Custos | Competência, composição, fator de custo, provisões e parcelas, selo de estimativa | Totais batem com os cálculos testados; trocar o regime ou o percentual da empresa muda os encargos |
@@ -369,6 +369,35 @@ O que cada fase entregou e o que ficou decidido no caminho, para a fase seguinte
 - Conferência do usuário em 13/10/2026: as sete escolhas aprovadas, com dois acréscimos: o saldo real do FGTS informado na ficha substitui a estimativa (o campo entra na fase 9, com o custo de desligar), e a rescisão desconta a 1ª parcela do 13º quando ela já foi paga (pelo valor informado ou pelo prazo legal). O 13º sobre o aviso que passa do fim do ano agora leva os avos do ano seguinte. `npm test`: 66 casos.
 - Antes do uso com clientes reais, a contabilidade parceira revisa as tabelas e os cálculos (`docs/tabelas.md`).
 
+### Fase 9: Admissões e Desligamentos (13/10/2026)
+
+- **Lançar › Admissão** com o formulário completo (nome, CPF, nascimento, unidade, departamento, cargo, contrato, primeiro dia, salário, jornada, gestor e os custos da admissão). Vai direto ao formulário, sem o "Com quem?". Substitui o cadastro da lista de colaboradores ("Admitir" abre o Lançar), e `PainelDeRegistro` saiu.
+- **Regras** (`lib/lancamentos.js`):
+  - admissão (`montarAdmissao`): nome completo, CPF válido e que não esteja no quadro (quem saiu pode ser readmitido), idade mínima de 16 anos (14 como aprendiz) no primeiro dia, unidade do cliente, salário, até 60 dias à frente;
+  - custos (`montarCustos`): somam o que foi preenchido, vazio é zero, valor estranho é recusado.
+  - A confirmação diz quando começa, o registro na véspera, as datas de 45 e 90 dias e os custos informados.
+- **Custos informados, não calculados:**
+  - na admissão: exames, uniforme e equipamentos, outros;
+  - no desligamento: rescisão paga (como a contabilidade apurou), exame demissional, outros.
+  - Ficam na coleção `custos`, um registro por pessoa e momento. Podem ser informados no Lançar ou depois ("Informar custos" em Admissões, Desligamentos e na ficha).
+- **Lançar › Desligamento:** mostra o prazo da rescisão enquanto se escolhe o último dia (10 dias, no dia útil anterior: 10/12/2026 vira 18/12) e aceita os custos. A confirmação repete o prazo. O prazo vem de `prazoDaRescisao` (`lib/prazos.js`), o mesmo de Pendências.
+- **Telas:**
+  - `/admissoes`: começam em breve, com os passos (registro até a véspera, ASO admissional e contrato pelos documentos, custos); em experiência (45 e 90 dias); 12 meses, com o resumo dos passos e o custo informado. As admissões de antes da implantação aparecem como "veio da implantação", sem passos.
+  - `/desligamentos`: para concluir, com prazo, passos, "Informar custos" e "Rescisão paga: concluir" (a mesma decisão de Pendências); 12 meses e os marcados para os próximos dias, com filtro por tipo.
+  - Os números das duas telas são admissões, experiência, desligamentos e custo informado (total e médio).
+- **Ficha:**
+  - aba Contrato com os custos da admissão;
+  - aba Desligamento com o prazo da rescisão, os passos, os custos e as ações;
+  - quem tem desligamento marcado aparece como "sai em" e não ganha "Desligar" de novo.
+- Puro e testado: `lib/entradasESaidas.js` (passos e resumos), em `testes/entradas.test.js`.
+- Gerador: custos fictícios nas admissões da janela e nos desligamentos concluídos. O desligamento desta semana fica sem custos, e quem chegou há menos de 15 dias fica sem o ASO admissional, para as telas mostrarem o que falta.
+- Navegação: Admissões e Desligamentos no grupo Pessoas, só na demonstração.
+- Conferido no navegador em 1440px (claro e escuro) e 375px (escuro), sem rolagem horizontal:
+  - admitir com erro de validação (os campos ficam), confirmar e ver em "Começam em breve" e em Pendências;
+  - desligar com custos, informar a rescisão paga depois e concluir;
+  - ver tudo na ficha.
+- `npm test`: 71 casos.
+
 ### Simplificação dos cálculos (13/10/2026)
 
 - **Decisão do usuário:** a plataforma mostra a ordem de grandeza dos custos para a gestão; cálculos trabalhistas são da contabilidade.
@@ -385,7 +414,7 @@ O que cada fase entregou e o que ficou decidido no caminho, para a fase seguinte
 
 ### Fase 8: Lançar, Ocorrências, Atestados e afastamentos, Movimentações (13/10/2026)
 
-- **Lançar em três passos** (`componentes/Lancar.jsx`): uma folha só para o sistema inteiro ("O que aconteceu?" → "Com quem?" → formulário → confirmação), aberta pela barra do topo, pela barra inferior, pelas ações rápidas da ficha (que pulam o "Com quem?"), pelos botões "Registrar" das listas e por `?lancar=<tipo>&matricula=…`. Tipos: Atestado ou afastamento, Ocorrência, Movimentação, Desligamento (básico: último dia, tipo e motivo; o resto na fase 9) e Admissão (ainda o cadastro da lista, até a fase 9). O envio vai pela transição, não por `<form action>`, para o React não limpar os campos quando o servidor devolve um erro.
+- **Lançar em três passos** (`componentes/Lancar.jsx`): uma folha só para o sistema inteiro ("O que aconteceu?" → "Com quem?" → formulário → confirmação), aberta pela barra do topo, pela barra inferior, pelas ações rápidas da ficha (que pulam o "Com quem?"), pelos botões "Registrar" das listas e por `?lancar=<tipo>&matricula=…`. Tipos: Atestado ou afastamento, Ocorrência, Movimentação, Desligamento (básico: último dia, tipo e motivo; o resto na fase 9) e Admissão (na fase 8, ainda o cadastro da lista; formulário completo na fase 9). O envio vai pela transição, não por `<form action>`, para o React não limpar os campos quando o servidor devolve um erro.
 - **Regras puras** (`lib/lancamentos.js`, testadas em `testes/lancamentos.test.js`): afastamento com tipo, período, atestado obrigatório em Doença e Acidente de trabalho (CID no formato do CID-10 ou "não informado"), sem sobrepor outro no mesmo período; retorno (depois do início, até hoje); ocorrência (sem data futura; a justificativa vem do tipo de falta); movimentação com o que muda (novo salário, cargo, departamento ou unidade); desligamento (uma vez, até 60 dias à frente).
 - **Repositório** (`lib/dados/lancamentos.js`): permissão, recorte do alcance e autoria. Na demonstração grava nos dados completos, com o próximo código do cliente (`lib/demo/memoria.js` › `inserir`, `proximoCodigo`); fora dela usa a planilha no que ela suporta (atestado por doença, ocorrência, movimentação com o que muda no motivo, desligamento como movimentação) e avisa no resto.
 - **Valores vigentes:** salário, cargo, departamento e unidade de hoje vêm das movimentações já em vigor (`lib/pessoas.js` › `aplicarMovimentacoes`), na ficha, na lista, no recorte por CNPJ e nas abas das telas atuais; as futuras esperam a data.
