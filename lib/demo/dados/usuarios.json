@@ -41,6 +41,16 @@
       "Ativo": "sim"
     },
     {
+      "Cliente": "",
+      "Parceiro": "contabilidade-horizonte",
+      "Empresa": "Contabilidade Horizonte (fictícia)",
+      "Nome": "Rita Valadares",
+      "Email": "horizonte@demo.test",
+      "Senha": "demo123",
+      "Perfil": "parceiro",
+      "Ativo": "sim"
+    },
+    {
       "Cliente": "*",
       "Parceiro": "",
       "Empresa": "Administração da plataforma",

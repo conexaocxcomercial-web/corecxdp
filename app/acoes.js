@@ -187,6 +187,7 @@ export async function salvarColaborador(_estado, dados) {
     gestor: ler(dados, 'gestor'),
     admissao: ler(dados, 'admissao'),
     status: ler(dados, 'status') || 'Ativo',
+    cnpj: ler(dados, 'cnpj'),
   };
 
   if (!pessoa.nome || pessoa.nome.split(/\s+/).length < 2) {

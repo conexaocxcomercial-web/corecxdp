@@ -1,5 +1,5 @@
 import { OPCOES, listarColaboradores, mensagemParaTela } from '@/lib/registros';
-import { permissoesAtuais } from '@/lib/dados/alcance';
+import { alcanceAtual, permissoesAtuais } from '@/lib/dados/alcance';
 import { apenasDigitos, formatarData, hojeISO, plural } from '@/lib/formato';
 import {
   Cabecalho,
@@ -27,7 +27,8 @@ export default async function Colaboradores({ searchParams }) {
   const busca = String(parametros?.busca || '').trim().toLowerCase();
   const area = String(parametros?.area || '');
   const situacao = String(parametros?.status || '');
-  const permissoes = await permissoesAtuais();
+  const [permissoes, alcance] = await Promise.all([permissoesAtuais(), alcanceAtual()]);
+  const cnpjs = alcance?.opcoes.cnpjs || [];
 
   let pessoas;
   try {
@@ -84,6 +85,14 @@ export default async function Colaboradores({ searchParams }) {
         <Data rotulo="Admissão" nome="admissao" defaultValue={hojeISO()} required />
       </div>
       <Texto rotulo="Cargo" nome="cargo" placeholder="Analista de Operações Júnior" required />
+      {cnpjs.length > 1 ? (
+        <Selecao
+          rotulo="CNPJ"
+          nome="cnpj"
+          defaultValue={(alcance.cnpj || cnpjs.find((item) => item.tipo === 'matriz') || cnpjs[0]).cnpj}
+          opcoes={cnpjs.map((item) => ({ valor: item.cnpj, texto: `${item.nome} (${item.cnpj})` }))}
+        />
+      ) : null}
       <div className="folha-duas">
         <Selecao rotulo="Área" nome="departamento" opcoes={areas} />
         <Selecao rotulo="Situação" nome="status" opcoes={OPCOES.statusColaborador} />

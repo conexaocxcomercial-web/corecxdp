@@ -136,11 +136,16 @@ export function useAplicarAlcance() {
       await esperarAlcance(chave);
     };
     const calmo = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (document.startViewTransition && !calmo) {
-      await document.startViewTransition(executar).finished.catch(() => {});
-    } else {
+    if (!document.startViewTransition || calmo) {
       await executar();
+      return;
     }
+    // Se o servidor demorar mais que o limite do navegador, a transição é
+    // pulada, mas a troca continua: as promessas rejeitadas não são erro.
+    const transicao = document.startViewTransition(executar);
+    transicao.ready.catch(() => {});
+    await transicao.updateCallbackDone.catch(() => {});
+    await transicao.finished.catch(() => {});
   };
 }
 
