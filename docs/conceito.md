@@ -297,3 +297,14 @@ A maior parte dos clientes chega com anos de história. A implantação traz o e
 - **Cada empresa tem uma data de implantação.** Prazos vencidos antes dessa data aparecem como **"a conferir na implantação"**, e não como vencidos.
 - **Revisão antes dos alertas:** depois da importação, a Gestão passa por uma revisão do que parece inconsistente (férias aparentemente vencidas, experiências abertas, documentos sem validade). Os alertas de prazo começam quando a revisão termina.
 - **Regime tributário:** no Simples Nacional, o cadastro pede também o anexo, porque no Anexo IV a contribuição patronal é paga à parte e o percentual padrão de encargos muda (de cerca de 8% para cerca de 36%). Sem o anexo ou sem o regime, a estimativa usa 8% com o aviso "anexo a conferir" ou "regime a conferir".
+
+---
+
+## 12. Melhorias futuras
+
+- **Simplificar o regime tributário** (registrado em 13/10/2026, ainda não implementado):
+  - o anexo do Simples deixa de ser perguntado (cadastro da empresa, planilha modelo e importação);
+  - toda empresa do Simples Nacional usa o padrão de 8%, sem o aviso "anexo a conferir";
+  - o cadastro da empresa mostra o campo "percentual de encargos" para ajuste, com a explicação "padrão do regime; ajuste se a contabilidade indicar outro valor (por exemplo, empresas do Anexo IV do Simples)".
+  - Até a mudança, continua valendo o que está nas seções 4 e 11.
+- **Cidade de cada CNPJ**, para os prazos de pagamento considerarem os feriados municipais e estaduais.

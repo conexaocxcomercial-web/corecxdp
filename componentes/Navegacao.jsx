@@ -111,6 +111,8 @@ export function Navegacao({ empresa, grupos, inicio = '/painel' }) {
                       key={item.id}
                       href={item.href}
                       data-tip={item.nome}
+                      // Recolhido, o menu esconde o texto: o nome do link fica no aria-label.
+                      aria-label={item.nome}
                       aria-current={ativa ? 'page' : undefined}
                       className={`cxsb-item ${ativa ? 'ativo' : ''}`}
                       tabIndex={fechado ? -1 : undefined}

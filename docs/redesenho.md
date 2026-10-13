@@ -283,6 +283,11 @@ Toda fase é testada em 375px e 1440px, nos temas claro e escuro, e termina com 
 **Melhorias futuras registradas:**
 - Cadastrar a cidade de cada CNPJ, para os prazos de pagamento considerarem os feriados municipais e estaduais (hoje, só os nacionais e a Sexta-feira da Paixão).
 - A contabilidade parceira confere os percentuais padrão de encargos antes do uso com clientes reais.
+- **Simplificar o regime tributário** (decisão de 13/10/2026; não implementar antes do pedido):
+  - não perguntar o anexo do Simples em lugar nenhum (cadastro da empresa, planilha modelo, importação);
+  - toda empresa do Simples Nacional usa o padrão de 8%, e o aviso "anexo a conferir" sai (fica só "regime a conferir");
+  - no cadastro da empresa, o campo "percentual de encargos" fica disponível para ajuste, com a explicação "padrão do regime; ajuste se a contabilidade indicar outro valor (por exemplo, empresas do Anexo IV do Simples)".
+  - Até lá, vale o que está hoje: anexo no cadastro e padrão de 36% no Anexo IV.
 
 ---
 

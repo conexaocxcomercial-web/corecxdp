@@ -2680,7 +2680,7 @@ html.com-folha {
   max-width: none;
   min-height: 40px;
   padding: 0 36px 0 40px;
-  font-size: 15px;
+  font-size: 16px;
   cursor: text;
 }
 .busca-p-campo::-webkit-search-cancel-button {
@@ -4502,5 +4502,17 @@ html.com-folha {
   }
   .linha-situacao.fim {
     justify-content: flex-start;
+  }
+}
+
+/* No celular, o nome que leva à ficha ganha altura de toque (44px) sem
+   mudar o desenho da linha: o respiro é transparente e sai das margens. */
+@media (max-width: 900px) {
+  a.tb-nome,
+  .pend-nome,
+  .tempo-t {
+    display: inline-block;
+    padding-block: 12px;
+    margin-block: -12px;
   }
 }

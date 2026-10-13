@@ -49,7 +49,7 @@ export function ProvedorDoLancar({ tipos, podeLancar, children }) {
   useEffect(() => {
     const pedido = parametros.get('lancar');
     if (!pedido || !podeLancar) return;
-    const tipo = tipos.some((item) => item.chave === pedido && !item.href) ? pedido : null;
+    const tipo = tipos.some((item) => item.chave === pedido) ? pedido : null;
     if (pedido !== '1' && !tipo) return;
     const matricula = parametros.get('matricula');
     abrir({ tipo, pessoa: matricula ? { matricula, nome: null } : null });
@@ -142,15 +142,9 @@ function FolhaDoLancar({ aberta, aoFechar, tipos, tipoInicial, pessoaInicial }) 
         <ul className="folha-corpo folha-lista" role="list">
           {tipos.map((item) => (
             <li key={item.chave}>
-              {item.href ? (
-                <Link href={item.href} className="opcao" onClick={aoFechar}>
-                  <OpcaoDoTipo item={item} />
-                </Link>
-              ) : (
-                <button type="button" className="opcao" onClick={() => setTipo(item)}>
-                  <OpcaoDoTipo item={item} />
-                </button>
-              )}
+              <button type="button" className="opcao" onClick={() => setTipo(item)}>
+                <OpcaoDoTipo item={item} />
+              </button>
             </li>
           ))}
         </ul>
@@ -543,7 +537,7 @@ function CamposDaAdmissao() {
 
   return (
     <>
-      <Texto rotulo="Nome completo" nome="nome" placeholder="Ana Beatriz Moreira" autoComplete="off" required />
+      <Texto rotulo="Nome completo" nome="nome" autoComplete="off" required />
       <div className="folha-duas">
         <Texto rotulo="CPF" nome="cpf" placeholder="000.000.000-00" inputMode="numeric" autoComplete="off" required />
         <Data rotulo="Nascimento" nome="nascimento" max={hojeISO()} required />
@@ -575,10 +569,10 @@ function CamposDaAdmissao() {
       ) : null}
       <div className="folha-duas">
         <Texto rotulo="Departamento" nome="departamento" list="lancar-departamentos" autoComplete="off" required />
-        <Texto rotulo="Cargo" nome="cargo" placeholder="Auxiliar Administrativo" required />
+        <Texto rotulo="Cargo" nome="cargo" required />
       </div>
       <div className="folha-duas">
-        <Texto rotulo="Salário" nome="salario" inputMode="decimal" placeholder="3.500,00" required />
+        <Texto rotulo="Salário" nome="salario" inputMode="decimal" placeholder="0,00" required />
         <Texto rotulo="Jornada" nome="jornada" defaultValue="44h semanais" />
       </div>
       <Texto rotulo="Gestor imediato" nome="gestor" list="lancar-gestores" autoComplete="off" dica="opcional" />
