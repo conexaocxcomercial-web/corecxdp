@@ -219,7 +219,7 @@ O avatar abre um popover no computador e uma folha no celular (no celular, o mes
 - **`lib/permissoes.js`:** `pode(perfil, ação)`, usado nas ações de servidor e nas telas.
 - **Alcance:** vem da sessão mais um cookie de escolha, sempre validado no servidor.
 - **`lib/calculos/`:** funções puras de folha gerencial, encargos por regime, provisões, rescisão e custo de desligar.
-- **Um único arquivo de tabelas** (INSS, FGTS, IRRF, salário mínimo etc.), com a fonte oficial de cada valor. Pesquisar as tabelas vigentes de 2026 na fase 7 e mostrar para conferência antes de usar. Nunca valores inventados.
+- **Um único arquivo de tabelas** (INSS, FGTS, IRRF, salário mínimo etc.), com a fonte oficial de cada valor: `lib/tabelas.js`, conferido em [tabelas.md](tabelas.md). Pesquisar as tabelas vigentes de 2026 na fase 7 e mostrar para conferência antes de usar. Nunca valores inventados.
 - **Regras de prazo** (45/90 dias, 30 dias, 2 dias, 10 dias, 15 dias, 30/11, 20/12) também num arquivo de configuração (`lib/regrasDePrazo.js`), conferidas pelo usuário em 13/10/2026, com dois acréscimos:
   - prazos de pagamento (férias, rescisão e 13º) que caem em fim de semana ou feriado antecipam para o dia útil anterior (em 2026, a 2ª parcela do 13º vence em 18/12, porque 20/12 é domingo);
   - afastamentos pela mesma doença (mesmo CID) com intervalo de até 60 dias somam os dias para contar os 15 dias da empresa e o encaminhamento ao INSS.
@@ -258,7 +258,7 @@ Toda fase é testada em 375px e 1440px, nos temas claro e escuro, e termina com 
 | 4 | **Dados de demonstração ampliados** ✅ concluída em 12/10/2026 | Gerador com datas ancoradas em hoje, parceiros, clientes, CNPJs, 18 meses de histórico | Números das telas atuais mudam com coerência ao trocar o alcance |
 | 5 | **Início da Gestão e Pendências** ✅ concluída em 13/10/2026 | **Primeiro: três estruturas da tela inicial lado a lado para escolha.** Depois: a escolhida, Pendências, regras de prazo em configuração | Aprovar e rejeitar no celular; prazos batem com os dados |
 | 6 | **Ficha e lista de colaboradores** ✅ concluída em 13/10/2026 | Resumo, números, abas com endereço, linha do tempo, valores mascarados, situação calculada | Abrir pelo alerta e cair na aba certa; Parceiro vê o CID como restrito |
-| 7 | **Tabelas e cálculos** | Arquivo de tabelas com fontes, cálculos puros, testes com casos conferidos | `node --test` passando; tabelas conferidas pelo usuário |
+| 7 | **Tabelas e cálculos** 🔎 pronta em 13/10/2026, esperando a conferência das tabelas ([tabelas.md](tabelas.md)) | Arquivo de tabelas com fontes, cálculos puros, testes com casos conferidos | `node --test` passando; tabelas conferidas pelo usuário |
 | 8 | **Lançar, Ocorrências, Atestados e afastamentos, Movimentações** | Lançar em três passos, autoria, tipos de afastamento, validação com CID, INSS acima de 15 dias; PRODUCT.md com a terminologia nova | Lançar de qualquer tela; aparece no histórico com autor; afastamento muda a situação |
 | 9 | **Admissões e Desligamentos** | Custos admissionais, passos, confirmação com rescisão estimada, custo de desligar hoje | Desligar alguém e ver custo, prazo e alerta |
 | 10 | **Estrutura de indicadores** | Central, modelo de painel e de detalhe; Quadro, Absenteísmo e Saúde, Movimentações; regra dos menos de 3 | Do número à pessoa em 3 cliques; grupo pequeno oculto |
@@ -353,4 +353,12 @@ O que cada fase entregou e o que ficou decidido no caminho, para a fase seguinte
 - Componentes novos: `Abas` (links, presas abaixo da barra do topo, rolando de lado no celular), `ValorProtegido`/`ProtecaoDeValores`/`BotaoDeMostrar`, `Ficha.jsx` (resumo, alertas, ações rápidas, números, dados, linha do tempo).
 - Conferido no navegador: o alerta de Pendências abre a ficha na aba Saúde; o Parceiro vê o CID como restrito e ele não aparece no HTML; o olho revela salário e CPF; o filtro de inativos mostra o tempo de casa até a saída. 375px e 1440px. `npm test`: 51 casos.
 - Para as próximas fases: o "custo estimado de desligar hoje" entra nos números da ficha com Desligamentos (fase 9), e o custo total estimado na Remuneração com a folha gerencial (fase 12); Férias no Lançar e a ação rápida de férias chegam com o módulo de Férias (fase 11).
+
+### Fase 7: tabelas e cálculos (13/10/2026, esperando a conferência)
+
+- `lib/tabelas.js`: arquivo único das tabelas de 2026, cada valor com fonte e confiança (oficial, calculado, jurisprudência, secundária). Inclui salário mínimo, INSS do empregado, IRRF com a redução da Lei 15.270/2025, salário-família, FGTS e multa por tipo de desligamento, INSS patronal, RAT e FAP, terceiros por FPAS, Simples Nacional por anexo, desoneração (só registro), verbas fixas, incidências de INSS, FGTS e IRRF por verba e as verbas da rescisão por tipo. Levantado em fonte oficial (Planalto, DOU, Receita, INSS); o documento de conferência é `docs/tabelas.md`.
+- `lib/calculos/` (puro): `inss.js` (faixa a faixa, até o teto), `irrf.js` (dedução legal ou simplificada, redução pelo rendimento bruto), `encargos.js` (alíquotas por regime e anexo; recusa estimar sem anexo do Simples, FPAS ou RAT), `custo.js` (custo estimado do mês com provisões, encargos e benefícios), `rescisao.js` (aviso proporcional com projeção, avos de 13º e férias, dobro, art. 479, FGTS do mês, multa sobre o saldo estimado, encargos pelo que tem incidência, custo de desligar), `dinheiro.js` (centavos, meio para cima).
+- Demonstração: cada cliente tem o anexo do Simples ou FPAS, RAT e FAP (fictícios), para a folha gerencial da fase 12.
+- Testes: `testes/calculos.test.js` com os exemplos oficiais da Receita para o IRRF, as faixas do INSS e rescisões conferidas à mão. `npm test`: 63 casos.
+- Nada disso vai para as telas antes da conferência do usuário (fases 9, 11 e 12).
 
