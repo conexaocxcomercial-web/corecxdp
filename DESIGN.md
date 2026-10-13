@@ -485,6 +485,14 @@ Organizado por assunto (fase 5 do redesenho). De cima para baixo:
 - **Revisão da implantação:** cartão liso com explicação de 14px, um item por linha com orientação de 13px e o botão "Conferir"/"Conferido" (fantasma vira violeta); rodapé em fio com o que falta e "Concluir revisão", desativado até tudo estar conferido.
 - **Esqueleto** (`.esqueleto`): blocos em Linha sobre mesa (preto a 12% no violeta) pulsando a 1,4s; some com movimento reduzido.
 
+### Ficha do colaborador
+- **Coluna do resumo** (300px, fixa a 76px do topo no computador; em cima no celular): papel com avatar lilás de 56px, matrícula em 13px 600 Tinta de Apoio, cargo e departamento em 15px 600, unidade em 14px, a pílula de situação e o tempo de casa em 13px. Abaixo, os alertas dela num cartão de linhas de 52px (pílula de dias, título 14px 600, seta) e as ações rápidas em duas colunas de botões mini sobre papel (no celular, uma linha que rola de lado).
+- **Abas** (`Abas`): links de 48px, 14px 600 em Tinta Secundária; a aberta em tinta cheia com fio violeta de 2px embaixo, a voz de ação marcando onde você está. Contagem numa pílula de Linha. Presas logo abaixo da barra do topo, sobre a mesa com fio; no celular rolam de lado e a borda direita esmaece para mostrar que há mais.
+- **Dados** (`Dados`): pares em duas colunas (uma no celular), rótulo de 13px Tinta de Apoio e valor de 15px; "não informado" em Tinta de Apoio.
+- **Valor protegido** (`ValorProtegido`): mascarado ("R$ •••••", "•••.•••.247-25") até a ação explícita; na ficha, com o olho de 44px do campo de senha da entrada; na lista, "Mostrar salários" no cabeçalho revela a coluna.
+- **Linha do tempo** (`LinhaDoTempo`): trilho de 1,5px em Linha Forte; ponto de 12px contornado em Tinta de Apoio (o mais recente em violeta cheio); data em 13px, o que foi em 15px 600 (leva à aba), detalhe em 14px e "registrado por" em 13px. Nunca mostra CID.
+- **Segunda linha da tabela** (`.tb-sub`): 13px Tinta de Apoio, para cargo e tempo de casa.
+
 ### Troca de tema
 A troca entre claro e escuro usa view-transition: a tela inteira se dissolve de um tema no outro em 0,32s (`cubic-bezier(0.16, 1, 0.3, 1)`). Com movimento reduzido, a troca é instantânea, como toda animação e transição do sistema.
 

@@ -41,8 +41,8 @@ Logins de teste, todos com a senha `demo123`: `teste@gmail.com` e `gestao@demo.t
 | `/pendencias` | Revisão da implantação, aprovações na linha (com Desfazer) e prazos, com filtros por assunto e data (só na demonstração) |
 | `/painel` | Início fora da demonstração: quadro de ativos, pendências do DP, séries de 6 meses e últimos lançamentos |
 | `/indicadores` | Turnover, absenteísmo, quadro, reincidência e tempo de casa (3, 6 ou 12 meses) |
-| `/colaboradores` | Lista com busca e filtros, cadastro de pessoa |
-| `/colaboradores/[matricula]` | Ficha: dados, situação e histórico da pessoa |
+| `/colaboradores` | Lista com busca, filtros (unidade, departamento, contrato, situação) e salário mascarado; cadastro de pessoa |
+| `/colaboradores/[matricula]` | Ficha: resumo, alertas, ações rápidas e abas com endereço (`?aba=ferias`); a situação vem dos eventos |
 | `/ocorrencias` | Faltas, atrasos e medidas disciplinares |
 | `/atestados` | Afastamentos médicos, com aprovar e rejeitar na linha |
 | `/movimentacoes` | Promoções, transferências, desligamentos, com checklist |
@@ -65,6 +65,7 @@ As telas internas ficam em `app/(sistema)/` (layout com barra do topo, menu late
 - `Sinais.jsx` — `Status` (pílula de situação).
 - `Navegacao.jsx` — menu lateral (computador). `BarraInferior.jsx` — navegação do celular. `Lancar.jsx` — folha "O que aconteceu?". `MenuDoUsuario.jsx` — menu do avatar e aba Menu. `BuscaDePessoa.jsx` — busca da barra do topo. `EscolhaDeCliente.jsx` — escolha de cliente e `TabelaDeClientes`. `TituloNaBarra.jsx` — título na barra do topo. `Tema.jsx` — tema claro/escuro.
 - `Inicio.jsx` — peças do Início: `FaixaDeUrgencia`, `FaixaDaImplantacao`, `FaixaDoInicio`, `Assunto`, `Atividade`. `Prazos.jsx` — `Prazo` (pílula de dias), `LinhaDePrazo`, `GrupoDePrazos`, `linkDaFicha`. `Pendencias.jsx` — `FilaDePendencias`, `Restantes`, `ListaDeAprovacoes` (aprovar e rejeitar na linha, com Desfazer), `ItemDaRevisao`, `ConcluirRevisao`.
+- `Ficha.jsx` — `ResumoDaPessoa`, `AlertasDaPessoa`, `AcoesRapidas`, `NumerosDaPessoa`, `Dados`, `LinhaDoTempo`. `Abas.jsx` — abas com endereço próprio. `Valores.jsx` — `ValorProtegido` (salário, CPF: mascarado, com o olho), `ProtecaoDeValores` e `BotaoDeMostrar` (revela a coluna da lista).
 - `Icones.jsx` — `Icone` (Material Symbols Rounded).
 - `Marca.jsx` — `Marca` (nome "core.cx · módulo dp" em texto) e `Assinatura` (logos de `public/marca/`, preto ou branco conforme o tema).
 
@@ -73,6 +74,7 @@ As telas internas ficam em `app/(sistema)/` (layout com barra do topo, menu late
 - `registros.js` — **porta de entrada das telas atuais**: `listar*`, `buscarColaborador`, `registrar*`, `mudar*`, `contarPendencias`, `resumirClientes`, `OPCOES`. Já devolve tudo recortado pelo alcance (cliente e CNPJ) e confere a permissão antes de gravar.
 - `dados/` — camada nova, no formato pensado para o Supabase: `regras.js` (alcance e recorte, puros e testados), `estrutura.js` (parceiros → clientes → CNPJs), `alcance.js` (`alcanceAtual`, `resumoDoAlcance`, `permissoesAtuais`; cookie de escolha sempre revalidado no servidor), `usuarios.js`. Os módulos novos ganham repositório aqui.
 - `prazos.js` — aprovações, prazos, implantação e revisão (puro, testado); as regras legais e os feriados ficam em `regrasDePrazo.js`, com a fonte de cada um; `calendario.js` — dia útil e feriados. `dados/pendencias.js` — leitura e decisões de Pendências (permissão e autoria); `dados/inicio.js` — números e assuntos do Início (os dois só na demonstração).
+- `pessoas.js` — situação calculada pelos eventos, tempo de casa, saldo de férias, números e linha do tempo da pessoa (puro, testado). `dados/pessoas.js` — lista e ficha nos dois modos (na demonstração, os dados completos; fora dela, adapta a planilha). `dados/recorte.js` — o recorte do alcance nos dados completos.
 - `permissoes.js` — `pode(perfil, ação)` e os perfis. `navegacao.js` — o que cada perfil vê no menu, na barra inferior e no Lançar (arquivo único).
 - `indicadores.js` — cálculos puros sobre os dados (sobrevivem à migração).
 - `avisos.js` — `AvisoAoUsuario` (erro com texto para a tela) e `mensagemParaTela(erro, padrao)`: qualquer outro erro vai para o log do servidor e a tela mostra o texto neutro. Telas usam isso, nunca `erro.message` direto.

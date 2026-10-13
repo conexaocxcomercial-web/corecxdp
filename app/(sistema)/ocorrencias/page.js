@@ -70,6 +70,7 @@ export default async function Ocorrencias({ searchParams }) {
         rotulo="Colaborador"
         nome="matricula"
         opcoes={ativos.map((p) => ({ valor: p.matricula, texto: `${p.nome} (${p.matricula})` }))}
+        defaultValue={parametros?.matricula || undefined}
         required
       />
       <div className="folha-duas">

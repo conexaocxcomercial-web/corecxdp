@@ -5,12 +5,12 @@
  * avisa no console quando o nome não está na lista.
  */
 export const ICONES = [
-  'add', 'arrow_back', 'arrow_forward', 'badge', 'chat', 'check', 'checklist',
-  'chevron_right', 'clinical_notes', 'close', 'contrast', 'dark_mode', 'domain', 'error', 'event',
+  'add', 'arrow_back', 'arrow_forward', 'badge', 'beach_access', 'chat', 'check', 'checklist',
+  'chevron_right', 'clinical_notes', 'close', 'contrast', 'dark_mode', 'description', 'domain', 'error', 'event',
   'event_available', 'event_busy', 'expand_more', 'fact_check', 'group', 'group_add', 'healing',
   'history', 'home', 'hourglass_empty', 'inbox', 'info', 'keep', 'keyboard_capslock',
   'left_panel_close', 'light_mode', 'login', 'logout', 'mail', 'menu', 'monitoring',
-  'pending_actions', 'person_add', 'schedule', 'search', 'search_off', 'sentiment_satisfied',
+  'pending_actions', 'person_add', 'person_remove', 'redeem', 'schedule', 'search', 'search_off', 'sentiment_satisfied',
   'supervisor_account', 'swap_horiz', 'task_alt', 'trending_down', 'trending_flat',
   'trending_up', 'visibility', 'visibility_off', 'warning', 'work',
 ];

@@ -15,7 +15,6 @@ import {
   listarColaboradores,
   mudarChecklist,
   mudarStatusDoAtestado,
-  mudarStatusDoColaborador,
   registrarAtestado,
   registrarMovimentacao,
   registrarOcorrencia,
@@ -187,7 +186,8 @@ export async function salvarColaborador(_estado, dados) {
     cargo: ler(dados, 'cargo'),
     gestor: ler(dados, 'gestor'),
     admissao: ler(dados, 'admissao'),
-    status: ler(dados, 'status') || 'Ativo',
+    // A situação vem dos registros: toda pessoa nova entra como Ativo.
+    status: 'Ativo',
     cnpj: ler(dados, 'cnpj'),
   };
 
@@ -213,18 +213,6 @@ export async function salvarColaborador(_estado, dados) {
   } catch (erro) {
     return { erro: mensagemDeFalha(erro) };
   }
-}
-
-export async function alterarStatusDoColaborador(dados) {
-  const linha = Number(ler(dados, 'linha'));
-  const status = ler(dados, 'status');
-  if (!linha || !status) return;
-
-  await mudarStatusDoColaborador(linha, status);
-  revalidatePath('/colaboradores');
-  revalidatePath(`/colaboradores/${ler(dados, 'matricula')}`);
-  revalidatePath('/painel');
-  revalidatePath('/indicadores');
 }
 
 /* ------------------------------------------------------------- ocorrências */

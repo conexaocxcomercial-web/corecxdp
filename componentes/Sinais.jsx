@@ -14,6 +14,8 @@ const TONS = {
   Férias: 'az',
   Rejeitado: 'cr',
   Não: 'cr',
+  Vencida: 'cr',
+  'A vencer': 'at',
   Inativo: '',
 };
 

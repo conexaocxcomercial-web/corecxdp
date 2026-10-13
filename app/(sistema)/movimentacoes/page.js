@@ -86,10 +86,16 @@ export default async function Movimentacoes({ searchParams }) {
         rotulo="Colaborador"
         nome="matricula"
         opcoes={pessoas.map((p) => ({ valor: p.matricula, texto: `${p.nome} (${p.matricula})` }))}
+        defaultValue={parametros?.matricula || undefined}
         required
       />
       <div className="folha-duas">
-        <Selecao rotulo="Tipo" nome="tipo" opcoes={OPCOES.tiposDeMovimentacao} />
+        <Selecao
+          rotulo="Tipo"
+          nome="tipo"
+          opcoes={OPCOES.tiposDeMovimentacao}
+          defaultValue={OPCOES.tiposDeMovimentacao.includes(parametros?.tipo) ? parametros.tipo : undefined}
+        />
         <Data rotulo="Passa a valer em" nome="efetiva" defaultValue={hojeISO()} required />
       </div>
       <Paragrafo

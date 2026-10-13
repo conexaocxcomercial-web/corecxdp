@@ -3847,3 +3847,375 @@ html.com-folha {
     bottom: calc(76px + env(safe-area-inset-bottom));
   }
 }
+
+/* ============================================================
+   FICHA E LISTA DE COLABORADORES — fase 6 do redesenho. Resumo em
+   cinco segundos à esquerda (em cima no celular), abas com endereço
+   à direita, valores protegidos com o olho da entrada.
+   ============================================================ */
+
+/* Segunda linha de uma célula de tabela (cargo, tempo de casa). */
+.tb-sub {
+  display: block;
+  margin-top: 2px;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--tinta-3);
+}
+.tb-autor {
+  color: var(--tinta-3);
+}
+
+/* ------------------------------------------------------------ ficha */
+.ficha {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  align-items: start;
+  gap: 32px;
+}
+.ficha-lado {
+  position: sticky;
+  top: 76px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.ficha-resumo {
+  display: flex;
+  gap: 16px;
+  padding: 20px;
+  background: var(--papel);
+  border-radius: var(--r-card);
+  box-shadow: var(--e1);
+}
+.avatar-ficha {
+  width: 56px;
+  height: 56px;
+  min-width: 56px;
+  font-size: 18px;
+}
+.ficha-resumo-txt {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.ficha-mat {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--tinta-3);
+}
+.ficha-cargo {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.ficha-cnpj {
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--tinta-2);
+}
+.ficha-situacao {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  margin-top: 8px;
+}
+.ficha-casa {
+  font-size: 13px;
+  color: var(--tinta-2);
+}
+
+/* Alertas dela: cada um leva à aba certa. */
+.ficha-alertas {
+  background: var(--papel);
+  border-radius: var(--r-card);
+  box-shadow: var(--e1);
+  overflow: hidden;
+}
+.ficha-alertas li + li {
+  border-top: 1px solid var(--linha);
+}
+.ficha-alerta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 8px 12px 8px 16px;
+  color: inherit;
+  transition: background 0.14s;
+}
+@media (hover: hover) {
+  .ficha-alerta:hover {
+    background: color-mix(in srgb, var(--papel-2) 70%, var(--papel));
+  }
+  .ficha-alerta:hover .prazo-ir {
+    color: var(--acao-texto);
+  }
+}
+.ficha-alerta-t {
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+.ficha-alertas-pe {
+  padding: 10px 16px 12px;
+}
+.ficha-alertas-pe .nota {
+  font-size: 13px;
+}
+
+/* Ações rápidas: duas colunas ao lado; no celular, uma linha que rola de lado. */
+.ficha-acoes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.ficha-acoes .btn {
+  justify-content: flex-start;
+  background: var(--papel);
+  box-shadow: var(--e1);
+}
+@media (hover: hover) {
+  .ficha-acoes .btn:hover {
+    background: var(--papel);
+    box-shadow: var(--e2);
+  }
+}
+
+/* ------------------------------------------------------------- abas */
+.abas {
+  position: sticky;
+  top: 56px;
+  z-index: 12;
+  background: var(--mesa);
+  box-shadow: inset 0 -1px 0 var(--linha);
+}
+.abas-l {
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+}
+.abas-l::-webkit-scrollbar {
+  display: none;
+}
+.aba {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 48px;
+  padding: 0 10px;
+  border-bottom: 2px solid transparent;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--tinta-2);
+  white-space: nowrap;
+  transition: color 0.15s, border-color 0.15s;
+}
+.aba:hover {
+  color: var(--tinta);
+}
+/* A aba aberta: fio violeta embaixo, a voz de ação marcando onde você está. */
+.aba.ativa {
+  color: var(--tinta);
+  border-bottom-color: var(--acao);
+}
+.aba-n {
+  min-width: 20px;
+  padding: 0 6px;
+  border-radius: var(--r-pill);
+  background: var(--linha);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 20px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.ficha-aba {
+  margin-top: 28px;
+}
+
+/* ------------------------------------------------------------ dados */
+.dados {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px 32px;
+}
+.dados dt {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--tinta-3);
+}
+.dados dd {
+  margin-top: 4px;
+  font-size: 15px;
+  line-height: 1.45;
+  min-height: 22px;
+}
+.dados-vazio {
+  color: var(--tinta-3);
+}
+.ficha-salario {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* Valor protegido: mascarado até a ação explícita, com o olho da entrada. */
+.protegido {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+.protegido-olho {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin: -12px -10px -12px 0;
+  border-radius: var(--r-ctrl);
+  background: none;
+  border: none;
+  color: var(--tinta-3);
+  cursor: pointer;
+  transition: color 0.15s;
+}
+.protegido-olho:hover {
+  color: var(--tinta);
+}
+.protegido-olho .material-symbols-rounded {
+  font-size: 20px;
+}
+.ficha-salario .protegido-olho {
+  margin: -8px 0;
+}
+
+/* --------------------------------------------------- linha do tempo */
+.tempo {
+  position: relative;
+}
+.tempo::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  left: 5px;
+  width: 1.5px;
+  background: var(--linha-2);
+}
+.tempo-i {
+  position: relative;
+  display: flex;
+  padding-left: 28px;
+}
+.tempo-i + .tempo-i {
+  margin-top: 18px;
+}
+.tempo-ponto {
+  position: absolute;
+  top: 5px;
+  left: 0;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--papel);
+  box-shadow: inset 0 0 0 2px var(--tinta-3);
+}
+.tempo-i:first-child .tempo-ponto {
+  background: var(--acao);
+  box-shadow: none;
+}
+.tempo-txt {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.tempo-data {
+  font-size: 13px;
+  color: var(--tinta-3);
+}
+.tempo-t {
+  align-self: flex-start;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.35;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 4px;
+  transition: text-decoration-color 0.15s;
+}
+@media (hover: hover) {
+  .tempo-t:hover {
+    text-decoration-color: currentColor;
+  }
+}
+.tempo-d {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--tinta-2);
+  text-wrap: pretty;
+}
+.tempo-autor {
+  font-size: 13px;
+  color: var(--tinta-3);
+}
+
+/* ------------------------------------------------- telas médias e toque */
+@media (max-width: 1100px) {
+  .ficha {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+  .ficha-lado {
+    position: static;
+  }
+  .ficha-acoes {
+    display: flex;
+    gap: 8px;
+    margin: 0 calc(var(--respiro) * -1);
+    padding: 2px var(--respiro) 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    scroll-snap-type: x proximity;
+  }
+  .ficha-acoes::-webkit-scrollbar {
+    display: none;
+  }
+  .ficha-acoes .btn {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+  }
+}
+@media (max-width: 900px) {
+  /* No celular as abas rolam de lado: a borda some aos poucos para mostrar que há mais. */
+  .abas-l {
+    mask-image: linear-gradient(to right, var(--tinta) calc(100% - 28px), transparent);
+  }
+  .abas {
+    top: 52px;
+    margin: 0 calc(var(--respiro) * -1);
+    padding: 0 calc(var(--respiro) - 6px);
+  }
+  .ficha-aba {
+    margin-top: 20px;
+  }
+  .ficha-resumo {
+    padding: 16px;
+  }
+  .dados {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+  }
+  .ficha-salario {
+    font-size: 24px;
+  }
+}

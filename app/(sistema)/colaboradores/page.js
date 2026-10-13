@@ -1,6 +1,7 @@
-import { OPCOES, listarColaboradores, mensagemParaTela } from '@/lib/registros';
+import { OPCOES, mensagemParaTela } from '@/lib/registros';
+import { listarPessoas } from '@/lib/dados/pessoas';
 import { alcanceAtual, permissoesAtuais } from '@/lib/dados/alcance';
-import { apenasDigitos, formatarData, hojeISO, plural } from '@/lib/formato';
+import { apenasDigitos, emReais, formatarData, hojeISO, paraBusca } from '@/lib/formato';
 import {
   Cabecalho,
   Cartao,
@@ -16,65 +17,79 @@ import { Status } from '@/componentes/Sinais';
 import { Busca, Seletor } from '@/componentes/Filtros';
 import { PainelDeRegistro } from '@/componentes/PainelDeRegistro';
 import { Data, Selecao, Texto } from '@/componentes/Campos';
+import { nomeDoContrato } from '@/componentes/Ficha';
+import { BotaoDeMostrar, ProtecaoDeValores, ValorProtegido } from '@/componentes/Valores';
 import { salvarColaborador } from '@/app/acoes';
 
 export const metadata = { title: 'Colaboradores' };
 
-const GRADE = '1.6fr 100px 1fr 1.2fr 104px 120px';
+const CONTRATOS = ['indeterminado', 'experiência', 'estágio', 'aprendiz', 'temporário'];
 
+/**
+ * Lista de colaboradores (fase 6 do redesenho): busca por nome, matrícula,
+ * cargo ou CPF; filtros por unidade, departamento, contrato e situação (a
+ * situação vem dos eventos); salário mascarado, revelado só por "Mostrar
+ * salários" (LGPD).
+ */
 export default async function Colaboradores({ searchParams }) {
   const parametros = await searchParams;
-  const busca = String(parametros?.busca || '').trim().toLowerCase();
-  const area = String(parametros?.area || '');
-  const situacao = String(parametros?.status || '');
+  const busca = paraBusca(parametros?.busca || '');
   const [permissoes, alcance] = await Promise.all([permissoesAtuais(), alcanceAtual()]);
-  const cnpjs = alcance?.opcoes.cnpjs || [];
+  const cnpjsDoCadastro = alcance?.opcoes.cnpjs || [];
 
-  let pessoas;
+  let lista;
   try {
-    pessoas = await listarColaboradores();
+    lista = await listarPessoas();
   } catch (erro) {
     return (
       <>
         <Cabecalho titulo="Colaboradores" />
         <Wrap>
           <Faixa tom="erro">
-            {mensagemParaTela(
-              erro,
-              'Não foi possível carregar os colaboradores agora. Recarregue a página em alguns segundos.'
-            )}
+            {mensagemParaTela(erro, 'Não foi possível carregar os colaboradores agora. Recarregue a página em alguns segundos.')}
           </Faixa>
         </Wrap>
       </>
     );
   }
 
-  const areas = [...new Set([...OPCOES.departamentos, ...pessoas.map((p) => p.departamento)])]
-    .filter(Boolean)
-    .sort((a, b) => a.localeCompare(b, 'pt-BR'));
+  const { pessoas, cnpjs, completo } = lista;
+  const departamentos = [...new Set(pessoas.map((pessoa) => pessoa.departamento).filter(Boolean))].sort((a, b) =>
+    a.localeCompare(b, 'pt-BR')
+  );
+  const area = departamentos.includes(parametros?.area) ? parametros.area : '';
+  const situacao = OPCOES.statusColaborador.includes(parametros?.status) ? parametros.status : '';
+  const contrato = CONTRATOS.includes(parametros?.contrato) ? parametros.contrato : '';
+  const unidade = cnpjs.some((item) => item.id === parametros?.unidade) ? parametros.unidade : '';
+  const comUnidade = cnpjs.length > 1;
+  const comSalario = completo && pessoas.some((pessoa) => pessoa.salario);
 
   const digitos = apenasDigitos(busca);
   const filtradas = pessoas.filter((pessoa) => {
     const combina =
       !busca ||
-      pessoa.nome.toLowerCase().includes(busca) ||
-      pessoa.matricula.toLowerCase().includes(busca) ||
-      pessoa.cargo.toLowerCase().includes(busca) ||
+      paraBusca(pessoa.nome).includes(busca) ||
+      paraBusca(pessoa.matricula).includes(busca) ||
+      paraBusca(pessoa.cargo).includes(busca) ||
       (digitos.length >= 3 && apenasDigitos(pessoa.cpf).includes(digitos));
-
     return (
       combina &&
       (!area || pessoa.departamento === area) &&
-      (!situacao || pessoa.status === situacao)
+      (!situacao || pessoa.situacao === situacao) &&
+      (!contrato || pessoa.contrato === contrato) &&
+      (!unidade || pessoa.cnpjId === unidade)
     );
   });
+  const noQuadro = pessoas.filter((pessoa) => pessoa.situacao !== 'Inativo').length;
+  const filtrado = Boolean(busca || area || situacao || contrato || unidade);
+  const sairam = pessoas.length - noQuadro;
 
   const cadastro = (abrirAoCarregar = false) => (
     <PainelDeRegistro
       abrirAoCarregar={abrirAoCarregar}
       abrir="Cadastrar"
       titulo="Cadastrar colaborador"
-      descricao="A matrícula é gerada automaticamente, na sequência das já cadastradas."
+      descricao="A matrícula é gerada automaticamente, na sequência das já cadastradas. A situação vem dos registros: entra como Ativo."
       acao={salvarColaborador}
       enviar="Cadastrar colaborador"
       enviando="Cadastrando…"
@@ -85,36 +100,58 @@ export default async function Colaboradores({ searchParams }) {
         <Data rotulo="Admissão" nome="admissao" defaultValue={hojeISO()} required />
       </div>
       <Texto rotulo="Cargo" nome="cargo" placeholder="Analista de Operações Júnior" required />
-      {cnpjs.length > 1 ? (
+      {cnpjsDoCadastro.length > 1 ? (
         <Selecao
           rotulo="CNPJ"
           nome="cnpj"
-          defaultValue={(alcance.cnpj || cnpjs.find((item) => item.tipo === 'matriz') || cnpjs[0]).cnpj}
-          opcoes={cnpjs.map((item) => ({ valor: item.cnpj, texto: `${item.nome} (${item.cnpj})` }))}
+          defaultValue={(alcance.cnpj || cnpjsDoCadastro.find((item) => item.tipo === 'matriz') || cnpjsDoCadastro[0]).cnpj}
+          opcoes={cnpjsDoCadastro.map((item) => ({ valor: item.cnpj, texto: `${item.nome} (${item.cnpj})` }))}
         />
       ) : null}
-      <div className="folha-duas">
-        <Selecao rotulo="Área" nome="departamento" opcoes={areas} />
-        <Selecao rotulo="Situação" nome="status" opcoes={OPCOES.statusColaborador} />
-      </div>
-      <Texto
-        rotulo="Gestor imediato"
-        nome="gestor"
-        dica="opcional"
-        placeholder="Nome de quem responde pela pessoa"
+      <Selecao
+        rotulo="Departamento"
+        nome="departamento"
+        opcoes={[...new Set([...departamentos, ...OPCOES.departamentos])].sort((a, b) => a.localeCompare(b, 'pt-BR'))}
       />
+      <Texto rotulo="Gestor imediato" nome="gestor" dica="opcional" placeholder="Nome de quem responde pela pessoa" />
     </PainelDeRegistro>
   );
 
+  const colunas = [
+    { rotulo: 'Nome', chave: 'nome', grade: '1.7fr' },
+    { rotulo: 'Departamento', chave: 'area', grade: '1fr' },
+    ...(comUnidade ? [{ rotulo: 'Unidade', chave: 'unidade', grade: '1fr' }] : []),
+    ...(completo ? [{ rotulo: 'Contrato', chave: 'contrato', grade: '130px' }] : []),
+    { rotulo: 'Admissão', chave: 'admissao', grade: '140px', alinha: 'd' },
+    ...(comSalario ? [{ rotulo: 'Salário', chave: 'salario', grade: '120px', alinha: 'd' }] : []),
+    { rotulo: 'Situação', chave: 'situacao', grade: '110px' },
+  ];
+  const grade = colunas.map((coluna) => coluna.grade).join(' ');
+
   return (
-    <>
+    <ProtecaoDeValores>
       <Cabecalho
         titulo="Colaboradores"
-        subtitulo={`${filtradas.length} de ${pessoas.length}`}
-        acoes={permissoes.lancar ? cadastro(parametros?.lancar === '1') : null}
+        subtitulo={
+          filtrado
+            ? `${filtradas.length} de ${pessoas.length} com o filtro`
+            : `${noQuadro} no quadro${sairam ? ` · ${sairam} ${sairam === 1 ? 'já saiu' : 'já saíram'}` : ''}`
+        }
+        acoes={
+          <>
+            {comSalario ? <BotaoDeMostrar rotulo="salários" /> : null}
+            {permissoes.lancar ? cadastro(parametros?.lancar === '1') : null}
+          </>
+        }
       >
         <Busca placeholder="Buscar por nome, matrícula, cargo ou CPF" />
-        <Seletor chave="area" rotulo="Todas as áreas" opcoes={areas} />
+        {comUnidade ? (
+          <Seletor chave="unidade" rotulo="Todas as unidades" opcoes={cnpjs.map((item) => ({ valor: item.id, rotulo: item.nome }))} />
+        ) : null}
+        <Seletor chave="area" rotulo="Todos os departamentos" opcoes={departamentos} />
+        {completo ? (
+          <Seletor chave="contrato" rotulo="Todos os contratos" opcoes={CONTRATOS.map((item) => ({ valor: item, rotulo: nomeDoContrato(item) }))} />
+        ) : null}
         <Seletor chave="status" rotulo="Todas as situações" opcoes={OPCOES.statusColaborador} />
       </Cabecalho>
 
@@ -129,36 +166,40 @@ export default async function Colaboradores({ searchParams }) {
                 : 'Nenhum colaborador corresponde à busca. Limpe os filtros ou tente outro termo.'}
             </Vazio>
           ) : (
-            <Tabela
-              grade={GRADE}
-              colunas={[
-                { rotulo: 'Nome' },
-                { rotulo: 'Matrícula', alinha: 'd' },
-                { rotulo: 'Área' },
-                { rotulo: 'Cargo' },
-                { rotulo: 'Admissão', alinha: 'd' },
-                { rotulo: 'Situação' },
-              ]}
-            >
+            <Tabela grade={grade} colunas={colunas}>
               {filtradas.map((pessoa) => (
-                <LinhaTabela key={pessoa.matricula} grade={GRADE}>
+                <LinhaTabela key={pessoa.matricula} grade={grade}>
                   <Celula>
-                    <Nome href={`/colaboradores/${pessoa.matricula}`}>{pessoa.nome}</Nome>
+                    <Nome href={`/colaboradores/${encodeURIComponent(pessoa.matricula)}`}>{pessoa.nome}</Nome>
+                    <span className="tb-sub">
+                      <span className="num">{pessoa.matricula}</span>
+                      {pessoa.cargo ? ` · ${pessoa.cargo}` : ''}
+                    </span>
                   </Celula>
-                  <Celula rotulo="Matrícula" alinha="d">
-                    <span className="num text-[var(--tinta-2)]">{pessoa.matricula}</span>
-                  </Celula>
-                  <Celula rotulo="Área" alinha="c">
+                  <Celula rotulo="Departamento" alinha="c">
                     <span className="text-[var(--tinta-2)]">{pessoa.departamento || '—'}</span>
                   </Celula>
-                  <Celula rotulo="Cargo" alinha="c">
-                    <span className="text-[var(--tinta-2)]">{pessoa.cargo || '—'}</span>
-                  </Celula>
+                  {comUnidade ? (
+                    <Celula rotulo="Unidade" alinha="c">
+                      <span className="text-[var(--tinta-2)]">{pessoa.cnpj?.nome.split(' · ').pop() || '—'}</span>
+                    </Celula>
+                  ) : null}
+                  {completo ? (
+                    <Celula rotulo="Contrato" alinha="c">
+                      <span className="text-[var(--tinta-2)]">{nomeDoContrato(pessoa.contrato) || '—'}</span>
+                    </Celula>
+                  ) : null}
                   <Celula rotulo="Admissão" alinha="d">
                     <span className="num">{formatarData(pessoa.admissao)}</span>
+                    <span className="tb-sub">{pessoa.tempoDeCasa}</span>
                   </Celula>
+                  {comSalario ? (
+                    <Celula rotulo="Salário" alinha="d">
+                      {pessoa.salario ? <ValorProtegido valor={emReais(pessoa.salario)} mascara="R$ •••••" rotulo="Salário" /> : '—'}
+                    </Celula>
+                  ) : null}
                   <Celula rotulo="Situação" alinha="c">
-                    <Status>{pessoa.status}</Status>
+                    <Status>{pessoa.situacao}</Status>
                   </Celula>
                 </LinhaTabela>
               ))}
@@ -166,6 +207,6 @@ export default async function Colaboradores({ searchParams }) {
           )}
         </Cartao>
       </Wrap>
-    </>
+    </ProtecaoDeValores>
   );
 }
