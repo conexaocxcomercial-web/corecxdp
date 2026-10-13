@@ -40,7 +40,7 @@ Uma plataforma só, vendida por parceiros, cada um com a própria identidade (wh
 - Isolamento em dois níveis: um parceiro nunca vê os clientes de outro parceiro; uma empresa só vê os próprios CNPJs. Os dados podem ser vistos por CNPJ ou consolidados, dentro do que o perfil alcança. O recorte vem da sessão; hoje, um usuário com `Cliente = '*'` enxerga todos (equivale à Administração da plataforma).
 - Aprovações acontecem só dentro da empresa. A contabilidade não recebe avisos nem solicitações.
 - Toda ação relevante fica registrada com autor e data.
-- Valores calculados são estimativas para gestão. O cálculo oficial de folha, encargos e rescisão é da contabilidade.
+- Valores calculados são estimativas para gestão. **A plataforma mostra a ordem de grandeza dos custos para a gestão; cálculos trabalhistas são da contabilidade.**
 - Dados de saúde e pessoais seguem as regras de LGPD de [docs/conceito.md › 9](docs/conceito.md#9-regras-de-privacidade-lgpd): CID individual só para Gestão da empresa e Administração, indicadores de saúde sempre agregados e ocultos em grupos com menos de 3 pessoas, salário/CPF/dados bancários mascarados nas listas.
 - Escala esperada: de dezenas a cerca de 500 clientes em 12 meses. Suporte aos clientes finais pela Conexão CX.
 
@@ -54,14 +54,16 @@ Uma plataforma só, vendida por parceiros, cada um com a própria identidade (wh
 - Perfis Gestão da empresa, Parceiro e Administração com permissões, alcance parceiro → cliente → CNPJ e CID restrito ao Parceiro (no modo de demonstração; fora dela, todo login é Gestão da empresa).
 - Dados em Google Sheets (API v4, conta de serviço). Stack: Next.js 15 (App Router), React 19, JavaScript, Tailwind 3.4. Deploy na Vercel.
 
-**Ainda não existe e o conceito exige:** perfis, parceiros e vários CNPJs fora do modo de demonstração, white-label (cores e logo do parceiro), upload da planilha modelo (aceitando ex-colaboradores dos últimos 12 meses), documentos com validade, alertas de prazo, registro de autoria, e os módulos de folha gerencial, férias, 13º, benefícios, encargos e custos admissionais e demissionais. Dados obrigatórios de cada cadastro em [docs/conceito.md › 4](docs/conceito.md#4-como-os-dados-funcionam); ficha do colaborador em [› 7](docs/conceito.md#7-ficha-do-colaborador); tela inicial por perfil em [› 10](docs/conceito.md#10-tela-inicial-por-perfil).
+**Ainda não existe e o conceito exige:** perfis, parceiros e vários CNPJs fora do modo de demonstração, white-label (cores e logo do parceiro), upload da planilha modelo (aceitando ex-colaboradores dos últimos 12 meses), documentos com validade, alertas de prazo, registro de autoria, e os módulos de folha gerencial, férias, 13º, benefícios, encargos estimados e custos admissionais e demissionais informados. Dados obrigatórios de cada cadastro em [docs/conceito.md › 4](docs/conceito.md#4-como-os-dados-funcionam); ficha do colaborador em [› 7](docs/conceito.md#7-ficha-do-colaborador); tela inicial por perfil em [› 10](docs/conceito.md#10-tela-inicial-por-perfil).
 
 **Cálculos:**
 - Todo valor calculado é estimativa e aparece identificado como tal. Chamar de **"custo estimado de pessoal"** ou **"folha gerencial"**, nunca só "folha".
-- Alíquotas e tabelas (INSS, FGTS, IRRF etc.) ficam em um único arquivo de configuração, fácil de atualizar. Nunca valores soltos no código nem inventados: usar as tabelas vigentes e informar a fonte.
-- Os encargos dependem do regime tributário (Simples Nacional, Lucro Presumido ou Lucro Real), cadastrado por empresa.
+- Custo estimado: salários + provisões (férias: salário ÷ 12, mais 1/3; 13º: salário ÷ 12) + encargos + benefícios, com total e fator de custo (quanto cada R$ 1 de salário custa).
+- Encargos: um percentual único por regime tributário, configurável por empresa (padrão de cerca de 8% no Simples, só o FGTS, e cerca de 36% no Lucro Presumido, no Lucro Real e no Anexo IV). Sem o anexo ou sem o regime, vale 8% com o aviso "anexo a conferir" ou "regime a conferir".
+- Percentuais e frações ficam num único arquivo de configuração ([lib/tabelas.js](lib/tabelas.js)), nunca soltos no código.
+- Custos admissionais e demissionais são **informados** pela empresa ao registrar a admissão ou o desligamento. Nada de rescisão calculada, INSS ou IRRF do colaborador, FGTS a sacar ou "custo de desligar hoje".
 
-**Fora do escopo:** controle de ponto, eSocial, integração com sistemas de contabilidade, holerite e cálculo oficial de folha. Não criar telas, rotas, menus nem modelos de dados para eles.
+**Fora do escopo:** controle de ponto, eSocial, integração com sistemas de contabilidade, holerite, cálculo oficial de folha e cálculos trabalhistas. Não criar telas, rotas, menus nem modelos de dados para eles.
 
 **Banco de dados:** o Google Sheets é provisório. Antes do lançamento, os dados migram para o Supabase, já com a hierarquia parceiro → cliente → CNPJ.
 

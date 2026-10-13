@@ -118,7 +118,7 @@ Empresa sem colaboradores: a tela vira primeiro passo ("Cadastre a primeira pess
 
 **Topo (resumo em 5 segundos):** avatar lilás, nome em 28px, cargo · departamento · CNPJ, situação, tempo de casa; **os alertas dela** em faixas; **ações rápidas** numa linha que rola de lado (Atestado ou afastamento, Férias, Ocorrência, Movimentação, Desligar), cada uma abrindo o Lançar já com a pessoa.
 
-**Números dela:** tempo de casa, dias de atestado no ano, faltas no ano, saldo de férias, custo estimado de desligar hoje.
+**Números dela:** tempo de casa, dias de atestado no ano, faltas no ano, saldo de férias, custo estimado do mês.
 
 **Abas com endereço próprio** (`?aba=ferias`): Resumo · Contrato · Remuneração · Férias · Saúde · Ocorrências · Movimentações · Documentos · Histórico. A aba Desligamento só aparece para quem foi desligado.
 - Por quê abas e não blocos sanfonados: um alerta leva direto à aba certa, o voltar funciona e nove blocos abertos viram uma rolagem longa demais.
@@ -138,12 +138,12 @@ Empresa sem colaboradores: a tela vira primeiro passo ("Cadastre a primeira pess
 | Pendências | `/pendencias` | Fila única de aprovações e prazos, com filtro por tipo |
 | Colaboradores | `/colaboradores` | Filtros por CNPJ, departamento, contrato e situação; salário mascarado |
 | Admissões | `/admissoes` | Custos admissionais (exames, uniforme, outros), passos (registro antes do primeiro dia, exame admissional), acompanhamento da experiência |
-| Desligamentos | `/desligamentos` | Data, tipo e motivo → **confirmação com a rescisão estimada** e o prazo de 10 dias → concluir. Simulação "custo de desligar hoje" |
+| Desligamentos | `/desligamentos` | Data, tipo, motivo e **custos demissionais informados** → confirmação com o prazo de 10 dias para pagar a rescisão → concluir. Sem rescisão calculada |
 | Férias | `/ferias` | Períodos aquisitivos e saldo, programação com aprovação, vencidas com o custo da dobra, aviso de 30 dias, pagamento 2 dias antes |
 | **Atestados e afastamentos** | `/afastamentos` (`/atestados` redireciona) | Ver abaixo |
 | Ocorrências | `/ocorrencias` | Faltas, atrasos, advertências e suspensões, com autoria |
 | Movimentações | `/movimentacoes` | Só reajuste (alteração salarial), promoção, mudança de cargo e transferência, com "passa a valer em". Sem desligamento, sem afastamento e sem checklist |
-| Folha gerencial | `/folha` | Abas Resumo do mês · Por colaborador · Encargos (pelo regime tributário) · Provisões e 13º (parcelas e prazos). Sempre identificada como **estimativa** |
+| Folha gerencial | `/folha` | Abas Resumo do mês · Por colaborador · Provisões e 13º (parcelas e prazos). Encargos por um percentual único do regime (ou o da empresa), com o percentual à mostra. Sempre identificada como **estimativa** |
 | Benefícios | `/beneficios` | VA, VR, VT, plano de saúde e outros: quanto a empresa paga, quanto é descontado, quem tem e quem não tem |
 | Documentos | `/documentos` | Validade, vencendo, percentual de cadastros completos |
 | Empresa | `/empresa` | CNPJs, filiais, departamentos, regime tributário, usuários, **importação da planilha modelo** (baixar, subir, conferir erros, aceitar ex-colaboradores dos últimos 12 meses com data, tipo e motivo do desligamento), histórico de ações com autor |
@@ -193,7 +193,7 @@ Reaproveitar e estender antes de criar (regra do CLAUDE.md).
 | `Graficos` | ganha `Composicao` (barra empilhada do custo), `MiniSerie` e `Variacao`; a rosca sai, trocada por barras horizontais |
 | `Filtros` | ganha `SeletorDeAlcance` |
 
-Novos: `BarraInferior`, `MenuDoUsuario`, `BuscaDePessoa`, `Abas` (com endereço), `ValorProtegido` (olho), `Estimativa` (selo com a explicação do cálculo), `ItemPendente` (aprovar e rejeitar na linha), `LinhaDoTempo`, `Passos`, `Lancar`.
+Novos: `BarraInferior`, `MenuDoUsuario`, `BuscaDePessoa`, `Abas` (com endereço), `ValorProtegido` (olho), `Estimativa` (selo com a explicação do cálculo e o aviso "anexo a conferir" ou "regime a conferir" quando falta o dado), `ItemPendente` (aprovar e rejeitar na linha), `LinhaDoTempo`, `Passos`, `Lancar`.
 
 Estados obrigatórios em toda tela: esqueleto ao carregar (`loading.js` por rota), vazio que ensina o próximo passo, faixa de erro via `mensagemParaTela`, faixa "Só consulta" para o Parceiro.
 
@@ -218,8 +218,9 @@ O avatar abre um popover no computador e uma folha no celular (no celular, o mes
 - **Fora da demonstração:** as áreas atuais continuam lendo do Sheets por um adaptador; os módulos novos ficam ocultos.
 - **`lib/permissoes.js`:** `pode(perfil, ação)`, usado nas ações de servidor e nas telas.
 - **Alcance:** vem da sessão mais um cookie de escolha, sempre validado no servidor.
-- **`lib/calculos/`:** funções puras de folha gerencial, encargos por regime, provisões, rescisão e custo de desligar.
-- **Um único arquivo de tabelas** (INSS, FGTS, IRRF, salário mínimo etc.), com a fonte oficial de cada valor: `lib/tabelas.js`, conferido em [tabelas.md](tabelas.md). Pesquisar as tabelas vigentes de 2026 na fase 7 e mostrar para conferência antes de usar. Nunca valores inventados.
+- **A plataforma mostra a ordem de grandeza dos custos para a gestão; cálculos trabalhistas são da contabilidade** (decisão de 13/10/2026).
+- **`lib/calculos/`:** `custo.js`, puro: salários, provisões (férias: salário ÷ 12, mais 1/3; 13º: salário ÷ 12), encargos por um percentual único do regime, benefícios, total e fator de custo. Sem o anexo do Simples ou sem o regime, vale 8% com o aviso "anexo a conferir" ou "regime a conferir".
+- **Um único arquivo de parâmetros:** `lib/tabelas.js` (frações das provisões, percentual padrão por regime, limites do percentual configurado), explicado em [tabelas.md](tabelas.md).
 - **Regras de prazo** (45/90 dias, 30 dias, 2 dias, 10 dias, 15 dias, 30/11, 20/12) também num arquivo de configuração (`lib/regrasDePrazo.js`), conferidas pelo usuário em 13/10/2026, com dois acréscimos:
   - prazos de pagamento (férias, rescisão e 13º) que caem em fim de semana ou feriado antecipam para o dia útil anterior (em 2026, a 2ª parcela do 13º vence em 18/12, porque 20/12 é domingo);
   - afastamentos pela mesma doença (mesmo CID) com intervalo de até 60 dias somam os dias para contar os 15 dias da empresa e o encaminhamento ao INSS.
@@ -237,7 +238,7 @@ O avatar abre um popover no computador e uma folha no celular (no celular, o mes
 - **A importação mostra os erros por linha**, para corrigir no Excel e subir de novo.
 - **Cada empresa tem uma data de implantação.** Prazos vencidos antes dessa data aparecem como **"a conferir na implantação"**, e não como vencidos.
 - **Revisão antes dos alertas:** depois da importação, a Gestão passa por uma revisão do que parece inconsistente (férias aparentemente vencidas, experiências abertas, documentos sem validade). Os alertas de prazo começam quando a revisão termina.
-- **Regime tributário:** no Simples Nacional, o cadastro pede também o anexo, porque no Anexo IV o INSS patronal é pago à parte.
+- **Regime tributário:** no Simples Nacional, o cadastro pede também o anexo, porque no Anexo IV a contribuição patronal é paga à parte e o percentual padrão de encargos muda. Sem o anexo ou sem o regime, o cadastro da empresa mostra "anexo a conferir" ou "regime a conferir".
 - A planilha modelo e a tela de importação são da fase 14; a data de implantação, os prazos "a conferir" e a revisão já valem desde a fase 5 (na demonstração, a Oficina Bom Motor foi implantada há 12 dias e começa com a revisão aberta).
 - **Gerador de dados fictícios:** resultado estável, com **datas ancoradas no dia de hoje** para os alertas não envelhecerem. 2 parceiros (um fictício, identificado como tal, com cores próprias para provar o white-label); cerca de 6 clientes de 8 a 60 pessoas nos três regimes tributários; um cliente com matriz e 2 filiais; 18 meses de histórico com admissões, desligamentos (tipo e motivo), férias em todas as situações, afastamentos de todos os tipos, atestados com CID (alguns "não informado"), reajustes, benefícios, documentos vencendo e autoria em tudo.
 - **Logins da demo:** `gestao@`, `parceiro@`, `admin@`, além de `teste@gmail.com` (Gestão).
@@ -258,12 +259,12 @@ Toda fase é testada em 375px e 1440px, nos temas claro e escuro, e termina com 
 | 4 | **Dados de demonstração ampliados** ✅ concluída em 12/10/2026 | Gerador com datas ancoradas em hoje, parceiros, clientes, CNPJs, 18 meses de histórico | Números das telas atuais mudam com coerência ao trocar o alcance |
 | 5 | **Início da Gestão e Pendências** ✅ concluída em 13/10/2026 | **Primeiro: três estruturas da tela inicial lado a lado para escolha.** Depois: a escolhida, Pendências, regras de prazo em configuração | Aprovar e rejeitar no celular; prazos batem com os dados |
 | 6 | **Ficha e lista de colaboradores** ✅ concluída em 13/10/2026 | Resumo, números, abas com endereço, linha do tempo, valores mascarados, situação calculada | Abrir pelo alerta e cair na aba certa; Parceiro vê o CID como restrito |
-| 7 | **Tabelas e cálculos** ✅ concluída em 13/10/2026 (tabelas conferidas; revisão da contabilidade parceira antes de clientes reais, [tabelas.md](tabelas.md)) | Arquivo de tabelas com fontes, cálculos puros, testes com casos conferidos | `node --test` passando; tabelas conferidas pelo usuário |
+| 7 | **Tabelas e cálculos** ✅ concluída em 13/10/2026; simplificada no mesmo dia para a ordem de grandeza dos custos ([tabelas.md](tabelas.md)) | Parâmetros num arquivo só, cálculo puro do custo estimado, testes | `node --test` passando |
 | 8 | **Lançar, Ocorrências, Atestados e afastamentos, Movimentações** ✅ concluída em 13/10/2026 | Lançar em três passos, autoria, tipos de afastamento, validação com CID, INSS acima de 15 dias; PRODUCT.md com a terminologia nova | Lançar de qualquer tela; aparece no histórico com autor; afastamento muda a situação |
-| 9 | **Admissões e Desligamentos** | Custos admissionais, passos, confirmação com rescisão estimada, custo de desligar hoje | Desligar alguém e ver custo, prazo e alerta |
+| 9 | **Admissões e Desligamentos** | Admissão completa no Lançar com custos admissionais informados, passos, experiência; desligamento com custos demissionais informados e prazo da rescisão | Desligar alguém e ver custo informado, prazo e alerta |
 | 10 | **Estrutura de indicadores** | Central, modelo de painel e de detalhe; Quadro, Absenteísmo e Saúde, Movimentações; regra dos menos de 3 | Do número à pessoa em 3 cliques; grupo pequeno oculto |
 | 11 | **Férias** + painel Férias | Períodos, programação e aprovação, dobra, prazos | Vencidas, vencendo e programadas batem com a ficha |
-| 12 | **Folha gerencial, encargos e 13º** + painel Custos | Competência, composição, fator de custo, provisões e parcelas | Totais batem com os cálculos testados; trocar o regime muda os encargos |
+| 12 | **Folha gerencial, encargos e 13º** + painel Custos | Competência, composição, fator de custo, provisões e parcelas, selo de estimativa | Totais batem com os cálculos testados; trocar o regime ou o percentual da empresa muda os encargos |
 | 13 | **Benefícios** + painel Benefícios | Catálogo, empresa paga e desconto, quem não tem | Custo entra na folha gerencial |
 | 14 | **Documentos e Empresa** | Validade, completude, CNPJs, departamentos (com o anexo do Simples Nacional), usuários, importação da planilha modelo (abas e erros por linha, ver § 9 › Implantação), histórico | Subir uma planilha com erros e ver o que corrigir |
 | 15 | **Parceiro** | Carteira, consulta de um cliente, comparação, exportação (CSV e página para imprimir), white-label com checagem de contraste | Login de parceiro não vê nada de outro parceiro; marca troca |
@@ -273,7 +274,7 @@ Toda fase é testada em 375px e 1440px, nos temas claro e escuro, e termina com 
 
 ## 11. Limites
 
-**Não muda:** o visual da entrada (só os textos dos perfis e a prévia); as 8 cores da marca, a Helvetica, os ícones Material Symbols; nada de marca fixo nas telas; o que está fora do escopo (ponto, eSocial, integração com contabilidade, holerite, cálculo oficial de folha).
+**Não muda:** o visual da entrada (só os textos dos perfis e a prévia); as 8 cores da marca, a Helvetica, os ícones Material Symbols; nada de marca fixo nas telas; o que está fora do escopo (ponto, eSocial, integração com contabilidade, holerite, cálculo oficial de folha, cálculos trabalhistas).
 
 **Não coletado por enquanto:** gênero.
 
@@ -281,7 +282,7 @@ Toda fase é testada em 375px e 1440px, nos temas claro e escuro, e termina com 
 
 **Melhorias futuras registradas:**
 - Cadastrar a cidade de cada CNPJ, para os prazos de pagamento considerarem os feriados municipais e estaduais (hoje, só os nacionais e a Sexta-feira da Paixão).
-- Revisão das tabelas e dos cálculos pela contabilidade parceira antes do uso com clientes reais.
+- A contabilidade parceira confere os percentuais padrão de encargos antes do uso com clientes reais.
 
 ---
 
@@ -345,7 +346,7 @@ O que cada fase entregou e o que ficou decidido no caminho, para a fase seguinte
 - Gerador: dois afastamentos pelo mesmo CID que somam 18 dias (INSS no 16º dia somado), códigos guardados, implantação por cliente.
 - Testes: `testes/prazos.test.js` (dia útil, 13º de 2026, mesma doença, implantação e revisão, recorte por CNPJ, LGPD), `testes/calendario.test.js`, `testes/memoria.test.js`, navegação nos dois modos. `npm test`: 44 casos.
 - Conferido no navegador: aprovar baixa a contagem na hora e a barra inferior depois do servidor, e o atestado aparece aprovado em Atestados; Rejeitar e Desfazer voltam ao pendente; a revisão da Oficina só conclui com tudo conferido; o Parceiro vê "esperando a Gestão", sem botões. 375px e 1440px, claro e escuro.
-- Para as próximas fases: a ficha abre na aba pelo `?aba=` que os prazos já mandam (fase 6); o custo estimado de pessoal e o custo da dobra das férias vencidas entram com Férias (fase 11) e Folha gerencial (fase 12); feriados estaduais e municipais entram no cadastro da empresa (fase 14).
+- Para as próximas fases: a ficha abre na aba pelo `?aba=` que os prazos já mandam (fase 6); o custo estimado de pessoal entra com a Folha gerencial (fase 12); feriados estaduais e municipais entram no cadastro da empresa (fase 14).
 
 ### Fase 6: ficha e lista de colaboradores (13/10/2026)
 
@@ -356,7 +357,7 @@ O que cada fase entregou e o que ficou decidido no caminho, para a fase seguinte
 - Ficha: resumo à esquerda (fixo no computador; em cima no celular) com avatar, cargo, unidade, situação e tempo de casa, os alertas dela (prazos e aprovações, cada um levando à aba certa) e as ações rápidas (Atestado, Ocorrência, Movimentação, Desligar, abrindo o cadastro já com a pessoa). Abas com endereço (`?aba=`): Resumo (números, dados, últimos registros), Contrato (com as datas da experiência), Remuneração (salário com o olho, reajustes, benefícios), Férias (períodos, limite para tirar, gozo, situação), Saúde (CID "Restrito" para o Parceiro, sem sair do servidor), Ocorrências, Movimentações, Documentos (validade e prazo), Histórico (linha do tempo com autor) e Desligamento, só para quem saiu.
 - Componentes novos: `Abas` (links, presas abaixo da barra do topo, rolando de lado no celular), `ValorProtegido`/`ProtecaoDeValores`/`BotaoDeMostrar`, `Ficha.jsx` (resumo, alertas, ações rápidas, números, dados, linha do tempo).
 - Conferido no navegador: o alerta de Pendências abre a ficha na aba Saúde; o Parceiro vê o CID como restrito e ele não aparece no HTML; o olho revela salário e CPF; o filtro de inativos mostra o tempo de casa até a saída. 375px e 1440px. `npm test`: 51 casos.
-- Para as próximas fases: o "custo estimado de desligar hoje" entra nos números da ficha com Desligamentos (fase 9), e o custo total estimado na Remuneração com a folha gerencial (fase 12); Férias no Lançar e a ação rápida de férias chegam com o módulo de Férias (fase 11).
+- Para as próximas fases: o custo total estimado na Remuneração com a folha gerencial (fase 12); Férias no Lançar e a ação rápida de férias chegam com o módulo de Férias (fase 11).
 
 ### Fase 7: tabelas e cálculos (13/10/2026)
 
@@ -367,6 +368,20 @@ O que cada fase entregou e o que ficou decidido no caminho, para a fase seguinte
 - Nada disso vai para as telas antes da conferência do usuário (fases 9, 11 e 12).
 - Conferência do usuário em 13/10/2026: as sete escolhas aprovadas, com dois acréscimos: o saldo real do FGTS informado na ficha substitui a estimativa (o campo entra na fase 9, com o custo de desligar), e a rescisão desconta a 1ª parcela do 13º quando ela já foi paga (pelo valor informado ou pelo prazo legal). O 13º sobre o aviso que passa do fim do ano agora leva os avos do ano seguinte. `npm test`: 66 casos.
 - Antes do uso com clientes reais, a contabilidade parceira revisa as tabelas e os cálculos (`docs/tabelas.md`).
+
+### Simplificação dos cálculos (13/10/2026)
+
+- **Decisão do usuário:** a plataforma mostra a ordem de grandeza dos custos para a gestão; cálculos trabalhistas são da contabilidade.
+- **Modelo novo** (`lib/calculos/custo.js`, parâmetros em `lib/tabelas.js`):
+  - salários (soma dos cadastrados);
+  - provisões: férias, salário ÷ 12 mais 1/3; 13º, salário ÷ 12;
+  - encargos: um percentual único por regime sobre salários e provisões, configurável por empresa (`percentual_encargos`, de 0% a 80%). O padrão é cerca de 8% no Simples (só o FGTS) e cerca de 36% no Lucro Presumido, no Lucro Real e no Anexo IV;
+  - benefícios (soma dos cadastrados), total e fator de custo.
+- **Dado faltando:** sem o anexo do Simples ou sem o regime, não há erro. Vale 8%, com o aviso "anexo a conferir" ou "regime a conferir" no cadastro da empresa e no selo de estimativa (os dois chegam com as fases 12 e 14).
+- **Saíram:** `inss.js`, `irrf.js`, `encargos.js` e `rescisao.js`; as tabelas de INSS, IRRF, salário-família, FPAS, RAT, FAP e desoneração; as verbas e incidências da rescisão. O mesmo vale para o saldo real do FGTS na ficha e o "custo de desligar hoje". A versão anterior está no commit `e59e674`.
+- **Custos admissionais e demissionais** passam a ser valores informados pela empresa ao registrar a admissão ou o desligamento (fase 9).
+- Gerador: os clientes têm `anexo_simples` e `percentual_encargos`; a Transportes Rota Sul tem 38% configurado, para mostrar o percentual próprio.
+- Os prazos (`lib/regrasDePrazo.js`, `lib/calendario.js`) continuam: são datas, não cálculos.
 
 ### Fase 8: Lançar, Ocorrências, Atestados e afastamentos, Movimentações (13/10/2026)
 

@@ -67,17 +67,24 @@ Todos os perfis usam pelo celular, exceto o Parceiro, que usa principalmente no 
   - um a um, pelos formulários;
   - por **upload de planilha**: baixa o modelo, preenche e sobe.
 - **A planilha modelo aceita ex-colaboradores dos últimos 12 meses**, com data, tipo e motivo do desligamento, para que o turnover já nasça com histórico. O que mais ela traz e como funciona a implantação de uma empresa que já existe está na seção 11.
-- **A folha nasce do cadastro:** salário e benefícios de cada colaborador, mais as regras de encargos e provisões.
-- **Todo cálculo é estimativa** para gestão e conferência, e aparece identificado como tal. O nome usado é **"custo estimado de pessoal"** ou **"folha gerencial"**, nunca apenas "folha".
-- **Alíquotas e tabelas** (INSS, FGTS, IRRF etc.) ficam num único arquivo de configuração, fácil de atualizar. Nunca valores soltos no código, nunca valores inventados.
-- **Os encargos dependem do regime tributário** de cada empresa (Simples Nacional, Lucro Presumido ou Lucro Real), cadastrado por empresa.
+- **A plataforma mostra a ordem de grandeza dos custos para a gestão; cálculos trabalhistas são da contabilidade.** Não há INSS nem IRRF do colaborador, rescisão calculada, saldo ou multa do FGTS, nem encargos detalhados (decisão de 13/10/2026).
+- **A folha gerencial nasce do cadastro**, com estimativas simples:
+  - **salários:** soma dos salários cadastrados;
+  - **provisão de férias:** salário ÷ 12, mais 1/3;
+  - **provisão de 13º:** salário ÷ 12;
+  - **encargos:** um percentual único por regime tributário, configurável por empresa (padrão de cerca de 8% no Simples, só o FGTS, e cerca de 36% no Lucro Presumido, no Lucro Real e no Anexo IV do Simples);
+  - **benefícios:** soma dos valores cadastrados;
+  - **total e fator de custo** (quanto cada R$ 1 de salário custa).
+- **Toda conta é estimativa** e aparece identificada como tal. O nome usado é **"custo estimado de pessoal"** ou **"folha gerencial"**, nunca apenas "folha".
+- **Os percentuais e as frações** ficam num único arquivo de configuração ([lib/tabelas.js](../lib/tabelas.js), explicado em [docs/tabelas.md](tabelas.md)). Nunca valores soltos no código.
+- **Dado faltando não esconde a estimativa:** sem o anexo do Simples ou sem o regime, vale 8%, com o aviso "anexo a conferir" ou "regime a conferir" no cadastro da empresa e no selo de estimativa.
 - **A plataforma guarda documentos** dos colaboradores (contrato, exames, atestados digitalizados), com validade quando houver.
 
 ### Dados obrigatórios no cadastro
-- **Empresa:** CNPJs, filiais, departamentos, regime tributário (com as alíquotas de encargos) e data de implantação. No Simples Nacional, também o anexo, porque no Anexo IV o INSS patronal é pago à parte.
+- **Empresa:** CNPJs, filiais, departamentos, regime tributário, percentual de encargos (opcional; sem ele, vale o padrão do regime) e data de implantação. No Simples Nacional, também o anexo, porque no Anexo IV a contribuição patronal é paga à parte.
 - **Colaborador:** CNPJ, departamento, cargo, tipo de contrato (indeterminado, experiência, estágio, aprendiz, temporário), data de admissão, salário, jornada, data de nascimento, benefícios (valor e desconto) e documentos com validade.
-- **Desligamento:** data, tipo e motivo.
-- **Admissão:** custos admissionais lançados (exames, uniforme, outros).
+- **Desligamento:** data, tipo, motivo e custos demissionais informados pela empresa (rescisão paga, multa e outros, como a contabilidade apurar).
+- **Admissão:** custos admissionais informados pela empresa (exames, uniforme, outros).
 - **Atestado:** período, dias e CID (com a opção "não informado").
 
 ---
@@ -94,8 +101,8 @@ Todos os perfis usam pelo celular, exceto o Parceiro, que usa principalmente no 
 - Férias: programação, pagamento e provisão
 - 13º salário: pagamento e provisão
 - Benefícios: VA, VR, VT, plano de saúde e outros
-- Encargos: FGTS, INSS patronal e demais, conforme o regime
-- Custos admissionais e demissionais, incluindo estimativa de rescisão
+- Encargos: percentual único estimado, conforme o regime
+- Custos admissionais e demissionais, informados pela empresa
 - Documentos
 - Indicadores e painéis
 
@@ -105,6 +112,7 @@ Todos os perfis usam pelo celular, exceto o Parceiro, que usa principalmente no 
 - Integração com sistemas de contabilidade
 - Holerite
 - Cálculo oficial de folha (a plataforma estima, a contabilidade calcula)
+- Cálculos trabalhistas: INSS e IRRF do colaborador, rescisão item por item, saldo e multa do FGTS, incidências de jurisprudência, FAP e RAT detalhados e "custo de desligar hoje"
 
 ---
 
@@ -151,11 +159,11 @@ Tela central do dia a dia: tudo sobre uma pessoa num lugar só.
 6. Ocorrências
 7. Movimentações
 8. Documentos, com validade
-9. Desligamento (se houver): data, tipo, motivo e custo da rescisão
+9. Desligamento (se houver): data, tipo, motivo e custos demissionais informados
 
 **Linha do tempo:** todos os eventos da pessoa em ordem de data, com quem registrou cada um.
 
-**Números dele:** tempo de casa, dias de atestado no ano, faltas no ano, saldo de férias e custo de desligar hoje.
+**Números dele:** tempo de casa, dias de atestado no ano, faltas no ano, saldo de férias e custo estimado do mês.
 
 **No celular:** resumo e alertas primeiro; seções em blocos que abrem e fecham ou abas deslizantes.
 
@@ -182,39 +190,36 @@ Todos os indicadores podem ser vistos por CNPJ, filial e departamento, com evolu
 
 ### Admissões
 - Admissões por mês, departamento e cargo
-- Custo admissional total e médio
+- Custo admissional informado: total e médio
 - Retenção na experiência (quantos passam dos 90 dias)
 
 ### Desligamentos
 - Desligamentos por mês e por tipo
 - **Turnover** mensal e anual: geral, voluntário e involuntário, por departamento
 - Turnover precoce (menos de 90 dias e menos de 1 ano)
-- Custo das rescisões: total, médio e por tipo
+- Custos demissionais informados: total, médio e por tipo
 - Tempo médio de casa de quem saiu; motivos de saída
-- **Custo de desligar hoje:** simulação de rescisão por colaborador e total (saldo, aviso prévio proporcional, férias com 1/3, 13º proporcional, multa de 40% do FGTS)
 
 ### Folha gerencial
-- Folha bruta estimada
-- Custo total de pessoal: folha + encargos + benefícios + provisões, e sua composição
+- Salários (soma dos cadastrados)
+- Custo estimado de pessoal: salários + provisões + encargos + benefícios, e sua composição
 - Custo médio por colaborador, departamento e CNPJ
 - **Fator de custo:** quanto cada R$ 1 de salário custa para a empresa
 - Evolução mensal e variação sobre o mês anterior
 
 ### Encargos
-- FGTS do mês; INSS patronal conforme o regime
-- Total de encargos e percentual sobre a folha
-- Saldo estimado de FGTS por colaborador
+- Encargos estimados pelo percentual do regime (ou o da empresa), com o percentual usado à mostra
 
 ### Férias
-- Férias vencidas, com o custo estimado da dobra
+- Férias vencidas
 - Férias vencendo em 30, 60 e 90 dias
 - Programadas, aprovadas e em andamento; saldo por colaborador
-- Provisão mensal e acumulada; custo das férias pagas
+- Provisão mensal estimada (salário ÷ 12, mais 1/3)
 - Percentual do quadro com férias em dia
 
 ### 13º salário
-- Provisão mensal e acumulada
-- Estimativa da 1ª e da 2ª parcela; impacto no caixa
+- Provisão mensal estimada (salário ÷ 12)
+- Estimativa da 1ª e da 2ª parcela (metade do salário cada); impacto no caixa
 
 ### Benefícios
 - Custo por tipo, médio por colaborador e peso no custo total
@@ -247,8 +252,8 @@ Todos os indicadores podem ser vistos por CNPJ, filial e departamento, com evolu
 - Documentos vencendo
 
 ### Indicadores que cruzam módulos
-- Custo do turnover (desligar e repor)
-- Previsão de custos dos próximos meses (férias programadas, 13º, rescisões previstas)
+- Custo do turnover (custos demissionais e admissionais informados)
+- Previsão de custos dos próximos meses (férias programadas e 13º)
 - Custo total por departamento
 
 ### Visão do parceiro
@@ -291,4 +296,4 @@ A maior parte dos clientes chega com anos de história. A implantação traz o e
 - **A importação mostra os erros por linha**, para corrigir no Excel e subir de novo.
 - **Cada empresa tem uma data de implantação.** Prazos vencidos antes dessa data aparecem como **"a conferir na implantação"**, e não como vencidos.
 - **Revisão antes dos alertas:** depois da importação, a Gestão passa por uma revisão do que parece inconsistente (férias aparentemente vencidas, experiências abertas, documentos sem validade). Os alertas de prazo começam quando a revisão termina.
-- **Regime tributário:** no Simples Nacional, o cadastro pede também o anexo, porque no Anexo IV o INSS patronal é pago à parte.
+- **Regime tributário:** no Simples Nacional, o cadastro pede também o anexo, porque no Anexo IV a contribuição patronal é paga à parte e o percentual padrão de encargos muda (de cerca de 8% para cerca de 36%). Sem o anexo ou sem o regime, a estimativa usa 8% com o aviso "anexo a conferir" ou "regime a conferir".
