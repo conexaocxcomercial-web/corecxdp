@@ -40,6 +40,7 @@ yarn-error.log*
 # configurações locais de agentes (permissões e caminhos desta máquina)
 .claude/settings.local.json
 .impeccable/config.local.json
+.codex/
 
 # capturas de tela das revisões de design (geradas a cada rodada)
 .impeccable/review/
