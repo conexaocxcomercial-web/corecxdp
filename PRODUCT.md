@@ -72,7 +72,13 @@ Uma plataforma só, vendida por parceiros, cada um com a própria identidade (wh
 **Terminologia:**
 - Perfis: Administração da plataforma, Parceiro, Gestão da empresa, Colaborador.
 - Em uso: registro de pessoal, quadro hoje, pessoas ativas, matrícula, gestor imediato (campo do colaborador, não perfil), situação, validação, passa a valer em, tempo de casa, custo estimado de pessoal, folha gerencial.
-- Status do colaborador: Ativo, Afastado, Férias, Inativo. Tipos de ocorrência: Falta Injustificada, Falta Justificada, Atraso, Saída Antecipada, Advertência, Suspensão. Tipos de movimentação: Promoção, Alteração Salarial, Transferência, Mudança de Cargo, Afastamento, Retorno de Afastamento, Desligamento. Tipos de contrato: indeterminado, experiência, estágio, aprendiz, temporário.
+- Status do colaborador (calculado pelos eventos, não escolhido à mão): Ativo, Afastado, Férias, Inativo.
+- Tipos de ocorrência: Falta Injustificada, Falta Justificada, Atraso, Saída Antecipada, Advertência, Suspensão.
+- Tipos de afastamento: Doença, Acidente de trabalho, Licença-maternidade, Licença não remunerada, Outros. Atestado (com CID ou "não informado") obrigatório em Doença e Acidente de trabalho, opcional nos demais; validação Pendente, Aprovado ou Rejeitado; "retorno" é o primeiro dia de volta ao trabalho.
+- Tipos de movimentação: Alteração Salarial, Promoção, Mudança de Cargo, Transferência, sempre com "passa a valer em" e o que muda (novo salário, cargo, departamento ou unidade). Desligamento e afastamento não são movimentação: têm fluxo próprio.
+- Tipos de desligamento: Dispensa sem justa causa, Pedido de demissão, Acordo entre as partes, Término de contrato de experiência, Dispensa com justa causa.
+- Lançar: o botão único de registro, em três passos ("O que aconteceu?", "Com quem?", formulário).
+- Tipos de contrato: indeterminado, experiência, estágio, aprendiz, temporário.
 
 ## Brand Commitments
 

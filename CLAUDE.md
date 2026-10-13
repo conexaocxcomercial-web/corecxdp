@@ -43,9 +43,9 @@ Logins de teste, todos com a senha `demo123`: `teste@gmail.com` e `gestao@demo.t
 | `/indicadores` | Turnover, absenteísmo, quadro, reincidência e tempo de casa (3, 6 ou 12 meses) |
 | `/colaboradores` | Lista com busca, filtros (unidade, departamento, contrato, situação) e salário mascarado; cadastro de pessoa |
 | `/colaboradores/[matricula]` | Ficha: resumo, alertas, ações rápidas e abas com endereço (`?aba=ferias`); a situação vem dos eventos |
-| `/ocorrencias` | Faltas, atrasos e medidas disciplinares |
-| `/atestados` | Afastamentos médicos, com aprovar e rejeitar na linha |
-| `/movimentacoes` | Promoções, transferências, desligamentos, com checklist |
+| `/ocorrencias` | Faltas, atrasos e medidas disciplinares, com quem registrou |
+| `/afastamentos` | Atestados e afastamentos: tipos, período, CID (restrito ao Parceiro), validação na linha e retorno; `/atestados` redireciona para cá |
+| `/movimentacoes` | Reajuste, promoção, mudança de cargo e transferência, com "passa a valer em" e o que muda |
 | `/carteira` | Parceiro: clientes do parceiro e "Consultar" (só na demonstração, versão inicial) |
 | `/admin` | Administração: parceiros, clientes, usuários e "Consultar" (só na demonstração, versão inicial) |
 
@@ -59,11 +59,12 @@ As telas internas ficam em `app/(sistema)/` (layout com barra do topo, menu late
 - `Campos.jsx` — `Texto`, `Senha`, `Caixa`, `Data`, `Selecao`, `Paragrafo`.
 - `Botao.jsx` — `Botao`, `BotaoLink`, `BotaoEnviar` (estado de envio, `variante`), `BotaoMini`.
 - `Folha.jsx` — tudo o que abre por cima (`<dialog>`): janela no computador, folha que sobe de baixo no celular, `tipo="popover"` para o menu do usuário.
-- `PainelDeRegistro.jsx` — cadastro numa `Folha`; `abrirAoCarregar` abre pelo `?lancar=1`.
+- `Lancar.jsx` — **o Lançar em três passos**: `ProvedorDoLancar` (no layout, uma folha para o sistema inteiro), `useLancar`, `BotaoLancar` (barra do topo), `BotaoDeLancar` (abre já num tipo e, da ficha, com a pessoa). Novos tipos de lançamento entram em `lib/navegacao.js` › `LANCAMENTOS` e num formulário aqui. `Afastamentos.jsx` — validar na linha e registrar retorno.
+- `PainelDeRegistro.jsx` — cadastro numa `Folha` (hoje só o de colaborador); `abrirAoCarregar` abre pelo `?lancar=1`.
 - `Filtros.jsx` — `Busca` e `Seletor` (parâmetros da URL) e o alcance: `SeletorDeAlcance`, `FolhaDoAlcance`, `useAplicarAlcance`.
 - `Graficos.jsx` — `Serie`, `SerieDupla`, `BarrasH`, `Rosca`.
 - `Sinais.jsx` — `Status` (pílula de situação).
-- `Navegacao.jsx` — menu lateral (computador). `BarraInferior.jsx` — navegação do celular. `Lancar.jsx` — folha "O que aconteceu?". `MenuDoUsuario.jsx` — menu do avatar e aba Menu. `BuscaDePessoa.jsx` — busca da barra do topo. `EscolhaDeCliente.jsx` — escolha de cliente e `TabelaDeClientes`. `TituloNaBarra.jsx` — título na barra do topo. `Tema.jsx` — tema claro/escuro.
+- `Navegacao.jsx` — menu lateral (computador). `BarraInferior.jsx` — navegação do celular. `MenuDoUsuario.jsx` — menu do avatar e aba Menu. `BuscaDePessoa.jsx` — busca da barra do topo. `EscolhaDeCliente.jsx` — escolha de cliente e `TabelaDeClientes`. `TituloNaBarra.jsx` — título na barra do topo. `Tema.jsx` — tema claro/escuro.
 - `Inicio.jsx` — peças do Início: `FaixaDeUrgencia`, `FaixaDaImplantacao`, `FaixaDoInicio`, `Assunto`, `Atividade`. `Prazos.jsx` — `Prazo` (pílula de dias), `LinhaDePrazo`, `GrupoDePrazos`, `linkDaFicha`. `Pendencias.jsx` — `FilaDePendencias`, `Restantes`, `ListaDeAprovacoes` (aprovar e rejeitar na linha, com Desfazer), `ItemDaRevisao`, `ConcluirRevisao`.
 - `Ficha.jsx` — `ResumoDaPessoa`, `AlertasDaPessoa`, `AcoesRapidas`, `NumerosDaPessoa`, `Dados`, `LinhaDoTempo`. `Abas.jsx` — abas com endereço próprio. `Valores.jsx` — `ValorProtegido` (salário, CPF: mascarado, com o olho), `ProtecaoDeValores` e `BotaoDeMostrar` (revela a coluna da lista).
 - `Icones.jsx` — `Icone` (Material Symbols Rounded).
@@ -74,6 +75,7 @@ As telas internas ficam em `app/(sistema)/` (layout com barra do topo, menu late
 - `registros.js` — **porta de entrada das telas atuais**: `listar*`, `buscarColaborador`, `registrar*`, `mudar*`, `contarPendencias`, `resumirClientes`, `OPCOES`. Já devolve tudo recortado pelo alcance (cliente e CNPJ) e confere a permissão antes de gravar.
 - `dados/` — camada nova, no formato pensado para o Supabase: `regras.js` (alcance e recorte, puros e testados), `estrutura.js` (parceiros → clientes → CNPJs), `alcance.js` (`alcanceAtual`, `resumoDoAlcance`, `permissoesAtuais`; cookie de escolha sempre revalidado no servidor), `usuarios.js`. Os módulos novos ganham repositório aqui.
 - `prazos.js` — aprovações, prazos, implantação e revisão (puro, testado); as regras legais e os feriados ficam em `regrasDePrazo.js`, com a fonte de cada um; `calendario.js` — dia útil e feriados. `dados/pendencias.js` — leitura e decisões de Pendências (permissão e autoria); `dados/inicio.js` — números e assuntos do Início (os dois só na demonstração).
+- `lancamentos.js` — regras do Lançar (afastamento, retorno, ocorrência, movimentação, desligamento), puras e testadas. `dados/lancamentos.js` — gravação nos dois modos e as listas de afastamentos, ocorrências e movimentações.
 - `tabelas.js` — **arquivo único das tabelas** (INSS, IRRF, FGTS, patronal, terceiros, Simples, verbas, incidências), cada valor com fonte; conferência em [docs/tabelas.md](docs/tabelas.md). `calculos/` — INSS, IRRF, encargos por regime, custo estimado do mês e rescisão estimada (puros, testados). Não usar nas telas antes da conferência das tabelas.
 - `pessoas.js` — situação calculada pelos eventos, tempo de casa, saldo de férias, números e linha do tempo da pessoa (puro, testado). `dados/pessoas.js` — lista e ficha nos dois modos (na demonstração, os dados completos; fora dela, adapta a planilha). `dados/recorte.js` — o recorte do alcance nos dados completos.
 - `permissoes.js` — `pode(perfil, ação)` e os perfis. `navegacao.js` — o que cada perfil vê no menu, na barra inferior e no Lançar (arquivo único).

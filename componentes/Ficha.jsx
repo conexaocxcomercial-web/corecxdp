@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Icone } from '@/componentes/Icones';
 import { Numero, Numeros } from '@/componentes/Estrutura';
 import { Prazo } from '@/componentes/Prazos';
+import { BotaoDeLancar } from '@/componentes/Lancar';
 import { Status } from '@/componentes/Sinais';
 import { dataCurta, formatarData, iniciais } from '@/lib/formato';
 
@@ -89,22 +90,19 @@ export function AlertasDaPessoa({ alertas, base, quem }) {
   );
 }
 
-/** Ações rápidas: cada uma abre o lançamento já com a pessoa escolhida. */
+/** Ações rápidas: cada uma abre o Lançar já com a pessoa, pulando o "Com quem?". */
 export function AcoesRapidas({ pessoa }) {
-  const m = encodeURIComponent(pessoa.matricula);
+  const quem = { matricula: pessoa.matricula, nome: pessoa.nome };
   const acoes = [
-    { href: `/atestados?lancar=1&matricula=${m}`, rotulo: 'Atestado', icone: 'clinical_notes' },
-    { href: `/ocorrencias?lancar=1&matricula=${m}`, rotulo: 'Ocorrência', icone: 'event_busy' },
-    { href: `/movimentacoes?lancar=1&matricula=${m}`, rotulo: 'Movimentação', icone: 'swap_horiz' },
-    { href: `/movimentacoes?lancar=1&matricula=${m}&tipo=Desligamento`, rotulo: 'Desligar', icone: 'person_remove' },
+    { tipo: 'afastamento', rotulo: 'Atestado', icone: 'clinical_notes' },
+    { tipo: 'ocorrencia', rotulo: 'Ocorrência', icone: 'event_busy' },
+    { tipo: 'movimentacao', rotulo: 'Movimentação', icone: 'swap_horiz' },
+    { tipo: 'desligamento', rotulo: 'Desligar', icone: 'person_remove' },
   ];
   return (
     <nav className="ficha-acoes" aria-label="Lançar para esta pessoa">
       {acoes.map((acao) => (
-        <Link key={acao.rotulo} href={acao.href} className="btn btn-fant btn-mini">
-          <Icone nome={acao.icone} />
-          {acao.rotulo}
-        </Link>
+        <BotaoDeLancar key={acao.tipo} tipo={acao.tipo} pessoa={quem} rotulo={acao.rotulo} icone={acao.icone} variante="fant" mini />
       ))}
     </nav>
   );

@@ -4219,3 +4219,163 @@ html.com-folha {
     font-size: 24px;
   }
 }
+
+/* ============================================================
+   LANÇAR E LISTAS DE REGISTRO — fase 8 do redesenho. Uma folha para
+   o sistema inteiro em três passos; ações na linha das listas.
+   ============================================================ */
+
+/* Passo 2: com quem. */
+.lancar-pessoa {
+  gap: 12px;
+}
+.lancar-pessoa-res {
+  min-height: 120px;
+}
+.lancar-pessoa-res .folha-lista {
+  margin: 0 -12px;
+}
+.lancar-pessoa-res .opcao .pil {
+  flex-shrink: 0;
+}
+.lancar-voltar {
+  display: flex;
+  padding-top: 4px;
+  border-top: 1px solid var(--linha);
+}
+.lancar-voltar .btn {
+  margin-top: 12px;
+}
+
+/* Passo 3: a pessoa escolhida, com "Trocar". */
+.lancar-quem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 4px 0 14px;
+  border-radius: var(--r-ctrl);
+  background: var(--papel-2);
+  font-size: 15px;
+  font-weight: 600;
+}
+.lancar-quem .material-symbols-rounded {
+  font-size: 20px;
+  color: var(--tinta-3);
+}
+.lancar-quem span:not(.material-symbols-rounded) {
+  flex: 1;
+  min-width: 0;
+}
+.lancar-trocar {
+  min-height: 40px;
+  padding: 0 12px;
+  border: none;
+  border-radius: var(--r-ctrl);
+  background: none;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--acao-texto);
+  cursor: pointer;
+}
+.lancar-trocar:hover {
+  background: var(--linha);
+}
+
+/* O bloco do atestado: fio fino em volta, legenda em frase. */
+.lancar-atestado {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0;
+  padding: 16px;
+  border: 1px solid var(--linha-2);
+  border-radius: var(--r-card);
+}
+.lancar-atestado legend {
+  padding: 0 6px;
+  font-size: 14px;
+  font-weight: 700;
+}
+.folha-corpo .faixa {
+  margin-bottom: 0;
+}
+
+/* Depois de registrar. */
+.lancar-feito {
+  align-items: flex-start;
+  gap: 14px;
+}
+.lancar-feito-ic {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--marca-lima);
+  color: var(--marca-grafite);
+  box-shadow: inset 0 0 0 1px var(--graf-contorno);
+}
+.lancar-feito-ic .material-symbols-rounded {
+  font-size: 26px;
+}
+.lancar-feito-t {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+}
+.lancar-feito-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  width: 100%;
+  margin-top: 8px;
+}
+.lancar-feito-acoes .btn-acao {
+  margin-left: auto;
+}
+
+/* ------------------------------------------------ ações na linha das listas */
+.linha-situacao {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.linha-acoes {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+.linha-erro {
+  flex-basis: 100%;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: normal;
+}
+.tb-linha {
+  display: block;
+}
+.tb-l > span:has(.linha-situacao) {
+  overflow: visible;
+  white-space: normal;
+}
+
+@media (max-width: 900px) {
+  .lancar-feito-acoes .btn {
+    flex: 1 1 auto;
+  }
+  .lancar-feito-acoes .btn-acao {
+    margin-left: 0;
+    flex-basis: 100%;
+  }
+  .linha-situacao {
+    width: 100%;
+  }
+  .linha-acoes .btn {
+    flex: 1;
+  }
+}

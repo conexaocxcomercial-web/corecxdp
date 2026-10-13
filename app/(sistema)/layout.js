@@ -9,7 +9,7 @@ import { BarraInferior } from '@/componentes/BarraInferior';
 import { BuscaDePessoa } from '@/componentes/BuscaDePessoa';
 import { EscolhaDeCliente } from '@/componentes/EscolhaDeCliente';
 import { MarcaDoAlcance, SeletorDeAlcance } from '@/componentes/Filtros';
-import { BotaoLancar } from '@/componentes/Lancar';
+import { BotaoLancar, ProvedorDoLancar } from '@/componentes/Lancar';
 import { BotaoDoUsuario } from '@/componentes/MenuDoUsuario';
 import { Marca } from '@/componentes/Marca';
 import { Icone } from '@/componentes/Icones';
@@ -44,7 +44,7 @@ export default async function LayoutDoSistema({ children }) {
   }
 
   return (
-    <>
+    <ProvedorDoLancar tipos={lancamentos} podeLancar={podeLancar && temCliente}>
       <a href="#conteudo" className="pular">
         Pular para o conteúdo
       </a>
@@ -65,7 +65,7 @@ export default async function LayoutDoSistema({ children }) {
           ) : null}
           <SeletorDeAlcance alcance={resumo} />
           {temCliente ? <BuscaDePessoa /> : null}
-          {podeLancar && temCliente ? <BotaoLancar lancamentos={lancamentos} /> : null}
+          <BotaoLancar />
           <BotaoDoUsuario usuario={usuario} perfil={perfil} alcance={resumo} demonstracao={demonstracao} />
         </div>
       </header>
@@ -92,6 +92,6 @@ export default async function LayoutDoSistema({ children }) {
         alcance={resumo}
         demonstracao={demonstracao}
       />
-    </>
+    </ProvedorDoLancar>
   );
 }

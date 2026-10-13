@@ -9,8 +9,8 @@ export const ICONES = [
   'chevron_right', 'clinical_notes', 'close', 'contrast', 'dark_mode', 'description', 'domain', 'error', 'event',
   'event_available', 'event_busy', 'expand_more', 'fact_check', 'group', 'group_add', 'healing',
   'history', 'home', 'hourglass_empty', 'inbox', 'info', 'keep', 'keyboard_capslock',
-  'left_panel_close', 'light_mode', 'login', 'logout', 'mail', 'menu', 'monitoring',
-  'pending_actions', 'person_add', 'person_remove', 'redeem', 'schedule', 'search', 'search_off', 'sentiment_satisfied',
+  'left_panel_close', 'light_mode', 'lock', 'login', 'logout', 'mail', 'menu', 'monitoring',
+  'pending_actions', 'person', 'person_add', 'person_remove', 'redeem', 'schedule', 'search', 'search_off', 'sentiment_satisfied',
   'supervisor_account', 'swap_horiz', 'task_alt', 'trending_down', 'trending_flat',
   'trending_up', 'visibility', 'visibility_off', 'warning', 'work',
 ];

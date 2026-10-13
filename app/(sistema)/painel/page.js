@@ -113,7 +113,7 @@ export default async function Painel() {
       icone: 'clinical_notes',
       tom: 'at',
       texto: `${plural(contagem.atestados, 'atestado esperando', 'atestados esperando')} validação`,
-      href: '/atestados?status=Pendente',
+      href: '/afastamentos?validacao=Pendente',
     },
     {
       quantidade: contagem.checklists,

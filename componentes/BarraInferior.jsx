@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import { Folha } from '@/componentes/Folha';
 import { FolhaDoAlcance } from '@/componentes/Filtros';
 import { Icone } from '@/componentes/Icones';
-import { FolhaDoLancar } from '@/componentes/Lancar';
+import { useLancar } from '@/componentes/Lancar';
 import { ConteudoDoMenu } from '@/componentes/MenuDoUsuario';
 import { estaAtiva } from '@/lib/navegacao';
 
@@ -15,10 +15,11 @@ import { estaAtiva } from '@/lib/navegacao';
  * polegar. Lançar, ao centro, é o único sólido; Menu abre a navegação
  * completa com o bloco da pessoa no alto.
  */
-export function BarraInferior({ barra, grupos, lancamentos, contadores, usuario, perfil, alcance, demonstracao }) {
+export function BarraInferior({ barra, grupos, contadores, usuario, perfil, alcance, demonstracao }) {
   const caminho = usePathname();
   const [aberta, setAberta] = useState(null);
   const fechar = () => setAberta(null);
+  const { abrir: abrirLancar } = useLancar();
 
   return (
     <>
@@ -41,8 +42,8 @@ export function BarraInferior({ barra, grupos, lancamentos, contadores, usuario,
                     type="button"
                     className={`barra-inf-item ${lancar ? 'barra-inf-lancar' : ''}`}
                     aria-haspopup="dialog"
-                    aria-expanded={aberta === acao}
-                    onClick={() => setAberta(acao)}
+                    aria-expanded={lancar ? undefined : aberta === acao}
+                    onClick={() => (lancar ? abrirLancar() : setAberta(acao))}
                   >
                     <span className="barra-inf-ic">
                       <Icone nome={posicao.icone} />
@@ -79,8 +80,6 @@ export function BarraInferior({ barra, grupos, lancamentos, contadores, usuario,
           })}
         </ul>
       </nav>
-
-      <FolhaDoLancar aberta={aberta === 'lancar'} aoFechar={fechar} lancamentos={lancamentos} />
 
       <Folha aberta={aberta === 'menu'} aoFechar={fechar} titulo="Menu">
         <ConteudoDoMenu
