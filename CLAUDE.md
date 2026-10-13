@@ -40,7 +40,7 @@ Logins de teste, todos com a senha `demo123`: `teste@gmail.com` e `gestao@demo.t
 | `/entrar` | Login por e-mail e senha |
 | `/inicio` | Gestão: faixa de urgência, quadro e números do negócio, um quadro por assunto e atividade recente (só na demonstração) |
 | `/pendencias` | Revisão da implantação, aprovações na linha (com Desfazer) e prazos, com filtros por assunto e data (só na demonstração) |
-| `/painel` | Início fora da demonstração: quadro de ativos, pendências do DP, séries de 6 meses e últimos lançamentos |
+| `/painel` | Início fora da demonstração: quadro de ativos, pendências do DP, séries de 6 meses e últimos lançamentos. Na demonstração, redireciona para o início do perfil |
 | `/indicadores` | Central: um cartão por tema (Quadro, Absenteísmo e saúde, Movimentações), com o número principal e dois de apoio |
 | `/indicadores/[tema]` | Painel do tema: números, mês a mês, por unidade e por departamento; período e departamento no endereço |
 | `/indicadores/[tema]/[indicador]` | Detalhe: o número, como é calculado, recortes e as pessoas por trás (saúde sem pessoas; grupos com menos de 3 ocultos) |
@@ -58,7 +58,7 @@ Logins de teste, todos com a senha `demo123`: `teste@gmail.com` e `gestao@demo.t
 | `/movimentacoes` | Reajuste, promoção, mudança de cargo e transferência, com "passa a valer em" e o que muda |
 | `/carteira` | Parceiro: clientes lado a lado (pessoas, custo estimado, fator, turnover, absenteísmo, o que pede atenção), ordenação, "Consultar", CSV e `/carteira/imprimir` (só na demonstração) |
 | `/exportacoes` | CSV da carteira, dos indicadores e dos colaboradores do cliente (sem CPF, salário nem CID) e páginas para imprimir |
-| `/admin` | Administração: parceiros, clientes, usuários e "Consultar" (só na demonstração, versão inicial) |
+| `/admin` | Administração: suporte (o que conferir com cada cliente ou parceiro), `/admin/parceiros` (marca e contraste), `/admin/clientes` e `/admin/usuarios`, com "Consultar" (só na demonstração) |
 
 As telas internas ficam em `app/(sistema)/` (layout com barra do topo, menu lateral no computador e barra inferior no celular). Ações de servidor em [app/acoes.js](app/acoes.js). Acesso protegido por [middleware.js](middleware.js), que também passa a rota ao layout (`x-caminho`). O andamento do redesenho e as decisões de cada fase ficam em [docs/redesenho.md](docs/redesenho.md).
 
@@ -66,11 +66,12 @@ As telas internas ficam em `app/(sistema)/` (layout com barra do topo, menu late
 
 **Reutilize antes de criar.** Se precisar de algo parecido com um componente existente, estenda-o em vez de criar outro.
 
-- `Estrutura.jsx` — `Cabecalho` (título da página com subtítulo, ações, `voltar` e filtros como filhos; o título vai para a barra do topo ao rolar), `Wrap`, `Secao`, `Cartao`, `Numeros`/`Numero` (tom, link e variação), `Tabela`/`LinhaTabela`/`Celula`/`Nome` (viram lista no celular via `data-r`), `Vazio`, `Faixa` (avisos). `Kpis`/`Kpi` só existem para a prévia da entrada (até a fase 16).
+- `Estrutura.jsx` — `Cabecalho` (título da página com subtítulo, ações, `voltar` e filtros como filhos; o título vai para a barra do topo ao rolar), `Wrap`, `Secao`, `Cartao`, `Numeros`/`Numero` (tom, link e variação), `Tabela`/`LinhaTabela`/`Celula`/`Nome` (viram lista no celular via `data-r`), `Vazio`, `Faixa` (avisos).
 - `Campos.jsx` — `Texto`, `Senha`, `Caixa`, `Data`, `Selecao`, `Paragrafo`.
 - `Botao.jsx` — `Botao`, `BotaoLink`, `BotaoEnviar` (estado de envio, `variante`), `BotaoMini`.
 - `Folha.jsx` — tudo o que abre por cima (`<dialog>`): janela no computador, folha que sobe de baixo no celular, `tipo="popover"` para o menu do usuário.
 - `Lancar.jsx` — **o Lançar em três passos**: `ProvedorDoLancar` (no layout, uma folha para o sistema inteiro), `useLancar`, `BotaoLancar` (barra do topo), `BotaoDeLancar` (abre já num tipo e, da ficha, com a pessoa). Novos tipos de lançamento entram em `lib/navegacao.js` › `LANCAMENTOS` e num formulário aqui. `Afastamentos.jsx` — validar na linha e registrar retorno.
+- `AbasDaAdministracao.jsx` — as partes da Administração.
 - `Carteira.jsx` — `ComparacaoDeClientes` (tela, impressão). `Imprimir.jsx` — `BotaoDeImprimir`.
 - `Empresa.jsx` — `FormularioDaEmpresa` e `ImportarPlanilha` (conferir e importar). `AbasDaEmpresa.jsx` — as partes de Empresa.
 - `Beneficios.jsx` — `FormularioDeBeneficio`, `IncluirNoBeneficio`, `EncerrarAdesao`.
@@ -90,6 +91,7 @@ As telas internas ficam em `app/(sistema)/` (layout com barra do topo, menu late
 - `dados/` — camada nova, no formato pensado para o Supabase: `regras.js` (alcance e recorte, puros e testados), `estrutura.js` (parceiros → clientes → CNPJs), `alcance.js` (`alcanceAtual`, `resumoDoAlcance`, `permissoesAtuais`; cookie de escolha sempre revalidado no servidor), `usuarios.js`. Os módulos novos ganham repositório aqui.
 - `prazos.js` — aprovações, prazos, implantação e revisão (puro, testado); as regras legais e os feriados ficam em `regrasDePrazo.js`, com a fonte de cada um; `calendario.js` — dia útil e feriados. `dados/pendencias.js` — leitura e decisões de Pendências (permissão e autoria); `dados/inicio.js` — números e assuntos do Início (os dois só na demonstração).
 - `lancamentos.js` — regras do Lançar (afastamento, retorno, ocorrência, movimentação, admissão, desligamento e custos informados), puras e testadas. `dados/lancamentos.js` — gravação nos dois modos e as listas de afastamentos, ocorrências e movimentações.
+- `dados/administracao.js` — parceiros, clientes, usuários e o que pede suporte (Administração).
 - `carteira.js` — a carteira do parceiro, cliente a cliente (puro); `exportacao.js` — CSV para o Excel (puro); `contraste.js` — checagem de contraste do white-label (puro). Repositório: `dados/carteira.js`.
 - `documentos.js` — situação pela validade, completude e documento novo; `empresa.js` — regime, anexo e percentual de encargos; `historico.js` — ações com autor tiradas dos registros; `planilhaModelo.js` — abas do modelo e a conferência linha a linha; `importacao.js` — registros da importação; `xlsx.js` — gravar e ler .xlsx sem dependência (só no servidor). Repositórios: `dados/documentos.js`, `dados/empresa.js` (dados, usuários, importação e histórico).
 - `beneficios.js` — catálogo, adesão e encerramento, quem tem e quem não tem (puro, testado); `dados/beneficios.js` — leitura e mudanças com permissão e autoria.
@@ -115,5 +117,5 @@ As telas internas ficam em `app/(sistema)/` (layout com barra do topo, menu late
 
 - [ ] Migrar os dados para o Supabase, com código único por registro garantido no banco (sequência/restrição `unique` por empresa, não "maior + 1" em memória), login pelo Supabase Auth e isolamento via RLS na hierarquia parceiro → cliente → CNPJ, com os quatro perfis de [docs/conceito.md › 3](docs/conceito.md#3-perfis-e-permissões) e registro de autor e data nas ações.
 - [x] Trocar os textos de perfil da tela de entrada ([lib/marca.js](lib/marca.js) › `perfis`), feito na fase 2 do redesenho.
-- [ ] Remover o modo de demonstração: apagar `lib/demo/` e as linhas que o chamam em `lib/planilha.js` (o `import * as demo` e os três `if (demo.modoDemo())`) e em `lib/dados/estrutura.js`, `lib/dados/pendencias.js` e `lib/dados/inicio.js`; os logins de teste e "Ver como…" saem junto, e `/carteira` e `/admin` passam a ler do Supabase.
+- [ ] Remover o modo de demonstração: apagar `lib/demo/` e as linhas que o chamam em `lib/planilha.js` (o `import * as demo` e os três `if (demo.modoDemo())`) e nos repositórios de `lib/dados/` que gravam ou leem a demonstração (`estrutura.js`, `recorte.js`, `pendencias.js`, `lancamentos.js`, `beneficios.js`, `empresa.js`, `carteira.js`, `administracao.js`); os logins de teste e "Ver como…" saem junto, e as telas que hoje são "só na demonstração" passam a ler e gravar no Supabase.
 - [ ] Revisar o `.gitignore`: `.env*` também ignora um futuro `.env.example`; `.claude/` e `.impeccable/` não estão ignorados (`.codex/` já está); confirmar que `dados-demo/` (tem senhas) continua fora do git.

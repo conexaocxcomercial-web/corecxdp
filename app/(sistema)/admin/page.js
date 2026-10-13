@@ -1,83 +1,81 @@
 import { notFound } from 'next/navigation';
-import { mensagemParaTela, resumirClientes } from '@/lib/registros';
 import { alcanceAtual } from '@/lib/dados/alcance';
-import { lerEstrutura } from '@/lib/dados/estrutura';
-import { listarUsuarios } from '@/lib/dados/usuarios';
-import { PERFIS, pode } from '@/lib/permissoes';
+import { lerAdministracao } from '@/lib/dados/administracao';
+import { mensagemParaTela } from '@/lib/avisos';
+import { pode } from '@/lib/permissoes';
 import { plural } from '@/lib/formato';
-import {
-  Cabecalho, Cartao, Faixa, Numero, Numeros, Secao, Vazio, Wrap,
-} from '@/componentes/Estrutura';
-import { TabelaDeClientes } from '@/componentes/EscolhaDeCliente';
+import { Cabecalho, Cartao, Faixa, Numero, Numeros, Secao, Vazio, Wrap } from '@/componentes/Estrutura';
+import { AbasDaAdministracao } from '@/componentes/AbasDaAdministracao';
+import { BotaoConsultar } from '@/componentes/EscolhaDeCliente';
 
 export const metadata = { title: 'Administração' };
 
 /**
- * Início da Administração da plataforma (versão inicial, fase 3 do
- * redesenho): parceiros, clientes e usuários, e "Consultar" para ver um
- * cliente como ele vê, em só consulta. Parceiros, clientes e usuários com
- * cadastro próprio são a fase 16. Módulo novo: só existe na demonstração.
+ * Início da Administração da plataforma (fase 16 do redesenho): os números
+ * da plataforma e o que pede suporte (implantação em revisão, regime ou
+ * anexo a conferir, cliente sem usuário da Gestão, prazos vencidos, cores de
+ * parceiro recusadas pela checagem de contraste). A Administração dá
+ * suporte: consulta, não lança nem aprova.
  */
 export default async function Administracao() {
   const alcance = await alcanceAtual();
   if (!alcance?.demonstracao || !pode(alcance.perfil, 'administrar')) notFound();
-
-  let estrutura;
-  let clientes;
-  let usuarios;
+  let lido;
   try {
-    [estrutura, clientes, usuarios] = await Promise.all([lerEstrutura(), resumirClientes(), listarUsuarios()]);
+    lido = await lerAdministracao();
   } catch (erro) {
     return (
       <>
         <Cabecalho titulo="Administração" />
         <Wrap>
-          <Faixa tom="erro">
-            {mensagemParaTela(erro, 'Não foi possível carregar a administração agora. Recarregue a página em alguns segundos.')}
-          </Faixa>
+          <Faixa tom="erro">{mensagemParaTela(erro, 'Não foi possível carregar a administração agora. Recarregue a página em alguns segundos.')}</Faixa>
         </Wrap>
       </>
     );
   }
-
-  const porPerfil = (perfil) => usuarios.filter((usuario) => usuario.perfil === perfil).length;
-
+  const { numeros, suporte } = lido;
   return (
     <>
       <Cabecalho titulo="Administração" subtitulo="Parceiros, clientes e usuários da plataforma" />
       <Wrap>
+        <AbasDaAdministracao atual="inicio" />
         <Numeros>
-          <Numero rotulo="Parceiros" valor={estrutura.parceiros.length} />
-          <Numero rotulo="Clientes" valor={clientes.length} />
+          <Numero rotulo="Parceiros" valor={numeros.parceiros} href="/admin/parceiros" />
+          <Numero rotulo="Clientes" valor={numeros.clientes} apoio={`${numeros.pessoas} pessoas no quadro`} href="/admin/clientes" />
           <Numero
             rotulo="Usuários"
-            valor={usuarios.length}
-            apoio={`${porPerfil('gestao')} da gestão, ${porPerfil('parceiro')} de parceiro, ${porPerfil('admin')} da administração`}
+            valor={numeros.usuarios}
+            apoio={`${numeros.porPerfil.gestao} da gestão, ${numeros.porPerfil.parceiro} de parceiro, ${numeros.porPerfil.admin} da administração`}
+            href="/admin/usuarios"
           />
+          <Numero rotulo="Pedem suporte" valor={suporte.length} tom={suporte.length ? 'var(--atencao)' : undefined} apoio="clientes e parceiros" />
         </Numeros>
-
-        {estrutura.parceiros.map((parceiro) => {
-          const doParceiro = clientes.filter((cliente) => cliente.parceiro_id === parceiro.id);
-          return (
-            <Secao
-              key={parceiro.id}
-              titulo={parceiro.nome}
-              nota={`${doParceiro.length} ${plural(doParceiro.length, 'cliente', 'clientes')}`}
-            >
-              <Cartao liso>
-                {doParceiro.length === 0 ? (
-                  <Vazio icone="domain">Este parceiro ainda não tem clientes.</Vazio>
-                ) : (
-                  <TabelaDeClientes clientes={doParceiro} />
-                )}
-              </Cartao>
-            </Secao>
-          );
-        })}
-
-        <p className="nota max-w-[70ch]">
-          Consultar abre o cliente como a {PERFIS.gestao} vê, em só consulta: a Administração
-          dá suporte, não lança nem aprova.
+        <Secao titulo="Pede suporte" nota="o que conferir com cada cliente ou parceiro">
+          <Cartao liso>
+            {suporte.length === 0 ? (
+              <Vazio icone="task_alt">Nada pedindo suporte agora.</Vazio>
+            ) : (
+              <ul className="sup-lista" role="list">
+                {suporte.map((item) => (
+                  <li key={`${item.tipo}-${item.id}`} className="sup-item">
+                    <span className="sup-quem">
+                      <b>{item.nome}</b>
+                      <span className="tb-sub">{item.tipo === 'cliente' ? `cliente de ${item.parceiro}` : 'parceiro'}</span>
+                    </span>
+                    <span className="sup-motivos">
+                      {item.motivos.map((motivo) => (
+                        <span key={motivo}>{motivo}</span>
+                      ))}
+                    </span>
+                    {item.tipo === 'cliente' ? <BotaoConsultar parceiro={item.parceiro_id} cliente={item.id} nome={item.nome} /> : null}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </Cartao>
+        </Secao>
+        <p className="nota ind-nota">
+          Consultar abre o cliente como a Gestão da empresa vê, em só consulta. Criar parceiros, empresas e usuários chega com o login pelo Supabase; até lá, o cadastro é feito pela equipe da plataforma.
         </p>
       </Wrap>
     </>

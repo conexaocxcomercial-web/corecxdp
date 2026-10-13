@@ -8,7 +8,9 @@ import {
   mensagemParaTela,
 } from '@/lib/registros';
 import { calcularIndicadores } from '@/lib/indicadores';
-import { permissoesAtuais } from '@/lib/dados/alcance';
+import { alcanceAtual, permissoesAtuais } from '@/lib/dados/alcance';
+import { inicioDoPerfil } from '@/lib/navegacao';
+import { redirect } from 'next/navigation';
 import { dataPorExtenso, formatarData, paraData, plural } from '@/lib/formato';
 import {
   Cartao,
@@ -40,6 +42,11 @@ const CORES_DO_LIVRO = {
 const GRADE = '1.4fr .8fr .8fr 2fr';
 
 export default async function Painel() {
+  // Na demonstração, o início de cada perfil substituiu o painel (fase 16).
+  // Fora dela o Início ainda depende dos dados novos: o painel continua.
+  const alcance = await alcanceAtual();
+  if (alcance?.demonstracao) redirect(inicioDoPerfil(alcance.perfil));
+
   const permissoes = await permissoesAtuais();
   let pessoas;
   let ocorrencias;

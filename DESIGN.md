@@ -302,9 +302,9 @@ O sistema fala a língua dos próprios tokens: uma **mesa** cinza-gelo, folhas d
 
 A paleta inteira são as oito cores obrigatórias da marca, e só elas. Todo tom intermediário sai de `color-mix()` entre essas oito; não existe outro hex no sistema. As situações (pílulas, marcas de gráfico) usam a paleta como código: lima resolve, escura espera, rosa recusa, violeta em curso, lilás férias, neutro encerrado. O tema escuro troca os valores dos tokens e nenhuma classe de componente muda: a mesa vira preto, o papel vira grafite, a tinta vira gelo.
 
-A tela de entrada leva o mesmo mundo para fora do sistema. A coluna do formulário é papel com os mesmos campos e o mesmo botão, só mais altos e mais legíveis; ao lado, um palco violeta chapado, igual nos dois temas, com texto preto em Helvetica bold de tracking fechado, e uma prévia do painel montada com os componentes reais. O violeta, ali, deixa de ser acento e vira chão; isso só acontece em mais um lugar, o topo do Início, a entrada do dia a dia.
+A tela de entrada leva o mesmo mundo para fora do sistema. A coluna do formulário é papel com os mesmos campos e o mesmo botão, só mais altos e mais legíveis; ao lado, um palco violeta chapado, igual nos dois temas, com texto preto em Helvetica bold de tracking fechado, e uma prévia do Início montada com os componentes reais. O violeta, ali, deixa de ser acento e vira chão; isso só acontece em mais um lugar, o topo do Início, a entrada do dia a dia.
 
-**A linguagem da entrada é a linguagem do sistema.** As telas internas usam a mesma régua da entrada: título de página em Helvetica 700 de tracking fechado (32px; 28px no celular) com subtítulo de 15px, corpo de 14px, títulos de seção e de cartão em frase (sem maiúsculas), campos e botões de 48px, e o que se abre por cima sobe de baixo como folha. O registro denso anterior (12,5px, rótulos maiúsculos, tarja lateral nos KPIs) foi substituído; dele só resta a prévia do painel na entrada, congelada até a fase 16 do redesenho.
+**A linguagem da entrada é a linguagem do sistema.** As telas internas usam a mesma régua da entrada: título de página em Helvetica 700 de tracking fechado (32px; 28px no celular) com subtítulo de 15px, corpo de 14px, títulos de seção e de cartão em frase (sem maiúsculas), campos e botões de 48px, e o que se abre por cima sobe de baixo como folha. O registro denso anterior (12,5px, rótulos maiúsculos, tarja lateral nos KPIs) foi substituído por inteiro; a prévia da entrada foi redesenhada na fase 16 e usa as peças atuais.
 
 **Key Characteristics:**
 - Oito cores de marca, nenhuma outra; tons intermediários só por `color-mix()`.
@@ -389,11 +389,11 @@ Entrada: duas colunas no desktop (`minmax(440px, 5fr) 6fr`). A coluna do formul�
 Profundidade híbrida e discreta: cada sombra combina um difuso suave com um contorno de 1px na cor da linha, de modo que o papel tem borda mesmo onde a sombra some. No escuro, a base da sombra passa a preto em opacidade maior. Nada de sombra dura ou deslocada.
 
 ### Shadow Vocabulary
-- **Papel apoiado** (`--e1`: `0 1px 2px` grafite 5% + `0 0 0 1px var(--linha)`): cartões, números, opção escolhida do segmentado, botão fantasma do cabeçalho, pendência da prévia.
+- **Papel apoiado** (`--e1`: `0 1px 2px` grafite 5% + `0 0 0 1px var(--linha)`): cartões, números, opção escolhida do segmentado, botão fantasma do cabeçalho, cartões da prévia.
 - **Papel erguido** (`--e2`: `0 4px 14px` grafite 7% + contorno): o botão flutuante do menu em toque e o hover de número com link e do botão fantasma do cabeçalho.
 - **Sobreposição** (`--e-pop`: `0 12px 34px` grafite 16% + contorno): janelas, gaveta aberta, menu lateral expandido por hover.
 - **Véu** (`--veu`: grafite 45%, preto 60% no escuro): fundo atrás da gaveta e das janelas; nas janelas, com desfoque de 3px.
-- **Prévia sobre o palco** (`0 28px 64px` preto 26% + contorno preto 14%): exclusiva da prévia do painel, que flutua sobre o violeta.
+- **Prévia sobre o palco** (`0 28px 64px` preto 26% + contorno preto 14%): exclusiva da prévia do Início, que flutua sobre o violeta.
 
 ### Named Rules
 **The Contorno-Junto Rule.** Toda sombra do sistema carrega o contorno de 1px em `--linha`. Profundidade sem limite visível não existe aqui.
@@ -467,7 +467,7 @@ O avatar (círculo lilás de 36px com as iniciais, num alvo de 44px) abre a folh
 Superfície inteira em violeta chapado, igual nos dois temas, com texto preto e secundário em Preto Sobre Violeta. Frase em Display; três perfis em colunas com fio preto de 1,5px no topo; etiqueta "Dados ilustrativos" de 12px. A seleção de texto ali inverte (fundo preto, texto violeta). No celular, o palco vira a faixa do alto, com a marca em preto e o ".cx" em branco.
 
 ### Prévia do painel (entrada)
-Retrato do painel montado com os componentes reais (KPIs, cartão, série, pílulas de situação) e dados inventados, marcado como inerte e oculto para leitores de tela. Está congelada até a fase 16 do redesenho: usa o `Kpi` antigo, com tarja, e um bloco `.previa …` no CSS segura as medidas antigas de cartão e pílula; os dois saem quando a prévia for redesenhada. Segue o tema: é ela que mostra a troca de tema acontecendo enquanto o violeta em volta fica parado. Entra subindo 28px com desfoque em 0,9s, partindo de 40% de opacidade para nunca estar invisível.
+Retrato do Início da Gestão montado com as peças reais e dados inventados, marcado como inerte e oculto para leitores de tela: a faixa violeta do Início em escala menor (o quadro, a frase do que espera você e os três números do negócio, cada um com rótulo, valor e apoio empilhados, porque a prévia sai pela borda direita) e dois cartões com as pílulas de prazo (`.quando`) e de situação. Acompanha a cor do parceiro, como o resto do sistema. Segue o tema: é ela que mostra a troca de tema acontecendo enquanto o violeta em volta fica parado. Entra subindo 28px com desfoque em 0,9s, partindo de 40% de opacidade para nunca estar invisível.
 
 ### Início (tela inicial da Gestão)
 Organizado por assunto (fase 5 do redesenho). De cima para baixo:
@@ -521,5 +521,5 @@ A troca entre claro e escuro usa view-transition: a tela inteira se dissolve de 
 - **Don't** escurecer o violeta no hover: com texto preto, o contraste cai para 3,9:1; o hover clareia.
 - **Don't** trocar a Helvetica por outra família, nem para títulos nem para números.
 - **Don't** usar sombra dura ou deslocada; a profundidade é difusa e sempre contornada.
-- **Don't** marcar tom de cartão com tarja lateral colorida. O `Numero` marca o tom com um ponto ao lado do rótulo; a tarja de 4px só sobrevive no `Kpi` da prévia da entrada, até a fase 16.
+- **Don't** marcar tom de cartão com tarja lateral colorida. O `Numero` marca o tom com um ponto ao lado do rótulo.
 - **Don't** voltar a títulos de seção, rótulos de campo ou cabeçalhos de tabela em maiúsculas pequenas: o registro denso foi substituído.

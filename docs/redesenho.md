@@ -268,7 +268,7 @@ Toda fase é testada em 375px e 1440px, nos temas claro e escuro, e termina com 
 | 13 | **Benefícios** + painel Benefícios ✅ concluída em 13/10/2026 | Catálogo, empresa paga e desconto, quem não tem | Custo entra na folha gerencial |
 | 14 | **Documentos e Empresa** ✅ concluída em 13/10/2026 | Validade, completude, CNPJs, departamentos (com o anexo do Simples Nacional), usuários, importação da planilha modelo (abas e erros por linha, ver § 9 › Implantação), histórico | Subir uma planilha com erros e ver o que corrigir |
 | 15 | **Parceiro** ✅ concluída em 13/10/2026 | Carteira, consulta de um cliente, comparação, exportação (CSV e página para imprimir), white-label com checagem de contraste | Login de parceiro não vê nada de outro parceiro; marca troca |
-| 16 | **Administração e fechamento** | Parceiros, clientes, usuários, suporte; prévia da entrada redesenhada; `/painel` redireciona para `/inicio`; revisão final | Revisão final em todas as telas |
+| 16 | **Administração e fechamento** ✅ concluída em 13/10/2026 | Parceiros, clientes, usuários, suporte; prévia da entrada redesenhada; `/painel` redireciona para `/inicio`; revisão final | Revisão final em todas as telas |
 
 ---
 
@@ -373,6 +373,20 @@ O que cada fase entregou e o que ficou decidido no caminho, para a fase seguinte
 - Nada disso vai para as telas antes da conferência do usuário (fases 9, 11 e 12).
 - Conferência do usuário em 13/10/2026: as sete escolhas aprovadas, com dois acréscimos: o saldo real do FGTS informado na ficha substitui a estimativa (o campo entra na fase 9, com o custo de desligar), e a rescisão desconta a 1ª parcela do 13º quando ela já foi paga (pelo valor informado ou pelo prazo legal). O 13º sobre o aviso que passa do fim do ano agora leva os avos do ano seguinte. `npm test`: 66 casos.
 - Antes do uso com clientes reais, a contabilidade parceira revisa as tabelas e os cálculos (`docs/tabelas.md`).
+
+### Fase 16: Administração e fechamento (13/10/2026)
+
+- **Administração da plataforma**, com abas próprias:
+  - `/admin`, Suporte: números da plataforma e o que pede suporte (implantação em revisão, regime ou anexo a conferir, cliente sem usuário da Gestão, prazos vencidos, cores de parceiro recusadas), com "Consultar";
+  - `/admin/parceiros`: clientes, pessoas, usuários e a marca de cada parceiro, com as amostras de cor e o resultado da checagem de contraste;
+  - `/admin/clientes`: parceiro, regime e encargos (padrão ou configurado), pessoas, implantação, suporte e "Consultar", com filtro por parceiro;
+  - `/admin/usuarios`: perfil, vínculo e situação, com busca e filtro por perfil.
+  - Contas em `lib/dados/administracao.js`.
+  - Só leitura: criar parceiros, empresas e usuários chega com o Supabase.
+- **Prévia da entrada redesenhada:** o Início em miniatura (faixa violeta com o quadro, a frase e os números do negócio; "Esperando você" e "Pessoas e contratos" com as pílulas de prazo). `Kpis`/`Kpi` e o CSS congelado saíram.
+- **`/painel` redireciona** para o início de cada perfil na demonstração. Fora dela, o painel continua, porque o Início depende dos dados novos (Supabase).
+- O início da Administração só fica ativo no menu no endereço exato (antes, ficava junto com Parceiros, Clientes e Usuários).
+- A revisão final é a auditoria das telas das fases 10 a 16, logo a seguir.
 
 ### Fase 15: Parceiro (13/10/2026)
 

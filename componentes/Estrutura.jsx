@@ -106,35 +106,6 @@ export function Numero({ rotulo, valor, apoio, tom, variacao, href }) {
   return <div className="numero">{conteudo}</div>;
 }
 
-/* ------------------------------------------------------------- KPIs */
-
-/* Kpi antigo, com tarja lateral: só a prévia da entrada usa, até a
-   fase 16 do redesenho. Nas telas internas, use Numero. */
-export function Kpis({ children }) {
-  return <div className="kpis">{children}</div>;
-}
-
-export function Kpi({ rotulo, valor, apoio, cor, href }) {
-  const conteudo = (
-    <>
-      {cor ? <span className="kpi-tom" style={{ background: cor }} aria-hidden="true" /> : null}
-      <div className="kpi-r">{rotulo}</div>
-      <div className="kpi-v num">{valor}</div>
-      {apoio ? <div className="kpi-p">{apoio}</div> : null}
-    </>
-  );
-
-  if (href) {
-    return (
-      <Link href={href} className="kpi block transition-shadow hover:shadow-[var(--e2)]">
-        {conteudo}
-      </Link>
-    );
-  }
-
-  return <div className="kpi">{conteudo}</div>;
-}
-
 /* ---------------------------------------------------------- tabelas */
 
 export function Tabela({ grade, colunas, children }) {
