@@ -104,7 +104,7 @@ export function figurasDoNegocio(numeros) {
       rotulo: 'Turnover em 12 meses',
       valor: `${decimal(numeros.turnover)}%`,
       apoio: `${numeros.admissoesEm12Meses} entradas e ${numeros.saidasEm12Meses} saídas`,
-      href: '/indicadores?meses=12',
+      href: '/indicadores/quadro/turnover',
     },
   ];
   if (numeros.absenteismo) {
@@ -118,7 +118,7 @@ export function figurasDoNegocio(numeros) {
         igual: `igual a ${mesAnterior}`,
         mudou: `${diferenca > 0 ? '+' : '−'}${decimal(Math.abs(diferenca))} p.p. sobre ${mesAnterior}`,
       }),
-      href: '/indicadores',
+      href: '/indicadores/saude/absenteismo?meses=3',
     });
   }
   return figuras;

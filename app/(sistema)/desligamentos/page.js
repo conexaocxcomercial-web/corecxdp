@@ -64,7 +64,7 @@ export default async function Desligamentos({ searchParams }) {
       <Wrap>
         <Numeros>
           <Numero rotulo="Para concluir" valor={numeros.abertos} tom={numeros.abertos ? 'var(--atencao)' : undefined} apoio="rescisão em 10 dias" />
-          <Numero rotulo="Desligamentos em 12 meses" valor={numeros.desligamentos} href="/indicadores" apoio="turnover em Indicadores" />
+          <Numero rotulo="Desligamentos em 12 meses" valor={numeros.desligamentos} href="/indicadores/quadro/turnover" apoio="turnover em Indicadores" />
           <Numero
             rotulo="Custo demissional informado"
             valor={emReais(numeros.custoInformado)}

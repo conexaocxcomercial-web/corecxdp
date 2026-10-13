@@ -203,13 +203,13 @@ export default async function Painel() {
             rotulo="Absenteísmo no mês"
             valor={`${decimal(mes.absenteismo)}%`}
             apoio={`${mes.diasPerdidos} ${plural(mes.diasPerdidos, 'dia perdido', 'dias perdidos')}`}
-            href="/indicadores"
+            href="/indicadores/saude/absenteismo?meses=3"
           />
           <Numero
             rotulo="Turnover no mês"
             valor={`${decimal(mes.turnover)}%`}
             apoio={`${mes.admissoes} ${plural(mes.admissoes, 'entrada', 'entradas')}, ${mes.saidas} ${plural(mes.saidas, 'saída', 'saídas')}`}
-            href="/indicadores"
+            href="/indicadores/quadro/turnover?meses=3"
           />
         </Numeros>
 

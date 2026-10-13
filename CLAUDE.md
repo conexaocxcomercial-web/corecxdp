@@ -41,7 +41,9 @@ Logins de teste, todos com a senha `demo123`: `teste@gmail.com` e `gestao@demo.t
 | `/inicio` | Gestão: faixa de urgência, quadro e números do negócio, um quadro por assunto e atividade recente (só na demonstração) |
 | `/pendencias` | Revisão da implantação, aprovações na linha (com Desfazer) e prazos, com filtros por assunto e data (só na demonstração) |
 | `/painel` | Início fora da demonstração: quadro de ativos, pendências do DP, séries de 6 meses e últimos lançamentos |
-| `/indicadores` | Turnover, absenteísmo, quadro, reincidência e tempo de casa (3, 6 ou 12 meses) |
+| `/indicadores` | Central: um cartão por tema (Quadro, Absenteísmo e saúde, Movimentações), com o número principal e dois de apoio |
+| `/indicadores/[tema]` | Painel do tema: números, mês a mês, por unidade e por departamento; período e departamento no endereço |
+| `/indicadores/[tema]/[indicador]` | Detalhe: o número, como é calculado, recortes e as pessoas por trás (saúde sem pessoas; grupos com menos de 3 ocultos) |
 | `/colaboradores` | Lista com busca, filtros (unidade, departamento, contrato, situação) e salário mascarado; "Admitir" abre o Lançar › Admissão |
 | `/admissoes` | Quem começa em breve (com os passos), quem está em experiência (45 e 90 dias) e as admissões de 12 meses com os custos informados (só na demonstração) |
 | `/desligamentos` | Para concluir (prazo da rescisão, passos, informar custos e concluir) e os de 12 meses, com os custos informados (só na demonstração) |
@@ -65,7 +67,7 @@ As telas internas ficam em `app/(sistema)/` (layout com barra do topo, menu late
 - `Lancar.jsx` — **o Lançar em três passos**: `ProvedorDoLancar` (no layout, uma folha para o sistema inteiro), `useLancar`, `BotaoLancar` (barra do topo), `BotaoDeLancar` (abre já num tipo e, da ficha, com a pessoa). Novos tipos de lançamento entram em `lib/navegacao.js` › `LANCAMENTOS` e num formulário aqui. `Afastamentos.jsx` — validar na linha e registrar retorno.
 - `Custos.jsx` — `CamposDeCustos` (campos `custo_*` da admissão ou do desligamento) e `InformarCustos` (botão e folha para informar depois). `Passos.jsx` — `Passos` e `ResumoDosPassos` (admissão e desligamento). `Desligamentos.jsx` — `ConcluirDesligamento`.
 - `Filtros.jsx` — `Busca` e `Seletor` (parâmetros da URL) e o alcance: `SeletorDeAlcance`, `FolhaDoAlcance`, `useAplicarAlcance`.
-- `Graficos.jsx` — `Serie`, `SerieDupla`, `BarrasH`, `Rosca`.
+- `Graficos.jsx` — `Serie`, `SerieDupla`, `BarrasH`, `Rosca`. `Indicadores.jsx` — `SeletorDePeriodo`, `ValorDoIndicador` (com o oculto da LGPD), `TabelaDeRecortes`, `enderecoDe`.
 - `Sinais.jsx` — `Status` (pílula de situação).
 - `Navegacao.jsx` — menu lateral (computador). `BarraInferior.jsx` — navegação do celular. `MenuDoUsuario.jsx` — menu do avatar e aba Menu. `BuscaDePessoa.jsx` — busca da barra do topo. `EscolhaDeCliente.jsx` — escolha de cliente e `TabelaDeClientes`. `TituloNaBarra.jsx` — título na barra do topo. `Tema.jsx` — tema claro/escuro.
 - `Inicio.jsx` — peças do Início: `FaixaDeUrgencia`, `FaixaDaImplantacao`, `FaixaDoInicio`, `Assunto`, `Atividade`. `Prazos.jsx` — `Prazo` (pílula de dias), `LinhaDePrazo`, `GrupoDePrazos`, `linkDaFicha`. `Pendencias.jsx` — `FilaDePendencias`, `Restantes`, `ListaDeAprovacoes` (aprovar e rejeitar na linha, com Desfazer), `ItemDaRevisao`, `ConcluirRevisao`.
@@ -83,7 +85,7 @@ As telas internas ficam em `app/(sistema)/` (layout com barra do topo, menu late
 - `tabelas.js` — **parâmetros das estimativas** (frações das provisões, percentual padrão de encargos por regime, limites do percentual da empresa, avisos); modelo em [docs/tabelas.md](docs/tabelas.md). `calculos/custo.js` — custo estimado (puro, testado): sem o anexo do Simples ou sem o regime, usa 8% e devolve o aviso "anexo a conferir" ou "regime a conferir", que aparece no cadastro da empresa e no selo de estimativa.
 - `pessoas.js` — situação calculada pelos eventos, tempo de casa, saldo de férias, números e linha do tempo da pessoa (puro, testado). `dados/pessoas.js` — lista e ficha nos dois modos (na demonstração, os dados completos; fora dela, adapta a planilha). `dados/recorte.js` — o recorte do alcance nos dados completos.
 - `permissoes.js` — `pode(perfil, ação)` e os perfis. `navegacao.js` — o que cada perfil vê no menu, na barra inferior e no Lançar (arquivo único).
-- `indicadores.js` — cálculos puros sobre os dados (sobrevivem à migração).
+- `paineis.js` — **indicadores em três camadas** (central, painel do tema, detalhe), com os temas, as contas e a regra dos menos de 3 (puro, testado); `dados/indicadores.js` — leitura nos dois modos e os filtros do endereço. Tema novo entra em `TEMAS` e `INDICADORES` de `paineis.js`. `indicadores.js` — as contas antigas, ainda usadas pelo `/painel` e pelo Início.
 - `avisos.js` — `AvisoAoUsuario` (erro com texto para a tela) e `mensagemParaTela(erro, padrao)`: qualquer outro erro vai para o log do servidor e a tela mostra o texto neutro. Telas usam isso, nunca `erro.message` direto.
 - `formato.js` — datas, CPF, tempo de casa. `contexto.js` — empresa da sessão. `sessao.js` / `usuarios.js` — login e cookie.
 - `planilha.js` — Google Sheets. `demo/` — modo de demonstração (`gerador.js` gera os dados fictícios; `memoria.js` guarda a cópia e deriva as abas; `fonte.js` a serve no lugar do Sheets).

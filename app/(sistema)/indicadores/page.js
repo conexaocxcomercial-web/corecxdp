@@ -1,85 +1,45 @@
 import Link from 'next/link';
-import {
-  listarAtestados, listarColaboradores, listarMovimentacoes, listarOcorrencias, mensagemParaTela,
-} from '@/lib/registros';
-import { calcularIndicadores } from '@/lib/indicadores';
+import { filtrosDoEndereco, lerCentral } from '@/lib/dados/indicadores';
 import { permissoesAtuais } from '@/lib/dados/alcance';
-import { plural } from '@/lib/formato';
-import {
-  Cabecalho, Cartao, Faixa, Numero, Numeros, Secao, Vazio, Wrap,
-} from '@/componentes/Estrutura';
-import { BotaoLink } from '@/componentes/Botao';
-import { BarrasH, PALETA, Rosca, Serie, SerieDupla } from '@/componentes/Graficos';
+import { mensagemParaTela } from '@/lib/avisos';
+import { Cabecalho, Cartao, Faixa, Vazio, Wrap } from '@/componentes/Estrutura';
+import { Icone } from '@/componentes/Icones';
+import { BotaoDeLancar } from '@/componentes/Lancar';
+import { SeletorDePeriodo, ValorDoIndicador, enderecoDe } from '@/componentes/Indicadores';
 
 export const metadata = { title: 'Indicadores' };
 
-const PERIODOS = [3, 6, 12];
-
+/**
+ * Central de indicadores (fase 10 do redesenho): um cartão por tema, com o
+ * número principal e dois de apoio, cada um levando ao detalhe; o tema leva
+ * ao painel. Saúde sempre agregada (LGPD).
+ */
 export default async function Indicadores({ searchParams }) {
-  const parametros = await searchParams;
-  const escolhido = Number(parametros?.meses);
-  const meses = PERIODOS.includes(escolhido) ? escolhido : 6;
+  const filtros = filtrosDoEndereco(await searchParams);
   const permissoes = await permissoesAtuais();
-
-  let pessoas;
-  let ocorrencias;
-  let atestados;
-  let movimentacoes;
-
+  let lido;
   try {
-    [pessoas, ocorrencias, atestados, movimentacoes] = await Promise.all([
-      listarColaboradores(), listarOcorrencias(), listarAtestados(), listarMovimentacoes(),
-    ]);
+    lido = await lerCentral(filtros);
   } catch (erro) {
     return (
       <>
         <Cabecalho titulo="Indicadores" />
         <Wrap>
-          <Faixa tom="erro">
-            {mensagemParaTela(
-              erro,
-              'Não foi possível calcular os indicadores agora. Recarregue a página em alguns segundos.'
-            )}
-          </Faixa>
+          <Faixa tom="erro">{mensagemParaTela(erro, 'Não foi possível calcular os indicadores agora. Recarregue a página em alguns segundos.')}</Faixa>
         </Wrap>
       </>
     );
   }
 
-  const seletor = (
-    <div className="segm" role="tablist" aria-label="Período">
-      {PERIODOS.map((opcao) => (
-        <Link
-          key={opcao}
-          href={`/indicadores?meses=${opcao}`}
-          role="tab"
-          aria-selected={opcao === meses}
-          className={`segm-btn ${opcao === meses ? 'on' : ''}`}
-        >
-          {opcao} meses
-        </Link>
-      ))}
-    </div>
-  );
-
-  if (pessoas.length === 0) {
+  const seletor = <SeletorDePeriodo base="/indicadores" filtros={filtros} />;
+  if (lido.vazio) {
     return (
       <>
         <Cabecalho titulo="Indicadores" acoes={seletor} />
         <Wrap>
           <Cartao>
-            <Vazio
-              icone="monitoring"
-              acao={
-                permissoes.lancar ? (
-                  <BotaoLink href="/colaboradores?lancar=1" icone="add">
-                    Cadastrar colaborador
-                  </BotaoLink>
-                ) : null
-              }
-            >
-              Ainda não há o que medir. Os indicadores são calculados a partir das admissões,
-              ausências e movimentações registradas.
+            <Vazio icone="monitoring" acao={permissoes.lancar ? <BotaoDeLancar tipo="admissao" rotulo="Admitir" icone="person_add" /> : null}>
+              Ainda não há o que medir. Os indicadores saem das admissões, ausências e movimentações registradas.
             </Vazio>
           </Cartao>
         </Wrap>
@@ -87,161 +47,54 @@ export default async function Indicadores({ searchParams }) {
     );
   }
 
-  const {
-    serie, resumo, porTipoDeOcorrencia, porTipoDeMovimentacao, porArea, reincidentes, tempoDeCasa,
-  } = calcularIndicadores({ pessoas, ocorrencias, atestados, movimentacoes, meses });
-
-  const decimal = (valor) => String(valor).replace('.', ',');
-
   return (
     <>
-      <Cabecalho titulo="Indicadores" subtitulo={`últimos ${meses} meses`} acoes={seletor} />
-
+      <Cabecalho titulo="Indicadores" subtitulo={`últimos ${filtros.meses} meses, até hoje`} acoes={seletor} />
       <Wrap>
-        {resumo.lancamentos < 12 ? (
-          <Faixa tom="info">
-            A base tem <b>{resumo.lancamentos}</b>{' '}
-            {plural(resumo.lancamentos, 'lançamento', 'lançamentos')} no período. As taxas já são
-            calculadas, mas só começam a descrever a empresa depois de alguns meses de registro
-            contínuo.
-          </Faixa>
-        ) : null}
-
-        <Numeros>
-          <Numero
-            rotulo="Turnover"
-            valor={`${decimal(resumo.turnover)}%`}
-            apoio={`${resumo.admissoes} ${plural(resumo.admissoes, 'entrada', 'entradas')} e ${resumo.saidas} ${plural(resumo.saidas, 'saída', 'saídas')}`}
-          />
-          <Numero
-            rotulo="Absenteísmo"
-            valor={`${decimal(resumo.absenteismo)}%`}
-            apoio={`${resumo.diasPerdidos} ${plural(resumo.diasPerdidos, 'dia perdido', 'dias perdidos')}`}
-          />
-          <Numero
-            rotulo="Quadro hoje"
-            valor={resumo.quadroAtual}
-            tom="var(--ok)"
-            apoio={`saldo de ${resumo.saldo > 0 ? '+' : ''}${resumo.saldo} no período`}
-          />
-          <Numero
-            rotulo="Dias de atestado"
-            valor={resumo.diasDeAtestado}
-            apoio={`${resumo.atestados} ${plural(resumo.atestados, 'atestado', 'atestados')}, média de ${decimal(resumo.mediaDiasPorAtestado)}`}
-          />
-        </Numeros>
-
-        <Secao titulo="Como o quadro se moveu" nota="mês a mês">
-          <div className="duas">
-            <Cartao titulo="Turnover" descricao="Entradas e saídas sobre o quadro médio do mês.">
-              <Serie
-                itens={serie.map((m) => ({ rotulo: m.rotulo, valor: m.turnover }))}
-                cor="var(--critico)"
-                casas={1}
-                sufixo="%"
-              />
-            </Cartao>
-            <Cartao titulo="Absenteísmo" descricao="Dias perdidos sobre os dias úteis disponíveis.">
-              <Serie
-                itens={serie.map((m) => ({ rotulo: m.rotulo, valor: m.absenteismo }))}
-                casas={1}
-                sufixo="%"
-              />
-            </Cartao>
-            <Cartao titulo="Pessoas ativas" descricao="Quadro ao fim de cada mês.">
-              <Serie
-                itens={serie.map((m) => ({ rotulo: m.rotulo, valor: m.quadroFim }))}
-                cor="var(--ok)"
-              />
-            </Cartao>
-            <Cartao titulo="Entradas e saídas" descricao="Quem entrou e quem saiu, mês a mês.">
-              <SerieDupla
-                itens={serie}
-                series={[
-                  { campo: 'admissoes', nome: 'Admissões', cor: 'var(--ok)' },
-                  { campo: 'saidas', nome: 'Saídas', cor: 'var(--critico)' },
-                ]}
-              />
-              {resumo.semRegistroDeSaida > 0 ? (
-                <p className="nota mt-4 border-t border-[var(--linha)] pt-3">
-                  {resumo.semRegistroDeSaida}{' '}
-                  {plural(resumo.semRegistroDeSaida, 'pessoa inativa', 'pessoas inativas')} sem
-                  movimentação de desligamento registrada. A saída foi contada no mês corrente.
-                </p>
-              ) : null}
-            </Cartao>
-          </div>
-        </Secao>
-
-        <Secao titulo="Ausências" nota={`${resumo.ocorrencias} no período`}>
-          <div className="duas">
-            <Cartao titulo="Por tipo" descricao="Como as ausências se distribuem.">
-              {porTipoDeOcorrencia.length ? (
-                <BarrasH itens={porTipoDeOcorrencia} cor="var(--atencao)" />
-              ) : (
-                <Vazio icone="event_available">Nenhuma ocorrência registrada no período.</Vazio>
-              )}
-            </Cartao>
-
-            <Cartao titulo="Reincidência" descricao="Quem mais acumulou ocorrências no período.">
-              {reincidentes.length ? (
-                <ul className="-mx-4 -mb-4 min-[901px]:-mx-6 min-[901px]:-mb-6">
-                  {reincidentes.map((pessoa) => (
-                    <li key={pessoa.matricula} className="border-t border-[var(--linha)]">
-                      <Link
-                        href={`/colaboradores/${pessoa.matricula}`}
-                        className="flex min-h-[52px] items-center justify-between gap-4 px-4 py-3 text-[14px] transition-colors hover:bg-[var(--papel-2)] min-[901px]:px-6"
-                      >
-                        <span className="font-semibold">{pessoa.rotulo}</span>
-                        <span className="num text-[var(--tinta-2)]">
-                          {pessoa.valor} {plural(pessoa.valor, 'registro', 'registros')}
-                        </span>
+        <div className="ind-temas">
+          {lido.temas.map((tema) => {
+            const base = `/indicadores/${tema.chave}`;
+            return (
+              <section key={tema.chave} className="cartao ind-tema" aria-labelledby={`tema-${tema.chave}`}>
+                <div className="ind-tema-cab">
+                  <span className="ind-tema-ic" aria-hidden="true">
+                    <Icone nome={tema.icone} />
+                  </span>
+                  <div>
+                    <h2 id={`tema-${tema.chave}`} className="ind-tema-t">
+                      {tema.nome}
+                    </h2>
+                    <p className="ind-tema-d">{tema.descricao}</p>
+                  </div>
+                </div>
+                <Link href={enderecoDe(`${base}/${tema.principal.chave}`, filtros)} className="ind-principal">
+                  <span className="ind-principal-r">{tema.principal.nome}</span>
+                  <span className="ind-principal-v">
+                    <ValorDoIndicador {...tema.principal} />
+                  </span>
+                  <span className="ind-principal-p">{tema.principal.apoio}</span>
+                </Link>
+                <ul className="ind-apoio" role="list">
+                  {tema.apoio.map((item) => (
+                    <li key={item.chave}>
+                      <Link href={enderecoDe(`${base}/${item.chave}`, filtros)} className="ind-apoio-l">
+                        <span>{item.nome}</span>
+                        <ValorDoIndicador {...item} />
+                        <Icone nome="chevron_right" className="prazo-ir" />
                       </Link>
                     </li>
                   ))}
                 </ul>
-              ) : (
-                <Vazio icone="sentiment_satisfied">Ninguém com ocorrências no período.</Vazio>
-              )}
-            </Cartao>
-
-            <Cartao titulo="Dias de atestado" descricao="Afastamento médico lançado por mês.">
-              <Serie
-                itens={serie.map((m) => ({ rotulo: m.rotulo, valor: m.diasDeAtestado }))}
-                cor="var(--azul)"
-              />
-            </Cartao>
-
-            <Cartao titulo="Movimentações por tipo" descricao={`${resumo.movimentacoes} no período, ${resumo.promocoes} ${plural(resumo.promocoes, 'promoção', 'promoções')}.`}>
-              {porTipoDeMovimentacao.length ? (
-                <BarrasH itens={porTipoDeMovimentacao} />
-              ) : (
-                <Vazio icone="swap_horiz">Nenhuma movimentação registrada no período.</Vazio>
-              )}
-            </Cartao>
-          </div>
-        </Secao>
-
-        <Secao titulo="Quem está no quadro" nota="situação de hoje">
-          <div className="duas">
-            <Cartao titulo="Distribuição por área">
-              <Rosca
-                itens={porArea.map((item, indice) => ({ ...item, cor: PALETA[indice % PALETA.length] }))}
-                total={resumo.quadroAtual}
-                rotulo="ativas"
-              />
-            </Cartao>
-            <Cartao titulo="Tempo de casa" descricao="Há quanto tempo cada faixa está na empresa.">
-              <BarrasH itens={tempoDeCasa} cor="var(--ok)" />
-            </Cartao>
-          </div>
-        </Secao>
-
-        <p className="nota max-w-[78ch]">
-          Como as contas são feitas: turnover é a média entre admissões e saídas do mês dividida
-          pelo quadro médio. Absenteísmo é o total de dias perdidos, somando faltas e dias de
-          atestado não rejeitado, sobre o quadro médio multiplicado pelos dias úteis do mês.
-          Atestados que atravessam a virada do mês têm os dias distribuídos entre os dois meses.
+                <Link href={enderecoDe(base, filtros)} className="ind-tema-ir" aria-label={`Ver o painel completo de ${tema.nome}`}>
+                  Ver o painel completo
+                  <Icone nome="arrow_forward" />
+                </Link>
+              </section>
+            );
+          })}
+        </div>
+        <p className="nota ind-nota">
+          Férias e 13º, Custos e Benefícios ganham o próprio painel quando os módulos chegarem. Indicadores de saúde são sempre de grupo: com menos de 3 pessoas, ficam ocultos.
         </p>
       </Wrap>
     </>

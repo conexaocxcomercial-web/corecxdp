@@ -4516,3 +4516,150 @@ html.com-folha {
     margin-block: -12px;
   }
 }
+
+/* ------------------------------------------------- indicadores (fase 10) */
+
+/* Central: um cartão por tema, com o número principal e dois de apoio. */
+.ind-temas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+.ind-tema {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.ind-tema-cab {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.ind-tema-ic {
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--r-ctrl);
+  background: var(--acao-fraco);
+  color: var(--acao-texto);
+}
+.ind-tema-t {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.ind-tema-d {
+  margin-top: 2px;
+  font-size: 14px;
+  color: var(--tinta-2);
+}
+.ind-principal {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0 -12px;
+  padding: 12px;
+  border-radius: var(--r-ctrl);
+  transition: background 0.15s;
+}
+.ind-principal:hover {
+  background: var(--papel-2);
+}
+.ind-principal-r {
+  font-size: 14px;
+  color: var(--tinta-2);
+}
+.ind-principal-v {
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+.ind-principal-p {
+  font-size: 13px;
+  color: var(--tinta-2);
+}
+.ind-apoio {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--linha);
+}
+.ind-apoio-l {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  border-bottom: 1px solid var(--linha);
+  font-size: 15px;
+}
+.ind-apoio-l > span:first-child {
+  flex: 1;
+  color: var(--tinta-2);
+}
+.ind-apoio-l .num {
+  font-weight: 600;
+}
+.ind-apoio-l:hover > span:first-child {
+  color: var(--tinta);
+}
+.ind-tema-ir {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  min-height: 44px;
+  margin-top: auto;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--acao-texto);
+}
+.ind-nota {
+  max-width: 78ch;
+  margin-top: 24px;
+}
+
+/* Valor oculto pela regra dos menos de 3 (LGPD). */
+.ind-oculto {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--tinta-3);
+}
+
+/* Detalhe: o número e a explicação lado a lado no computador. */
+.ind-detalhe {
+  display: grid;
+  gap: 16px;
+}
+.ind-detalhe .numeros {
+  margin: 0;
+}
+.ind-explicacao {
+  max-width: 70ch;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--tinta-2);
+}
+@media (min-width: 901px) {
+  .ind-detalhe {
+    grid-template-columns: minmax(260px, 1fr) 2fr;
+    align-items: stretch;
+  }
+  .ind-detalhe .numeros {
+    grid-template-columns: 1fr;
+    height: 100%;
+  }
+}
+@media (max-width: 900px) {
+  .ind-temas {
+    grid-template-columns: 1fr;
+  }
+  .ind-detalhe .numeros {
+    grid-template-columns: 1fr;
+  }
+}

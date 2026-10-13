@@ -27,12 +27,13 @@ function fmt(valor, casas) {
  * Barras por mês, com o valor impresso acima. Num toque não existe
  * passar o mouse: sem o rótulo o gráfico vira desenho.
  */
-export function Serie({ itens, cor = 'var(--acao)', casas = 0, sufixo = '' }) {
+export function Serie({ itens, cor = 'var(--acao)', casas = 0, sufixo = '', rotulo = 'Série mês a mês' }) {
   const { topo } = escala(Math.max(...itens.map((i) => i.valor), 0), casas);
 
   return (
     <>
-      <div className="serie-rolagem">
+      {/* No celular a série rola de lado: a região recebe foco para rolar pelo teclado. */}
+      <div className="serie-rolagem" tabIndex={0} role="region" aria-label={rotulo}>
         <div className="serie">
           {itens.map((item) => (
             <div key={item.rotulo} className="sb" title={`${item.rotulo}: ${fmt(item.valor, casas)}${sufixo}`}>
@@ -57,7 +58,7 @@ export function Serie({ itens, cor = 'var(--acao)', casas = 0, sufixo = '' }) {
 }
 
 /** Duas barras por mês, para entradas contra saídas. */
-export function SerieDupla({ itens, series }) {
+export function SerieDupla({ itens, series, rotulo = 'Série mês a mês' }) {
   const todos = itens.flatMap((item) => series.map((s) => item[s.campo] || 0));
   const { topo } = escala(Math.max(...todos, 0));
 
@@ -72,7 +73,7 @@ export function SerieDupla({ itens, series }) {
         ))}
       </div>
 
-      <div className="serie-rolagem">
+      <div className="serie-rolagem" tabIndex={0} role="region" aria-label={rotulo}>
         <div className="serie">
           {itens.map((item) => (
             <div key={item.rotulo} className="sb">

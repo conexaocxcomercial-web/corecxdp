@@ -139,7 +139,7 @@ Empresa sem colaboradores: a tela vira primeiro passo ("Cadastre a primeira pess
 | Colaboradores | `/colaboradores` | Filtros por CNPJ, departamento, contrato e situação; salário mascarado |
 | Admissões | `/admissoes` | Custos admissionais (exames, uniforme, outros), passos (registro antes do primeiro dia, exame admissional), acompanhamento da experiência |
 | Desligamentos | `/desligamentos` | Data, tipo, motivo e **custos demissionais informados** → confirmação com o prazo de 10 dias para pagar a rescisão → concluir. Sem rescisão calculada |
-| Férias | `/ferias` | Períodos aquisitivos e saldo, programação com aprovação, vencidas com o custo da dobra, aviso de 30 dias, pagamento 2 dias antes |
+| Férias | `/ferias` | Períodos aquisitivos e saldo, programação com aprovação, vencidas (sem valor calculado da dobra, pela simplificação dos cálculos), aviso de 30 dias, pagamento 2 dias antes |
 | **Atestados e afastamentos** | `/afastamentos` (`/atestados` redireciona) | Ver abaixo |
 | Ocorrências | `/ocorrencias` | Faltas, atrasos, advertências e suspensões, com autoria |
 | Movimentações | `/movimentacoes` | Só reajuste (alteração salarial), promoção, mudança de cargo e transferência, com "passa a valer em". Sem desligamento, sem afastamento e sem checklist |
@@ -262,7 +262,7 @@ Toda fase é testada em 375px e 1440px, nos temas claro e escuro, e termina com 
 | 7 | **Tabelas e cálculos** ✅ concluída em 13/10/2026; simplificada no mesmo dia para a ordem de grandeza dos custos ([tabelas.md](tabelas.md)) | Parâmetros num arquivo só, cálculo puro do custo estimado, testes | `node --test` passando |
 | 8 | **Lançar, Ocorrências, Atestados e afastamentos, Movimentações** ✅ concluída em 13/10/2026 | Lançar em três passos, autoria, tipos de afastamento, validação com CID, INSS acima de 15 dias; PRODUCT.md com a terminologia nova | Lançar de qualquer tela; aparece no histórico com autor; afastamento muda a situação |
 | 9 | **Admissões e Desligamentos** ✅ concluída em 13/10/2026 | Admissão completa no Lançar com custos admissionais informados, passos, experiência; desligamento com custos demissionais informados e prazo da rescisão | Desligar alguém e ver custo informado, prazo e alerta |
-| 10 | **Estrutura de indicadores** | Central, modelo de painel e de detalhe; Quadro, Absenteísmo e Saúde, Movimentações; regra dos menos de 3 | Do número à pessoa em 3 cliques; grupo pequeno oculto |
+| 10 | **Estrutura de indicadores** ✅ concluída em 13/10/2026 | Central, modelo de painel e de detalhe; Quadro, Absenteísmo e Saúde, Movimentações; regra dos menos de 3 | Do número à pessoa em 3 cliques; grupo pequeno oculto |
 | 11 | **Férias** + painel Férias | Períodos, programação e aprovação, dobra, prazos | Vencidas, vencendo e programadas batem com a ficha |
 | 12 | **Folha gerencial, encargos e 13º** + painel Custos | Competência, composição, fator de custo, provisões e parcelas, selo de estimativa | Totais batem com os cálculos testados; trocar o regime ou o percentual da empresa muda os encargos |
 | 13 | **Benefícios** + painel Benefícios | Catálogo, empresa paga e desconto, quem não tem | Custo entra na folha gerencial |
@@ -373,6 +373,30 @@ O que cada fase entregou e o que ficou decidido no caminho, para a fase seguinte
 - Nada disso vai para as telas antes da conferência do usuário (fases 9, 11 e 12).
 - Conferência do usuário em 13/10/2026: as sete escolhas aprovadas, com dois acréscimos: o saldo real do FGTS informado na ficha substitui a estimativa (o campo entra na fase 9, com o custo de desligar), e a rescisão desconta a 1ª parcela do 13º quando ela já foi paga (pelo valor informado ou pelo prazo legal). O 13º sobre o aviso que passa do fim do ano agora leva os avos do ano seguinte. `npm test`: 66 casos.
 - Antes do uso com clientes reais, a contabilidade parceira revisa as tabelas e os cálculos (`docs/tabelas.md`).
+
+### Fase 10: Estrutura de indicadores (13/10/2026)
+
+- **Três camadas:**
+  - `/indicadores` é a central, com um cartão por tema: o número principal e dois de apoio, cada um levando ao detalhe, e "Ver o painel completo";
+  - `/indicadores/[tema]` é o painel, com os números, a evolução mês a mês e a tabela por unidade e por departamento (a linha do departamento filtra o painel);
+  - `/indicadores/[tema]/[indicador]` é o detalhe: o número, "Como é calculado", a série, a distribuição quando faz sentido, os recortes e "Quem está por trás do número", cada pessoa levando à aba certa da ficha.
+  - Período (3, 6 ou 12 meses; 12 por padrão) e departamento ficam no endereço.
+- **Temas entregues:**
+  - Quadro: pessoas no quadro, turnover, admissões, tempo médio de casa, em experiência;
+  - Absenteísmo e saúde: absenteísmo, dias de atestado, pessoas afastadas hoje, faltas;
+  - Movimentações: movimentações, promoções, reajustes salariais.
+  - Férias e 13º, Custos e Benefícios entram com os módulos (fases 11 a 13).
+- **LGPD:** os indicadores de saúde não listam pessoas, e um grupo com menos de 3 pessoas aparece como "oculto" ("Oculto por privacidade: menos de 3 pessoas"), no painel, nos recortes e no filtro de departamento. Faltas não são dado de saúde e mostram quem faltou.
+- **Contas** (`lib/paineis.js`, puro, testado em `testes/paineis.test.js`):
+  - quadro médio é a média entre o começo e o fim de cada mês, e o último dia de trabalho ainda conta como no quadro;
+  - turnover é a média de admissões e saídas sobre o quadro médio;
+  - absenteísmo são faltas mais dias úteis de atestado por doença ou acidente (sem os rejeitados) sobre o quadro médio vezes os dias úteis, com os feriados nacionais;
+  - o mês atual vai até hoje.
+  - Funciona nos dois modos: na demonstração, com os dados completos; fora dela, com o adaptador da planilha.
+- **Gráficos:** carregada a skill `dataviz`. Uma série por gráfico, sem eixo duplo, texto em tinta (nunca na cor da barra) e os recortes também em tabela. A central não usa minigráfico: o número principal vem com dois números de apoio. A série que rola de lado no celular recebe foco pelo teclado.
+- Links do Início, do painel antigo e de Desligamentos levam direto ao indicador (turnover, absenteísmo).
+- Conferido em 1440px e 375px, claro e escuro, com axe (WCAG 2.1 AA) sem violações; o único aviso é o logotipo "cx", que é exceção.
+- `npm test`: 77 casos.
 
 ### Fase 9: Admissões e Desligamentos (13/10/2026)
 
