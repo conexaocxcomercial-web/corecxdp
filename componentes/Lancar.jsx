@@ -19,6 +19,7 @@ import {
 } from '@/lib/lancamentos';
 import { prazoDaRescisao } from '@/lib/prazos';
 import { motivoParaNaoComecar, prazosDaProgramacao } from '@/lib/ferias';
+import { COM_VALIDADE, TIPOS_DE_DOCUMENTO } from '@/lib/documentos';
 import { hojeISO } from '@/lib/formato';
 
 /*
@@ -290,6 +291,7 @@ const FORMULARIOS = {
   desligamento: CamposDoDesligamento,
   admissao: CamposDaAdmissao,
   ferias: CamposDasFerias,
+  documento: CamposDoDocumento,
 };
 
 function Formulario({ tipo, pessoa, aoVoltar, aoTrocarPessoa, aoRegistrar }) {
@@ -634,6 +636,23 @@ function CamposDasFerias({ pessoa }) {
   );
 }
 
+function CamposDoDocumento() {
+  const [tipo, setTipo] = useState(TIPOS_DE_DOCUMENTO[1]);
+  const vence = COM_VALIDADE.includes(tipo);
+  return (
+    <>
+      <Selecao rotulo="Tipo de documento" nome="tipo" opcoes={TIPOS_DE_DOCUMENTO} value={tipo} onChange={(evento) => setTipo(evento.target.value)} />
+      {tipo === 'Outros' ? <Texto rotulo="Que documento é" nome="descricao" placeholder="Certificado de treinamento" required /> : null}
+      <div className="folha-duas">
+        <Data rotulo="Emissão" nome="emissao" defaultValue={hojeISO()} max={hojeISO()} required />
+        <Data rotulo="Validade" nome="validade" required={vence} dica={vence ? undefined : 'se vencer'} />
+      </div>
+      <Texto rotulo="Link do arquivo" nome="anexo" type="url" placeholder="https://" dica="opcional" />
+      {vence ? <p className="nota">A validade entra nos prazos: o alerta aparece 30 dias antes de vencer.</p> : null}
+    </>
+  );
+}
+
 function CamposDaAdmissao() {
   const [opcoes, setOpcoes] = useState({ departamentos: [], cnpjs: [], gestores: [], unidadeAtual: null });
   const [contrato, setContrato] = useState(CONTRATOS[0].valor);
@@ -708,6 +727,7 @@ const FEITO = {
   desligamento: 'Desligamento registrado',
   admissao: 'Admissão registrada',
   ferias: 'Férias programadas',
+  documento: 'Documento registrado',
 };
 
 function Confirmacao({ feito, tipo, aoFechar, aoLancarOutro }) {
@@ -733,6 +753,7 @@ function Confirmacao({ feito, tipo, aoFechar, aoLancarOutro }) {
         </div>
       ) : null}
       {feito.passaAValer ? <p className="nota">A mudança passa a valer em {feito.passaAValer}; até lá, a ficha mostra o que vale hoje.</p> : null}
+      {feito.documento?.validade ? <p className="nota">{feito.documento.tipo} vale até {feito.documento.validade}; o alerta de renovar aparece 30 dias antes.</p> : null}
       {feito.ferias ? (
         <>
           <p className="nota">

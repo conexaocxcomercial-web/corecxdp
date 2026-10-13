@@ -53,6 +53,8 @@ Logins de teste, todos com a senha `demo123`: `teste@gmail.com` e `gestao@demo.t
 | `/ferias` | Pedidos para aprovar, por tirar (vencidas e vencendo em 90 dias), programadas com aviso e pagamento, saldo por pessoa (só na demonstração) |
 | `/folha` | Folha gerencial (estimativa): Resumo do mês, Por colaborador (mascarado) e Provisões e 13º; competência no endereço (só na demonstração) |
 | `/beneficios` | Catálogo (empresa paga, desconto, quem tem, custo mensal) e quem não tem nenhum; `/beneficios/[id]` inclui e encerra adesões (só na demonstração) |
+| `/documentos` | Validade (vencido, vencendo, sem validade), cadastros incompletos e completude; registrar pelo Lançar › Documento (só na demonstração) |
+| `/empresa` | Dados (regime, anexo, percentual de encargos, unidades, departamentos), Usuários, Importar planilha (modelo, erros por linha, importar) e Histórico (só na demonstração) |
 | `/movimentacoes` | Reajuste, promoção, mudança de cargo e transferência, com "passa a valer em" e o que muda |
 | `/carteira` | Parceiro: clientes do parceiro e "Consultar" (só na demonstração, versão inicial) |
 | `/admin` | Administração: parceiros, clientes, usuários e "Consultar" (só na demonstração, versão inicial) |
@@ -68,6 +70,7 @@ As telas internas ficam em `app/(sistema)/` (layout com barra do topo, menu late
 - `Botao.jsx` — `Botao`, `BotaoLink`, `BotaoEnviar` (estado de envio, `variante`), `BotaoMini`.
 - `Folha.jsx` — tudo o que abre por cima (`<dialog>`): janela no computador, folha que sobe de baixo no celular, `tipo="popover"` para o menu do usuário.
 - `Lancar.jsx` — **o Lançar em três passos**: `ProvedorDoLancar` (no layout, uma folha para o sistema inteiro), `useLancar`, `BotaoLancar` (barra do topo), `BotaoDeLancar` (abre já num tipo e, da ficha, com a pessoa). Novos tipos de lançamento entram em `lib/navegacao.js` › `LANCAMENTOS` e num formulário aqui. `Afastamentos.jsx` — validar na linha e registrar retorno.
+- `Empresa.jsx` — `FormularioDaEmpresa` e `ImportarPlanilha` (conferir e importar). `AbasDaEmpresa.jsx` — as partes de Empresa.
 - `Beneficios.jsx` — `FormularioDeBeneficio`, `IncluirNoBeneficio`, `EncerrarAdesao`.
 - `Custos.jsx` — `CamposDeCustos` (campos `custo_*` da admissão ou do desligamento) e `InformarCustos` (botão e folha para informar depois). `Passos.jsx` — `Passos` e `ResumoDosPassos` (admissão e desligamento). `Desligamentos.jsx` — `ConcluirDesligamento`.
 - `Filtros.jsx` — `Busca` e `Seletor` (parâmetros da URL) e o alcance: `SeletorDeAlcance`, `FolhaDoAlcance`, `useAplicarAlcance`.
@@ -85,6 +88,7 @@ As telas internas ficam em `app/(sistema)/` (layout com barra do topo, menu late
 - `dados/` — camada nova, no formato pensado para o Supabase: `regras.js` (alcance e recorte, puros e testados), `estrutura.js` (parceiros → clientes → CNPJs), `alcance.js` (`alcanceAtual`, `resumoDoAlcance`, `permissoesAtuais`; cookie de escolha sempre revalidado no servidor), `usuarios.js`. Os módulos novos ganham repositório aqui.
 - `prazos.js` — aprovações, prazos, implantação e revisão (puro, testado); as regras legais e os feriados ficam em `regrasDePrazo.js`, com a fonte de cada um; `calendario.js` — dia útil e feriados. `dados/pendencias.js` — leitura e decisões de Pendências (permissão e autoria); `dados/inicio.js` — números e assuntos do Início (os dois só na demonstração).
 - `lancamentos.js` — regras do Lançar (afastamento, retorno, ocorrência, movimentação, admissão, desligamento e custos informados), puras e testadas. `dados/lancamentos.js` — gravação nos dois modos e as listas de afastamentos, ocorrências e movimentações.
+- `documentos.js` — situação pela validade, completude e documento novo; `empresa.js` — regime, anexo e percentual de encargos; `historico.js` — ações com autor tiradas dos registros; `planilhaModelo.js` — abas do modelo e a conferência linha a linha; `importacao.js` — registros da importação; `xlsx.js` — gravar e ler .xlsx sem dependência (só no servidor). Repositórios: `dados/documentos.js`, `dados/empresa.js` (dados, usuários, importação e histórico).
 - `beneficios.js` — catálogo, adesão e encerramento, quem tem e quem não tem (puro, testado); `dados/beneficios.js` — leitura e mudanças com permissão e autoria.
 - `folha.js` — folha gerencial da competência (salário vigente, benefícios, encargos da empresa, totais, composição, grupos), 13º com avos e parcelas e o texto do selo de estimativa (puro, testado); `dados/folha.js` — leitura da tela.
 - `ferias.js` — situação das férias pelas datas (aplicada em `recortar`), períodos e saldo, programação com as regras da CLT e o resumo da tela (puro, testado); `dados/ferias.js` — leitura da tela.

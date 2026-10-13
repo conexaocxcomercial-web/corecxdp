@@ -11,6 +11,7 @@ import { concluirRevisao, conferir, decidir, desfazer } from '@/lib/dados/penden
 import {
   informarCustos,
   lancarAdmissao,
+  lancarDocumento,
   lancarFerias,
   periodosDeFerias,
   lancarAfastamento,
@@ -22,6 +23,7 @@ import {
   validarAfastamento,
 } from '@/lib/dados/lancamentos';
 import { encerrarAdesao, incluirNoBeneficio, salvarBeneficio } from '@/lib/dados/beneficios';
+import { conferirArquivo, importarArquivo, salvarDadosDaEmpresa } from '@/lib/dados/empresa';
 import { inicioDoPerfil } from '@/lib/navegacao';
 import { PERFIS } from '@/lib/permissoes';
 import { listarColaboradores, mensagemParaTela } from '@/lib/registros';
@@ -291,6 +293,15 @@ const LANCAMENTOS = {
       motivo: ler(dados, 'motivo'),
       ...lerCustos(dados),
     }),
+  documento: (dados) =>
+    lancarDocumento({
+      matricula: ler(dados, 'matricula'),
+      tipo: ler(dados, 'tipo'),
+      emissao: ler(dados, 'emissao'),
+      validade: ler(dados, 'validade'),
+      descricao: ler(dados, 'descricao'),
+      anexo: ler(dados, 'anexo'),
+    }),
   ferias: (dados) =>
     lancarFerias({
       matricula: ler(dados, 'matricula'),
@@ -418,5 +429,32 @@ export async function encerrarAdesaoDoBeneficio({ adesao, ate } = {}) {
     return { ok: true };
   } catch (erro) {
     return { erro: mensagemDeFalha(erro) };
+  }
+}
+
+/* ---------------------------------------------------------------- empresa */
+
+export async function salvarEmpresa(_estado, dados) {
+  try {
+    const resultado = await salvarDadosDaEmpresa({ regime: ler(dados, 'regime'), anexo: ler(dados, 'anexo'), percentual: ler(dados, 'percentual') });
+    revalidarTudo();
+    return { ok: true, ...resultado, quando: Date.now() };
+  } catch (erro) {
+    return { erro: mensagemDeFalha(erro) };
+  }
+}
+
+/** Confere ou importa a planilha modelo (o mesmo arquivo, sem guardar nada entre um passo e outro). */
+export async function enviarPlanilha(_estado, dados) {
+  const acao = ler(dados, 'acao');
+  try {
+    if (acao === 'importar') {
+      const resultado = await importarArquivo(dados.get('arquivo'));
+      revalidarTudo();
+      return { ok: true, importado: true, ...resultado, quando: Date.now() };
+    }
+    return { ok: true, conferido: true, ...(await conferirArquivo(dados.get('arquivo'))), quando: Date.now() };
+  } catch (erro) {
+    return { erro: mensagemParaTela(erro, 'Não foi possível ler a planilha agora. Tente de novo em alguns segundos.') };
   }
 }

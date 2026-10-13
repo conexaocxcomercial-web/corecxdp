@@ -5,7 +5,7 @@
  * avisa no console quando o nome não está na lista.
  */
 export const ICONES = [
-  'add', 'arrow_back', 'arrow_forward', 'badge', 'beach_access', 'chat', 'check', 'checklist',
+  'add', 'apartment', 'arrow_back', 'arrow_forward', 'badge', 'beach_access', 'chat', 'check', 'checklist',
   'chevron_right', 'clinical_notes', 'close', 'contrast', 'dark_mode', 'description', 'domain', 'edit', 'error', 'event',
   'event_available', 'event_busy', 'expand_more', 'fact_check', 'group', 'group_add', 'healing',
   'history', 'home', 'hourglass_empty', 'inbox', 'info', 'keep', 'keyboard_capslock',
@@ -13,6 +13,7 @@ export const ICONES = [
   'payments', 'pending_actions', 'person', 'person_add', 'person_remove', 'redeem', 'schedule', 'search', 'search_off', 'sentiment_satisfied',
   'supervisor_account', 'swap_horiz', 'task_alt', 'trending_down', 'trending_flat',
   'trending_up', 'visibility', 'visibility_off', 'warning', 'work',
+  'download', 'handshake', 'manage_accounts', 'palette', 'print', 'upload_file',
 ];
 
 /* Eixos fixos nos valores do globals.css (FILL 0, wght 400, GRAD 0,

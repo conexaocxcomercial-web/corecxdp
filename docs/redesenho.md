@@ -266,7 +266,7 @@ Toda fase é testada em 375px e 1440px, nos temas claro e escuro, e termina com 
 | 11 | **Férias** + painel Férias ✅ concluída em 13/10/2026 | Períodos, programação e aprovação, dobra, prazos | Vencidas, vencendo e programadas batem com a ficha |
 | 12 | **Folha gerencial, encargos e 13º** + painel Custos ✅ concluída em 13/10/2026 | Competência, composição, fator de custo, provisões e parcelas, selo de estimativa | Totais batem com os cálculos testados; trocar o regime ou o percentual da empresa muda os encargos |
 | 13 | **Benefícios** + painel Benefícios ✅ concluída em 13/10/2026 | Catálogo, empresa paga e desconto, quem não tem | Custo entra na folha gerencial |
-| 14 | **Documentos e Empresa** | Validade, completude, CNPJs, departamentos (com o anexo do Simples Nacional), usuários, importação da planilha modelo (abas e erros por linha, ver § 9 › Implantação), histórico | Subir uma planilha com erros e ver o que corrigir |
+| 14 | **Documentos e Empresa** ✅ concluída em 13/10/2026 | Validade, completude, CNPJs, departamentos (com o anexo do Simples Nacional), usuários, importação da planilha modelo (abas e erros por linha, ver § 9 › Implantação), histórico | Subir uma planilha com erros e ver o que corrigir |
 | 15 | **Parceiro** | Carteira, consulta de um cliente, comparação, exportação (CSV e página para imprimir), white-label com checagem de contraste | Login de parceiro não vê nada de outro parceiro; marca troca |
 | 16 | **Administração e fechamento** | Parceiros, clientes, usuários, suporte; prévia da entrada redesenhada; `/painel` redireciona para `/inicio`; revisão final | Revisão final em todas as telas |
 
@@ -373,6 +373,41 @@ O que cada fase entregou e o que ficou decidido no caminho, para a fase seguinte
 - Nada disso vai para as telas antes da conferência do usuário (fases 9, 11 e 12).
 - Conferência do usuário em 13/10/2026: as sete escolhas aprovadas, com dois acréscimos: o saldo real do FGTS informado na ficha substitui a estimativa (o campo entra na fase 9, com o custo de desligar), e a rescisão desconta a 1ª parcela do 13º quando ela já foi paga (pelo valor informado ou pelo prazo legal). O 13º sobre o aviso que passa do fim do ano agora leva os avos do ano seguinte. `npm test`: 66 casos.
 - Antes do uso com clientes reais, a contabilidade parceira revisa as tabelas e os cálculos (`docs/tabelas.md`).
+
+### Fase 14: Documentos e Empresa (13/10/2026)
+
+- **`/documentos`:**
+  - a validade de cada documento: vencido, vencendo em 30 dias, válido, sem validade;
+  - sem filtro, só os que vencem; os outros, pelo filtro de tipo;
+  - os cadastros incompletos: contrato de trabalho e ASO admissional para todos e, depois de um ano de casa, o ASO periódico em dia;
+  - o percentual de cadastros completos.
+  - Registrar é pelo novo **Lançar › Documento** (tipo, emissão, validade obrigatória no ASO periódico e na CNH, link do arquivo).
+- **`/empresa`**, com abas próprias:
+  - Dados: regime, anexo do Simples (como hoje), percentual de encargos com "padrão do regime" ou "configurado", aviso de dado a conferir, implantação, unidades e departamentos. "Mudar regime e encargos" grava e anota no histórico;
+  - Usuários: quem acessa como Gestão da empresa (convidar e desativar chegam com o Supabase Auth);
+  - Importar planilha;
+  - Histórico: toda ação com autor e data, com busca e filtro por tipo, sem CID nem valores.
+- **Planilha modelo** (`lib/planilhaModelo.js`, puro):
+  - aba Instruções (o que vai em cada aba e, coluna por coluna, se é obrigatória, o exemplo e as opções);
+  - abas de dados só com o cabeçalho: Empresa, Colaboradores ativos, Ex-colaboradores, Férias, Atestados, Reajustes e Benefícios. Sem linha de exemplo, porque uma linha igual ao exemplo seria descartada por engano.
+- **Conferência linha a linha:**
+  - cada erro diz a aba, a linha do Excel, a coluna e o que corrigir: CPF ou CNPJ inválido, data, valor, opção fora da lista, campo vazio, CPF repetido, CNPJ que não é da empresa, atestado fora dos 12 meses, CID, período de férias acima de 30 dias, benefício com dois valores, vale-transporte acima de 6%;
+  - quem já está no quadro (pelo CPF) fica de fora, e a importação só acrescenta.
+- **Importação** (`lib/importacao.js`, puro):
+  - pessoas com a próxima matrícula do cliente;
+  - ex-colaboradores com o desligamento concluído;
+  - atestados já validados;
+  - férias pelo período aquisitivo;
+  - reajustes com o que muda;
+  - o catálogo de benefícios que falta e as adesões.
+  - Tudo em nome de "Importação da planilha".
+- **`.xlsx` sem dependência** (`lib/xlsx.js`): grava o modelo (zip com deflate do zlib do Node) e lê a planilha que a empresa sobe, com os textos compartilhados e o número da linha do Excel; datas em dd/mm/aaaa, aaaa-mm-dd ou número de série. A rota `/empresa/importar/modelo` gera o arquivo na hora.
+- Conferido no navegador em 1440px e 375px:
+  - a planilha com erros mostrou cada erro com aba, linha e coluna;
+  - a planilha certa importou (a pessoa nova aparece em Colaboradores, MAT056);
+  - mudar o anexo para o IV levou os encargos da folha de 8% para 36%;
+  - o histórico mostrou as ações.
+- Testes: `testes/xlsx.test.js`, `testes/planilhaModelo.test.js`, `testes/documentos.test.js`. `npm test`: 106 casos.
 
 ### Fase 13: Benefícios (13/10/2026)
 

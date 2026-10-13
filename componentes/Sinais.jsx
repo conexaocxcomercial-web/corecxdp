@@ -17,6 +17,11 @@ const TONS = {
   Vencida: 'cr',
   'A vencer': 'at',
   Inativo: '',
+  // Documentos
+  Válido: 'ok',
+  Vencido: 'cr',
+  Vencendo: 'at',
+  'Sem validade': 'at',
 };
 
 export function Status({ children }) {

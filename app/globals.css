@@ -4736,3 +4736,190 @@ html.com-folha {
   border-radius: var(--r-pill);
   background: var(--acao);
 }
+
+/* --------------------------------------- documentos e empresa (fase 14) */
+
+.faixa.ok {
+  background: color-mix(in srgb, var(--marca-lima) 30%, var(--papel));
+  color: var(--tinta);
+}
+.faixa.ok .material-symbols-rounded {
+  color: var(--tinta);
+}
+.doc-link {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Importação: dois passos numerados e a lista de erros por linha. */
+.imp-passos {
+  display: grid;
+  gap: 16px;
+  margin: 0 0 24px;
+  padding: 0;
+  list-style: none;
+}
+.imp-passo {
+  display: grid;
+  grid-template-columns: 36px 1fr;
+  gap: 16px;
+  padding: 24px;
+  border-radius: var(--r-card);
+  background: var(--papel);
+  box-shadow: var(--e1);
+}
+.imp-n {
+  display: inline-grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--acao-fraco);
+  color: var(--acao-texto);
+  font-weight: 700;
+}
+.imp-corpo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+.imp-t {
+  font-size: 18px;
+  font-weight: 700;
+}
+.imp-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  width: 100%;
+}
+.imp-arquivo {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: var(--alt-ctrl);
+  padding: 0 16px;
+  border: 1.5px dashed var(--linha-3);
+  border-radius: var(--r-ctrl);
+  font-size: 16px;
+  color: var(--tinta-2);
+  cursor: pointer;
+}
+.imp-arquivo:focus-within {
+  border-color: var(--acao);
+  box-shadow: 0 0 0 3px var(--acao-fraco);
+}
+.imp-arquivo input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.imp-resultado {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  outline: none;
+}
+.imp-erros {
+  width: 100%;
+}
+.imp-erros ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.imp-linha {
+  display: grid;
+  grid-template-columns: minmax(150px, 1fr) 90px minmax(140px, 1fr) 2.2fr;
+  gap: 12px;
+  padding: 12px 24px;
+  border-top: 1px solid var(--linha);
+  font-size: 14px;
+}
+.imp-erros .tb-cab.imp-linha {
+  border-top: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--tinta-2);
+}
+.imp-aba {
+  font-weight: 600;
+}
+@media (max-width: 900px) {
+  .imp-passo {
+    grid-template-columns: 1fr;
+    padding: 20px 16px;
+  }
+  .imp-arquivo,
+  .imp-form .btn {
+    width: 100%;
+  }
+  .imp-erros .tb-cab.imp-linha {
+    display: none;
+  }
+  .imp-linha {
+    grid-template-columns: 1fr 1fr;
+    padding: 12px 16px;
+  }
+  .imp-msg {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Histórico: data, quem fez o quê e o tipo. */
+.hist {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.hist-i {
+  display: grid;
+  grid-template-columns: 100px 1fr auto;
+  align-items: baseline;
+  gap: 16px;
+  padding: 12px 0;
+  border-top: 1px solid var(--linha);
+  font-size: 15px;
+}
+.hist-i:first-child {
+  border-top: 0;
+}
+.hist-data {
+  font-size: 13px;
+  color: var(--tinta-2);
+}
+.hist-pessoa {
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 3px;
+}
+.hist-pessoa:hover {
+  text-decoration-color: currentColor;
+}
+.hist-tipo {
+  font-size: 13px;
+  color: var(--tinta-3);
+}
+.hist-mais {
+  margin-top: 12px;
+}
+@media (max-width: 900px) {
+  .hist-i {
+    grid-template-columns: 1fr auto;
+    gap: 4px 12px;
+  }
+  .hist-t {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+  .hist-pessoa {
+    display: inline-block;
+    padding-block: 12px;
+    margin-block: -12px;
+  }
+}
