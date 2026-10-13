@@ -125,3 +125,16 @@ test('navegação: parceiro e administração não lançam; telas de cliente ped
   const semCliente = navegacaoDe('parceiro', { temCliente: false }).grupos.flatMap((g) => g.itens.map((i) => i.id));
   assert.ok(!semCliente.includes('colaboradores'), 'sem cliente, o parceiro não vê telas de cliente no menu');
 });
+
+test('navegação: Início e Pendências são da demonstração; fora dela, o início é o painel', () => {
+  const itens = (opcoes) => navegacaoDe('gestao', opcoes).grupos.flatMap((g) => g.itens);
+  const naDemo = itens({ demonstracao: true });
+  assert.equal(naDemo.find((item) => item.id === 'inicio').href, '/inicio');
+  assert.ok(naDemo.some((item) => item.id === 'pendencias'));
+  const fora = itens({ demonstracao: false });
+  assert.equal(fora.find((item) => item.id === 'inicio').href, '/painel');
+  assert.ok(!fora.some((item) => item.id === 'pendencias'));
+  assert.equal(navegacaoDe('gestao', { demonstracao: false }).barra[0].href, '/painel');
+  assert.equal(navegacaoDe('gestao', { demonstracao: false }).inicio, '/painel');
+  assert.ok(precisaDeCliente('/inicio') && precisaDeCliente('/pendencias'));
+});

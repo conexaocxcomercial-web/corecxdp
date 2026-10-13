@@ -31,6 +31,16 @@
       "Ativo": "sim"
     },
     {
+      "Cliente": "oficina-bom-motor",
+      "Parceiro": "",
+      "Empresa": "Oficina Bom Motor",
+      "Nome": "Carlos Eduardo Brito",
+      "Email": "oficina@demo.test",
+      "Senha": "demo123",
+      "Perfil": "gestao",
+      "Ativo": "sim"
+    },
+    {
       "Cliente": "",
       "Parceiro": "conexao-cx",
       "Empresa": "Conexão CX",

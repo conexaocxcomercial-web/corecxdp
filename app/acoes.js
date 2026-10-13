@@ -7,6 +7,7 @@ import { autenticar } from '@/lib/usuarios';
 import { gravarAlcance, limparAlcance } from '@/lib/dados/alcance';
 import { emDemonstracao } from '@/lib/dados/estrutura';
 import { usuarioDeExemplo } from '@/lib/dados/usuarios';
+import { concluirRevisao, conferir, decidir, desfazer } from '@/lib/dados/pendencias';
 import { inicioDoPerfil } from '@/lib/navegacao';
 import { PERFIS } from '@/lib/permissoes';
 import {
@@ -58,7 +59,7 @@ function destinoSeguro(destino, padrao) {
 
 /** Fora da demonstração todo login é Gestão (lib/dados/alcance.js). */
 function inicioDe(perfil) {
-  return inicioDoPerfil(emDemonstracao() ? perfil : 'gestao');
+  return inicioDoPerfil(perfil, { demonstracao: emDemonstracao() });
 }
 
 export async function entrar(_estado, dados) {
@@ -207,7 +208,7 @@ export async function salvarColaborador(_estado, dados) {
     const matricula = await cadastrarColaborador(pessoa);
     revalidatePath('/colaboradores');
     revalidatePath('/painel');
-  revalidatePath('/indicadores');
+    revalidatePath('/indicadores');
     return { ok: true, matricula };
   } catch (erro) {
     return { erro: mensagemDeFalha(erro) };
@@ -245,7 +246,7 @@ export async function salvarOcorrencia(_estado, dados) {
     await registrarOcorrencia(ocorrencia);
     revalidatePath('/ocorrencias');
     revalidatePath('/painel');
-  revalidatePath('/indicadores');
+    revalidatePath('/indicadores');
     revalidatePath(`/colaboradores/${ocorrencia.matricula}`);
     return { ok: true };
   } catch (erro) {
@@ -275,7 +276,7 @@ export async function salvarAtestado(_estado, dados) {
     await registrarAtestado(atestado);
     revalidatePath('/atestados');
     revalidatePath('/painel');
-  revalidatePath('/indicadores');
+    revalidatePath('/indicadores');
     revalidatePath(`/colaboradores/${atestado.matricula}`);
     return { ok: true };
   } catch (erro) {
@@ -313,7 +314,7 @@ export async function salvarMovimentacao(_estado, dados) {
     await registrarMovimentacao(movimentacao);
     revalidatePath('/movimentacoes');
     revalidatePath('/painel');
-  revalidatePath('/indicadores');
+    revalidatePath('/indicadores');
     revalidatePath(`/colaboradores/${movimentacao.matricula}`);
     return { ok: true };
   } catch (erro) {
@@ -330,4 +331,60 @@ export async function atualizarChecklist(dados) {
   revalidatePath('/movimentacoes');
   revalidatePath('/painel');
   revalidatePath('/indicadores');
+}
+
+/* -------------------------------------------------------------- pendências */
+
+/*
+ * Decisões de Pendências e do Início (só na demonstração). Cada uma muda os
+ * dados de uma vez: Início, Pendências, a barra inferior e as telas de
+ * Atestados e Movimentações passam a mostrar o novo estado.
+ */
+
+function aposDecidir() {
+  revalidatePath('/', 'layout');
+}
+
+function falhaDaDecisao(erro) {
+  return { erro: mensagemParaTela(erro, 'A decisão não foi registrada. Tente de novo em alguns segundos.') };
+}
+
+export async function decidirPendencia({ tipo, id, acao } = {}) {
+  try {
+    await decidir(String(tipo), String(id), String(acao));
+    aposDecidir();
+    return { ok: true };
+  } catch (erro) {
+    return falhaDaDecisao(erro);
+  }
+}
+
+export async function desfazerPendencia({ tipo, id } = {}) {
+  try {
+    await desfazer(String(tipo), String(id));
+    aposDecidir();
+    return { ok: true };
+  } catch (erro) {
+    return falhaDaDecisao(erro);
+  }
+}
+
+export async function conferirNaRevisao({ id, conferido } = {}) {
+  try {
+    await conferir(String(id), Boolean(conferido));
+    aposDecidir();
+    return { ok: true };
+  } catch (erro) {
+    return falhaDaDecisao(erro);
+  }
+}
+
+export async function concluirRevisaoDaImplantacao() {
+  try {
+    await concluirRevisao();
+    aposDecidir();
+    return { ok: true };
+  } catch (erro) {
+    return falhaDaDecisao(erro);
+  }
 }

@@ -30,14 +30,16 @@ MODO_DEMO=1
 AUTH_SECRET=qualquer_texto_longo_aleatorio
 ```
 
-Logins de teste, todos com a senha `demo123`: `teste@gmail.com` e `gestao@demo.test` (Gestão da Empresa Teste, que tem matriz e 2 filiais), `parceiro@demo.test` (Conexão CX), `horizonte@demo.test` (Contabilidade Horizonte, fictícia) e `admin@demo.test` (Administração). Na demonstração, "Ver como…" no menu do usuário troca de perfil sem senha. Os dados são gerados por `lib/demo/gerador.js` para o dia de hoje; cadastros e aprovações ficam só na memória e voltam ao original quando o servidor reinicia ou o dia muda.
+Logins de teste, todos com a senha `demo123`: `teste@gmail.com` e `gestao@demo.test` (Gestão da Empresa Teste, que tem matriz e 2 filiais), `oficina@demo.test` (Gestão da Oficina Bom Motor, implantada há 12 dias, com a revisão da implantação aberta), `parceiro@demo.test` (Conexão CX), `horizonte@demo.test` (Contabilidade Horizonte, fictícia) e `admin@demo.test` (Administração). Na demonstração, "Ver como…" no menu do usuário troca de perfil sem senha. Os dados são gerados por `lib/demo/gerador.js` para o dia de hoje e ficam numa cópia em memória (`lib/demo/memoria.js`), fonte única das telas atuais e dos módulos novos; cadastros e aprovações voltam ao original quando o servidor reinicia ou o dia muda.
 
 ## Telas e rotas
 
 | Rota | Tela |
 |---|---|
 | `/entrar` | Login por e-mail e senha |
-| `/painel` | Quadro de ativos, pendências do DP, séries de 6 meses e últimos lançamentos |
+| `/inicio` | Gestão: faixa de urgência, quadro e números do negócio, um quadro por assunto e atividade recente (só na demonstração) |
+| `/pendencias` | Revisão da implantação, aprovações na linha (com Desfazer) e prazos, com filtros por assunto e data (só na demonstração) |
+| `/painel` | Início fora da demonstração: quadro de ativos, pendências do DP, séries de 6 meses e últimos lançamentos |
 | `/indicadores` | Turnover, absenteísmo, quadro, reincidência e tempo de casa (3, 6 ou 12 meses) |
 | `/colaboradores` | Lista com busca e filtros, cadastro de pessoa |
 | `/colaboradores/[matricula]` | Ficha: dados, situação e histórico da pessoa |
@@ -62,6 +64,7 @@ As telas internas ficam em `app/(sistema)/` (layout com barra do topo, menu late
 - `Graficos.jsx` — `Serie`, `SerieDupla`, `BarrasH`, `Rosca`.
 - `Sinais.jsx` — `Status` (pílula de situação).
 - `Navegacao.jsx` — menu lateral (computador). `BarraInferior.jsx` — navegação do celular. `Lancar.jsx` — folha "O que aconteceu?". `MenuDoUsuario.jsx` — menu do avatar e aba Menu. `BuscaDePessoa.jsx` — busca da barra do topo. `EscolhaDeCliente.jsx` — escolha de cliente e `TabelaDeClientes`. `TituloNaBarra.jsx` — título na barra do topo. `Tema.jsx` — tema claro/escuro.
+- `Inicio.jsx` — peças do Início: `FaixaDeUrgencia`, `FaixaDaImplantacao`, `FaixaDoInicio`, `Assunto`, `Atividade`. `Prazos.jsx` — `Prazo` (pílula de dias), `LinhaDePrazo`, `GrupoDePrazos`, `linkDaFicha`. `Pendencias.jsx` — `FilaDePendencias`, `Restantes`, `ListaDeAprovacoes` (aprovar e rejeitar na linha, com Desfazer), `ItemDaRevisao`, `ConcluirRevisao`.
 - `Icones.jsx` — `Icone` (Material Symbols Rounded).
 - `Marca.jsx` — `Marca` (nome "core.cx · módulo dp" em texto) e `Assinatura` (logos de `public/marca/`, preto ou branco conforme o tema).
 
@@ -69,12 +72,13 @@ As telas internas ficam em `app/(sistema)/` (layout com barra do topo, menu late
 
 - `registros.js` — **porta de entrada das telas atuais**: `listar*`, `buscarColaborador`, `registrar*`, `mudar*`, `contarPendencias`, `resumirClientes`, `OPCOES`. Já devolve tudo recortado pelo alcance (cliente e CNPJ) e confere a permissão antes de gravar.
 - `dados/` — camada nova, no formato pensado para o Supabase: `regras.js` (alcance e recorte, puros e testados), `estrutura.js` (parceiros → clientes → CNPJs), `alcance.js` (`alcanceAtual`, `resumoDoAlcance`, `permissoesAtuais`; cookie de escolha sempre revalidado no servidor), `usuarios.js`. Os módulos novos ganham repositório aqui.
+- `prazos.js` — aprovações, prazos, implantação e revisão (puro, testado); as regras legais e os feriados ficam em `regrasDePrazo.js`, com a fonte de cada um; `calendario.js` — dia útil e feriados. `dados/pendencias.js` — leitura e decisões de Pendências (permissão e autoria); `dados/inicio.js` — números e assuntos do Início (os dois só na demonstração).
 - `permissoes.js` — `pode(perfil, ação)` e os perfis. `navegacao.js` — o que cada perfil vê no menu, na barra inferior e no Lançar (arquivo único).
 - `indicadores.js` — cálculos puros sobre os dados (sobrevivem à migração).
 - `avisos.js` — `AvisoAoUsuario` (erro com texto para a tela) e `mensagemParaTela(erro, padrao)`: qualquer outro erro vai para o log do servidor e a tela mostra o texto neutro. Telas usam isso, nunca `erro.message` direto.
 - `formato.js` — datas, CPF, tempo de casa. `contexto.js` — empresa da sessão. `sessao.js` / `usuarios.js` — login e cookie.
-- `planilha.js` — Google Sheets. `demo/` — modo de demonstração (`gerador.js` gera os dados fictícios; `fonte.js` os serve no lugar do Sheets).
-- Testes: `npm test` (`node --test`, sem dependência) roda `testes/` (isolamento, alcance, permissões e dados de demonstração). Módulos testados só usam import relativo com `.js`.
+- `planilha.js` — Google Sheets. `demo/` — modo de demonstração (`gerador.js` gera os dados fictícios; `memoria.js` guarda a cópia e deriva as abas; `fonte.js` a serve no lugar do Sheets).
+- Testes: `npm test` (`node --test`, sem dependência) roda `testes/` (isolamento, alcance, permissões, navegação, dados de demonstração, memória, calendário e prazos). Módulos testados só usam import relativo com `.js`.
 
 **O Google Sheets é provisório e será substituído pelo Supabase.** Nada novo deve depender dele:
 - telas e componentes só importam de `lib/registros.js` (ou do módulo equivalente do novo domínio), nunca de `lib/planilha.js`;
@@ -86,5 +90,5 @@ As telas internas ficam em `app/(sistema)/` (layout com barra do topo, menu late
 
 - [ ] Migrar os dados para o Supabase, com código único por registro garantido no banco (sequência/restrição `unique` por empresa, não "maior + 1" em memória), login pelo Supabase Auth e isolamento via RLS na hierarquia parceiro → cliente → CNPJ, com os quatro perfis de [docs/conceito.md › 3](docs/conceito.md#3-perfis-e-permissões) e registro de autor e data nas ações.
 - [x] Trocar os textos de perfil da tela de entrada ([lib/marca.js](lib/marca.js) › `perfis`), feito na fase 2 do redesenho.
-- [ ] Remover o modo de demonstração: apagar `lib/demo/` e as linhas que o chamam em `lib/planilha.js` (o `import * as demo` e os três `if (demo.modoDemo())`) e em `lib/dados/estrutura.js`; os logins de teste e "Ver como…" saem junto, e `/carteira` e `/admin` passam a ler do Supabase.
+- [ ] Remover o modo de demonstração: apagar `lib/demo/` e as linhas que o chamam em `lib/planilha.js` (o `import * as demo` e os três `if (demo.modoDemo())`) e em `lib/dados/estrutura.js`, `lib/dados/pendencias.js` e `lib/dados/inicio.js`; os logins de teste e "Ver como…" saem junto, e `/carteira` e `/admin` passam a ler do Supabase.
 - [ ] Revisar o `.gitignore`: `.env*` também ignora um futuro `.env.example`; `.claude/` e `.impeccable/` não estão ignorados (`.codex/` já está); confirmar que `dados-demo/` (tem senhas) continua fora do git.

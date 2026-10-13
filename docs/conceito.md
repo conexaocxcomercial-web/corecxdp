@@ -66,7 +66,7 @@ Todos os perfis usam pelo celular, exceto o Parceiro, que usa principalmente no 
 - **Quem cadastra é a Gestão da empresa**, de duas formas:
   - um a um, pelos formulários;
   - por **upload de planilha**: baixa o modelo, preenche e sobe.
-- **A planilha modelo aceita ex-colaboradores dos últimos 12 meses**, com data, tipo e motivo do desligamento, para que o turnover já nasça com histórico.
+- **A planilha modelo aceita ex-colaboradores dos últimos 12 meses**, com data, tipo e motivo do desligamento, para que o turnover já nasça com histórico. O que mais ela traz e como funciona a implantação de uma empresa que já existe está na seção 11.
 - **A folha nasce do cadastro:** salário e benefícios de cada colaborador, mais as regras de encargos e provisões.
 - **Todo cálculo é estimativa** para gestão e conferência, e aparece identificado como tal. O nome usado é **"custo estimado de pessoal"** ou **"folha gerencial"**, nunca apenas "folha".
 - **Alíquotas e tabelas** (INSS, FGTS, IRRF etc.) ficam num único arquivo de configuração, fácil de atualizar. Nunca valores soltos no código, nunca valores inventados.
@@ -74,7 +74,7 @@ Todos os perfis usam pelo celular, exceto o Parceiro, que usa principalmente no 
 - **A plataforma guarda documentos** dos colaboradores (contrato, exames, atestados digitalizados), com validade quando houver.
 
 ### Dados obrigatórios no cadastro
-- **Empresa:** CNPJs, filiais, departamentos e regime tributário (com as alíquotas de encargos).
+- **Empresa:** CNPJs, filiais, departamentos, regime tributário (com as alíquotas de encargos) e data de implantação. No Simples Nacional, também o anexo, porque no Anexo IV o INSS patronal é pago à parte.
 - **Colaborador:** CNPJ, departamento, cargo, tipo de contrato (indeterminado, experiência, estágio, aprendiz, temporário), data de admissão, salário, jornada, data de nascimento, benefícios (valor e desconto) e documentos com validade.
 - **Desligamento:** data, tipo e motivo.
 - **Admissão:** custos admissionais lançados (exames, uniforme, outros).
@@ -128,8 +128,9 @@ As aprovações acontecem só dentro da empresa. A contabilidade não recebe avi
 - Férias: aviso ao colaborador com 30 dias de antecedência e pagamento até 2 dias antes do início.
 - Rescisão: pagamento em até 10 dias após o desligamento.
 - Admissão: registro antes do primeiro dia de trabalho.
-- Afastamento por atestado acima de 15 dias: encaminhamento ao INSS.
+- Afastamento por atestado acima de 15 dias: encaminhamento ao INSS. Afastamentos pela mesma doença (mesmo CID) com intervalo de até 60 dias somam os dias para contar os 15 dias da empresa e o encaminhamento.
 - 13º: 1ª parcela até 30/11 e 2ª até 20/12.
+- Prazos de pagamento (férias, rescisão e 13º) que caem em fim de semana ou feriado antecipam para o dia útil anterior. Ex.: em 2026, 20/12 é domingo, e a 2ª parcela do 13º vence em 18/12.
 - Documentos vencendo (por exemplo, exame periódico).
 - Atestados aguardando validação.
 
@@ -269,6 +270,25 @@ Todos os indicadores podem ser vistos por CNPJ, filial e departamento, com evolu
 
 ## 10. Tela inicial por perfil
 
-- **Gestão da empresa:** 1) o que precisa de ação (aprovações pendentes); 2) alertas com prazo; 3) como está o negócio (custo estimado de pessoal do mês comparado ao anterior, quadro, turnover e absenteísmo). Uso esperado: pontual, para aprovar, e mensal, para acompanhar.
+- **Gestão da empresa:** organizada por assunto. No topo, uma faixa de urgência fina, só quando há algo vencido ou vencendo em até 2 dias, levando a Pendências; depois, o quadro e como está o negócio (custo estimado de pessoal do mês comparado ao anterior, turnover e absenteísmo); e um quadro por assunto (pessoas e contratos, férias e 13º, saúde e afastamentos, ocorrências, documentos, desligamentos), cada um com o que espera ação. As aprovações e os prazos ficam numa fila única, Pendências. Uso esperado: pontual, para aprovar, e mensal, para acompanhar.
 - **Parceiro:** visão consolidada dos clientes, clientes com alertas críticos e acesso rápido a cada cliente.
 - **Administração da plataforma:** parceiros, clientes, usuários e suporte.
+
+---
+
+## 11. Implantação em empresas que já existem
+
+A maior parte dos clientes chega com anos de história. A implantação traz o essencial dessa história sem gerar alertas falsos no primeiro dia.
+
+- **Planilha modelo**, com abas para:
+  - **empresa:** CNPJs, filiais, departamentos, regime tributário e, no Simples Nacional, o anexo;
+  - **colaboradores ativos**;
+  - **ex-colaboradores dos últimos 12 meses**, com data, tipo e motivo do desligamento;
+  - **férias:** períodos aquisitivos e férias já tiradas, desde o período aberto mais antigo;
+  - **atestados dos últimos 12 meses**, com dias e CID;
+  - **reajustes e mudanças de cargo** (opcional);
+  - **benefícios atuais**.
+- **A importação mostra os erros por linha**, para corrigir no Excel e subir de novo.
+- **Cada empresa tem uma data de implantação.** Prazos vencidos antes dessa data aparecem como **"a conferir na implantação"**, e não como vencidos.
+- **Revisão antes dos alertas:** depois da importação, a Gestão passa por uma revisão do que parece inconsistente (férias aparentemente vencidas, experiências abertas, documentos sem validade). Os alertas de prazo começam quando a revisão termina.
+- **Regime tributário:** no Simples Nacional, o cadastro pede também o anexo, porque no Anexo IV o INSS patronal é pago à parte.

@@ -57,11 +57,15 @@ export function Seletor({ chave, rotulo, opcoes }) {
       onChange={aplicar}
     >
       <option value="">{rotulo}</option>
-      {opcoes.map((opcao) => (
-        <option key={opcao} value={opcao}>
-          {opcao}
-        </option>
-      ))}
+      {opcoes.map((opcao) => {
+        // Texto solto vale como valor e rótulo; { valor, rotulo } separa os dois.
+        const { valor, rotulo: nome } = typeof opcao === 'string' ? { valor: opcao, rotulo: opcao } : opcao;
+        return (
+          <option key={valor} value={valor}>
+            {nome}
+          </option>
+        );
+      })}
     </select>
   );
 }

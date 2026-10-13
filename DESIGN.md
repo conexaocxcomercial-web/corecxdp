@@ -302,7 +302,7 @@ O sistema fala a língua dos próprios tokens: uma **mesa** cinza-gelo, folhas d
 
 A paleta inteira são as oito cores obrigatórias da marca, e só elas. Todo tom intermediário sai de `color-mix()` entre essas oito; não existe outro hex no sistema. As situações (pílulas, marcas de gráfico) usam a paleta como código: lima resolve, escura espera, rosa recusa, violeta em curso, lilás férias, neutro encerrado. O tema escuro troca os valores dos tokens e nenhuma classe de componente muda: a mesa vira preto, o papel vira grafite, a tinta vira gelo.
 
-A tela de entrada leva o mesmo mundo para fora do sistema. A coluna do formulário é papel com os mesmos campos e o mesmo botão, só mais altos e mais legíveis; ao lado, um palco violeta chapado, igual nos dois temas, com texto preto em Helvetica bold de tracking fechado, e uma prévia do painel montada com os componentes reais. O violeta, ali, deixa de ser acento e vira chão; é a única superfície do sistema em que isso acontece (o redesenho prevê uma segunda, o topo da tela inicial, na fase 5).
+A tela de entrada leva o mesmo mundo para fora do sistema. A coluna do formulário é papel com os mesmos campos e o mesmo botão, só mais altos e mais legíveis; ao lado, um palco violeta chapado, igual nos dois temas, com texto preto em Helvetica bold de tracking fechado, e uma prévia do painel montada com os componentes reais. O violeta, ali, deixa de ser acento e vira chão; isso só acontece em mais um lugar, o topo do Início, a entrada do dia a dia.
 
 **A linguagem da entrada é a linguagem do sistema.** As telas internas usam a mesma régua da entrada: título de página em Helvetica 700 de tracking fechado (32px; 28px no celular) com subtítulo de 15px, corpo de 14px, títulos de seção e de cartão em frase (sem maiúsculas), campos e botões de 48px, e o que se abre por cima sobe de baixo como folha. O registro denso anterior (12,5px, rótulos maiúsculos, tarja lateral nos KPIs) foi substituído; dele só resta a prévia do painel na entrada, congelada até a fase 16 do redesenho.
 
@@ -468,6 +468,22 @@ Superfície inteira em violeta chapado, igual nos dois temas, com texto preto e 
 
 ### Prévia do painel (entrada)
 Retrato do painel montado com os componentes reais (KPIs, cartão, série, pílulas de situação) e dados inventados, marcado como inerte e oculto para leitores de tela. Está congelada até a fase 16 do redesenho: usa o `Kpi` antigo, com tarja, e um bloco `.previa …` no CSS segura as medidas antigas de cartão e pílula; os dois saem quando a prévia for redesenhada. Segue o tema: é ela que mostra a troca de tema acontecendo enquanto o violeta em volta fica parado. Entra subindo 28px com desfoque em 0,9s, partindo de 40% de opacidade para nunca estar invisível.
+
+### Início (tela inicial da Gestão)
+Organizado por assunto (fase 5 do redesenho). De cima para baixo:
+- **Faixa de urgência:** 44px, tinta cheia com texto papel (o que espera ação é escuro), ponto rosa quando há vencido, frase em 700 ("4 prazos vencidos e 4 que vencem até quinta") e "Ver pendências" com seta. Só aparece com algo vencido ou vencendo em até 2 dias. Na revisão da implantação, vira Véu Violeta com ícone em Violeta Tinta.
+- **Faixa violeta:** o mesmo chão do palco da entrada, igual nos dois temas, texto preto. O quadro em Display ("41 pessoas no quadro", clamp 40–56px; 28–40px no celular) e, abaixo, a frase do que espera a Gestão em 22–30px (19–24px no celular), 700; data e alcance em 15px, Preto Sobre Violeta. À direita (embaixo no celular), três números do negócio com fio preto de 1,5px no topo, como os perfis da entrada: rótulo 14px 600, valor 26px 700 (22px, à direita, no celular), apoio 13px.
+- **Folha de mesa** que sobe 32px por cima da faixa (24px no celular), cantos de 24px no topo; dentro, a grade de assuntos em 3 colunas (2 até 1199px, 1 no celular) com vão de 12px.
+- **Quadro de assunto:** papel com Papel apoiado, 20px de respiro; título 17px 700; pílula de situação (escura "N esperando você", neutra "N esta semana", lima "Em dia"); três números de 26px com rótulo de 13px (um ponto rosa ao lado do número que pede cuidado, nunca o número em rosa); até três linhas de prazo; rodapé com "e mais N" e o link do assunto em Violeta Tinta.
+- **Atividade recente:** linhas de 14px com autor em 600 e a pessoa sublinhada em Linha Forte; o quando à direita em 13px.
+
+### Pendências e linhas de prazo
+- **Linha de prazo** (`LinhaDePrazo`): mínimo 64px; o que é em 15px 600, de quem e o detalhe em 13px Tinta de Apoio; pílula de dias à direita e seta. A linha inteira leva à ficha, na aba do assunto.
+- **Pílula de dias** (`Prazo`, `.quando`): 26px, 13px 600; rosa "venceu há N dias", escura esta semana ("hoje", "amanhã", "em 4 dias"), neutra depois, contornada em Linha de Campo para "a conferir" (antes da implantação).
+- **Aprovação na linha:** nome em 16px 700, o que é em 14px 600, detalhe em 13px; Rejeitar (fantasma) e Aprovar (violeta) com ícone, mini de 40px (44px no toque, dividindo a largura no celular). Decidido, o item encolhe em 0,36s e o número da contagem desce do alto com desfoque em 0,5s; o aviso escuro "Desfazer" (56px, cantos de 14px, botão violeta de 44px) sobe de baixo e fica 6 segundos. Erro do servidor: o item volta e o aviso fica rosa.
+- **Grupos de prazos:** título 14px 700 com ponto do tom (rosa, tinta, Linha Forte, papel-2) e contagem; "Mais N" em Violeta Tinta para o que passa do limite.
+- **Revisão da implantação:** cartão liso com explicação de 14px, um item por linha com orientação de 13px e o botão "Conferir"/"Conferido" (fantasma vira violeta); rodapé em fio com o que falta e "Concluir revisão", desativado até tudo estar conferido.
+- **Esqueleto** (`.esqueleto`): blocos em Linha sobre mesa (preto a 12% no violeta) pulsando a 1,4s; some com movimento reduzido.
 
 ### Troca de tema
 A troca entre claro e escuro usa view-transition: a tela inteira se dissolve de um tema no outro em 0,32s (`cubic-bezier(0.16, 1, 0.3, 1)`). Com movimento reduzido, a troca é instantânea, como toda animação e transição do sistema.

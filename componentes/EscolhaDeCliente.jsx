@@ -6,7 +6,7 @@ import { Cabecalho, Cartao, Celula, LinhaTabela, Tabela, Wrap } from '@/componen
 import { useAplicarAlcance } from '@/componentes/Filtros';
 import { Icone } from '@/componentes/Icones';
 
-/** "Consultar" na carteira e na administração: põe o cliente no alcance e abre o Início dele. */
+/** "Consultar" na carteira e na administração (só na demonstração): põe o cliente no alcance e abre o Início dele. */
 export function BotaoConsultar({ parceiro, cliente, nome }) {
   const aplicar = useAplicarAlcance();
   const router = useRouter();
@@ -15,7 +15,7 @@ export function BotaoConsultar({ parceiro, cliente, nome }) {
   async function consultar() {
     setIndo(true);
     await aplicar({ parceiro, cliente });
-    router.push('/painel');
+    router.push('/inicio');
   }
 
   return (

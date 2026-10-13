@@ -88,15 +88,16 @@ A lista de itens por perfil fica num único arquivo de configuração.
 
 ### Gestão da empresa — `/inicio` (substitui `/painel`), celular primeiro
 
-1. **Faixa violeta** com a data, o alcance e uma frase em preto grande: *"3 coisas precisam de você hoje"*. O conteúdo vem numa folha de papel que sobe por cima da faixa, como na entrada.
-2. **Precisa de você:** atestados e afastamentos para validar, férias para aprovar, desligamentos para confirmar. Aprovar e Rejeitar na linha (44px), com "Desfazer" por alguns segundos.
-3. **Prazos**, em três grupos: *Vencido* (rosa), *Esta semana* (escuro) e *Próximos 30 dias* (neutro). Cada item mostra a pessoa, os dias que faltam e a ação. Entram: experiência de 45 e 90 dias, férias vencendo e vencidas, aviso de 30 dias e pagamento de férias, prazo de rescisão, registro antes do primeiro dia, afastamento acima de 15 dias (INSS), 13º e documentos vencendo.
-4. **Como está o negócio:** custo estimado de pessoal do mês comparado ao anterior, quadro hoje, turnover em 12 meses, absenteísmo do mês e custo estimado da dobra das férias vencidas. Cada número leva ao painel do tema.
-5. **Atividade recente**, com quem registrou cada coisa.
+Escolhida na fase 5, entre três estruturas, a **organizada por assunto**:
 
-Empresa sem colaboradores: a tela vira primeiro passo ("Importe a planilha modelo ou cadastre a primeira pessoa").
+1. **Faixa de urgência**, fina e escura, no topo: só aparece quando há prazo vencido ou vencendo em até 2 dias, e leva direto a Pendências. Durante a revisão da implantação, dá lugar à faixa da revisão.
+2. **Faixa violeta** com o quadro em Display ("41 pessoas no quadro"), uma frase do que espera a Gestão ("11 coisas esperando você, a maior parte em férias e afastamentos"), a data, o alcance e os números do negócio: custo estimado de pessoal do mês comparado ao anterior (hoje, a soma dos salários, até a folha gerencial da fase 12), turnover em 12 meses e absenteísmo do último mês fechado.
+3. **Um quadro por assunto** (Pessoas e contratos, Férias e 13º, Saúde e afastamentos, Ocorrências, Documentos, Desligamentos), cada um com a situação ("3 esperando você", "esta semana" ou "Em dia"), três números e os três itens mais urgentes, levando à ficha ou a Pendências filtrada.
+4. **Atividade recente**, com quem registrou cada coisa.
 
-**Antes de implementar (fase 5):** montar três estruturas diferentes desta tela e mostrá-las lado a lado para escolha. A estrutura acima é o ponto de partida de uma delas, não a decisão final.
+**Pendências** (`/pendencias`) é a fila única: a revisão da implantação, quando há; as aprovações (Aprovar e Rejeitar na linha, 44px, com "Desfazer" por alguns segundos, e o número baixa na hora); e os prazos em Vencido, Esta semana, Próximos 30 dias e Mais adiante, com filtros por assunto e por data no endereço.
+
+Empresa sem colaboradores: a tela vira primeiro passo ("Cadastre a primeira pessoa").
 
 ### Parceiro — `/carteira`, computador primeiro
 
@@ -219,7 +220,25 @@ O avatar abre um popover no computador e uma folha no celular (no celular, o mes
 - **Alcance:** vem da sessão mais um cookie de escolha, sempre validado no servidor.
 - **`lib/calculos/`:** funções puras de folha gerencial, encargos por regime, provisões, rescisão e custo de desligar.
 - **Um único arquivo de tabelas** (INSS, FGTS, IRRF, salário mínimo etc.), com a fonte oficial de cada valor. Pesquisar as tabelas vigentes de 2026 na fase 7 e mostrar para conferência antes de usar. Nunca valores inventados.
-- **Regras de prazo** (45/90 dias, 30 dias, 2 dias, 10 dias, 15 dias, 30/11, 20/12) também num arquivo de configuração.
+- **Regras de prazo** (45/90 dias, 30 dias, 2 dias, 10 dias, 15 dias, 30/11, 20/12) também num arquivo de configuração (`lib/regrasDePrazo.js`), conferidas pelo usuário em 13/10/2026, com dois acréscimos:
+  - prazos de pagamento (férias, rescisão e 13º) que caem em fim de semana ou feriado antecipam para o dia útil anterior (em 2026, a 2ª parcela do 13º vence em 18/12, porque 20/12 é domingo);
+  - afastamentos pela mesma doença (mesmo CID) com intervalo de até 60 dias somam os dias para contar os 15 dias da empresa e o encaminhamento ao INSS.
+
+### Implantação em empresas que já existem
+
+- **Planilha modelo**, com abas para:
+  - **empresa:** CNPJs, filiais, departamentos, regime tributário e, no Simples Nacional, o anexo;
+  - **colaboradores ativos**;
+  - **ex-colaboradores dos últimos 12 meses**, com data, tipo e motivo do desligamento;
+  - **férias:** períodos aquisitivos e férias já tiradas, desde o período aberto mais antigo;
+  - **atestados dos últimos 12 meses**, com dias e CID;
+  - **reajustes e mudanças de cargo** (opcional);
+  - **benefícios atuais**.
+- **A importação mostra os erros por linha**, para corrigir no Excel e subir de novo.
+- **Cada empresa tem uma data de implantação.** Prazos vencidos antes dessa data aparecem como **"a conferir na implantação"**, e não como vencidos.
+- **Revisão antes dos alertas:** depois da importação, a Gestão passa por uma revisão do que parece inconsistente (férias aparentemente vencidas, experiências abertas, documentos sem validade). Os alertas de prazo começam quando a revisão termina.
+- **Regime tributário:** no Simples Nacional, o cadastro pede também o anexo, porque no Anexo IV o INSS patronal é pago à parte.
+- A planilha modelo e a tela de importação são da fase 14; a data de implantação, os prazos "a conferir" e a revisão já valem desde a fase 5 (na demonstração, a Oficina Bom Motor foi implantada há 12 dias e começa com a revisão aberta).
 - **Gerador de dados fictícios:** resultado estável, com **datas ancoradas no dia de hoje** para os alertas não envelhecerem. 2 parceiros (um fictício, identificado como tal, com cores próprias para provar o white-label); cerca de 6 clientes de 8 a 60 pessoas nos três regimes tributários; um cliente com matriz e 2 filiais; 18 meses de histórico com admissões, desligamentos (tipo e motivo), férias em todas as situações, afastamentos de todos os tipos, atestados com CID (alguns "não informado"), reajustes, benefícios, documentos vencendo e autoria em tudo.
 - **Logins da demo:** `gestao@`, `parceiro@`, `admin@`, além de `teste@gmail.com` (Gestão).
 - **Testes:** `node --test` (nativo, sem dependência) para cálculos, prazos e **isolamento** (nenhum parceiro ou cliente vê dado de outro).
@@ -237,7 +256,7 @@ Toda fase é testada em 375px e 1440px, nos temas claro e escuro, e termina com 
 | 2 | **Navegação e casca** ✅ concluída em 12/10/2026 | Barra inferior, menu lateral reorganizado, menu de usuário, busca de pessoa, `Folha` genérica; textos novos dos perfis na entrada (`lib/marca.js`) | Navegar tudo com uma mão em 375px; teclado e leitor de tela |
 | 3 | **Camada de dados, perfis e alcance** ✅ concluída em 12/10/2026 | `lib/dados/`, permissões, seletor de alcance, logins por perfil, "Ver como…"; navegação de cada perfil (incluindo a do Parceiro no celular) | Testes de isolamento; cada login vê só o que alcança |
 | 4 | **Dados de demonstração ampliados** ✅ concluída em 12/10/2026 | Gerador com datas ancoradas em hoje, parceiros, clientes, CNPJs, 18 meses de histórico | Números das telas atuais mudam com coerência ao trocar o alcance |
-| 5 | **Início da Gestão e Pendências** | **Primeiro: três estruturas da tela inicial lado a lado para escolha.** Depois: a escolhida, Pendências, regras de prazo em configuração | Aprovar e rejeitar no celular; prazos batem com os dados |
+| 5 | **Início da Gestão e Pendências** ✅ concluída em 13/10/2026 | **Primeiro: três estruturas da tela inicial lado a lado para escolha.** Depois: a escolhida, Pendências, regras de prazo em configuração | Aprovar e rejeitar no celular; prazos batem com os dados |
 | 6 | **Ficha e lista de colaboradores** | Resumo, números, abas com endereço, linha do tempo, valores mascarados, situação calculada | Abrir pelo alerta e cair na aba certa; Parceiro vê o CID como restrito |
 | 7 | **Tabelas e cálculos** | Arquivo de tabelas com fontes, cálculos puros, testes com casos conferidos | `node --test` passando; tabelas conferidas pelo usuário |
 | 8 | **Lançar, Ocorrências, Atestados e afastamentos, Movimentações** | Lançar em três passos, autoria, tipos de afastamento, validação com CID, INSS acima de 15 dias; PRODUCT.md com a terminologia nova | Lançar de qualquer tela; aparece no histórico com autor; afastamento muda a situação |
@@ -246,7 +265,7 @@ Toda fase é testada em 375px e 1440px, nos temas claro e escuro, e termina com 
 | 11 | **Férias** + painel Férias | Períodos, programação e aprovação, dobra, prazos | Vencidas, vencendo e programadas batem com a ficha |
 | 12 | **Folha gerencial, encargos e 13º** + painel Custos | Competência, composição, fator de custo, provisões e parcelas | Totais batem com os cálculos testados; trocar o regime muda os encargos |
 | 13 | **Benefícios** + painel Benefícios | Catálogo, empresa paga e desconto, quem não tem | Custo entra na folha gerencial |
-| 14 | **Documentos e Empresa** | Validade, completude, CNPJs, departamentos, usuários, importação da planilha modelo, histórico | Subir uma planilha com erros e ver o que corrigir |
+| 14 | **Documentos e Empresa** | Validade, completude, CNPJs, departamentos (com o anexo do Simples Nacional), usuários, importação da planilha modelo (abas e erros por linha, ver § 9 › Implantação), histórico | Subir uma planilha com erros e ver o que corrigir |
 | 15 | **Parceiro** | Carteira, consulta de um cliente, comparação, exportação (CSV e página para imprimir), white-label com checagem de contraste | Login de parceiro não vê nada de outro parceiro; marca troca |
 | 16 | **Administração e fechamento** | Parceiros, clientes, usuários, suporte; prévia da entrada redesenhada; `/painel` redireciona para `/inicio`; revisão final | Revisão final em todas as telas |
 
@@ -311,3 +330,15 @@ O que cada fase entregou e o que ficou decidido no caminho, para a fase seguinte
 - Conferido no navegador (build de produção): as três unidades da Empresa Teste somam o todo (38 ativas = 23 + 10 + 5; 6 pendências = 3 + 3 + 0; 55 na lista = 32 + 14 + 9); cada parceiro vê só os próprios clientes.
 - Para as próximas fases: as telas de lista não paginam (Movimentações tem cerca de 100 linhas por cliente grande); o tempo de casa de quem já saiu ainda conta até hoje (fase 6); "Pessoas ativas" do painel conta só a situação Ativo, sem afastados e em férias (definição a revisar na fase 10).
 
+### Fase 5: Início da Gestão e Pendências (13/10/2026)
+
+- Três estruturas comparadas lado a lado em `/opcoes-do-inicio` (A · Fila do dia, B · Agenda, C · Por assunto); escolhida a **C**, com a faixa de urgência no topo. A página de comparação saiu.
+- `/inicio` (opção C) e `/pendencias` (fila única, filtros `?assunto=` e `?quando=`), só na demonstração; fora dela, o Início continua sendo o painel (`lib/navegacao.js`, `soNaDemonstracao`). Login, `/` e "Consultar" levam ao Início; a barra inferior mostra o mesmo "esperando você" do Início (aprovações e prazos vencidos).
+- Decisões de verdade: Aprovar e Rejeitar atestado, Aprovar e Recusar férias (o período volta para "a programar"), Concluir desligamento, com autoria, e Desfazer, que volta ao estado anterior. O item sai da lista e a contagem baixa antes de o servidor responder; se o servidor recusar, o item volta com o aviso.
+- **Fonte única na demonstração** (`lib/demo/memoria.js`): os dados completos são a fonte; as abas das telas atuais saem deles a cada leitura, com o número da linha estável (os dados só crescem pelo fim) e os códigos guardados no registro. O que as telas atuais gravam vira alteração nos dados (com autoria); o que Pendências decide aparece em Atestados e Movimentações.
+- Regras: `lib/regrasDePrazo.js` (com feriados nacionais), `lib/calendario.js` (Páscoa, feriados, dia útil anterior), `lib/prazos.js` (aprovações, prazos, mesma doença em 60 dias, implantação, revisão, urgentes). Repositórios: `lib/dados/pendencias.js` (leitura, permissão, autoria e decisões) e `lib/dados/inicio.js` (números, assuntos, atividade).
+- Implantação: todo cliente tem `implantacao` e `revisao`. Na demonstração, o que veio antes da implantação está em nome de "Importação da planilha"; a Oficina Bom Motor (login `oficina@demo.test`) foi implantada há 12 dias, só com o que a planilha traz, e tem 4 itens na revisão (férias aparentemente vencidas, experiência aberta, 2 ASO sem validade). Concluir a revisão exige tudo conferido; daí os vencidos de antes passam a vencido e a faixa de urgência aparece.
+- Gerador: dois afastamentos pelo mesmo CID que somam 18 dias (INSS no 16º dia somado), códigos guardados, implantação por cliente.
+- Testes: `testes/prazos.test.js` (dia útil, 13º de 2026, mesma doença, implantação e revisão, recorte por CNPJ, LGPD), `testes/calendario.test.js`, `testes/memoria.test.js`, navegação nos dois modos. `npm test`: 44 casos.
+- Conferido no navegador: aprovar baixa a contagem na hora e a barra inferior depois do servidor, e o atestado aparece aprovado em Atestados; Rejeitar e Desfazer voltam ao pendente; a revisão da Oficina só conclui com tudo conferido; o Parceiro vê "esperando a Gestão", sem botões. 375px e 1440px, claro e escuro.
+- Para as próximas fases: a ficha abre na aba pelo `?aba=` que os prazos já mandam (fase 6); o custo estimado de pessoal e o custo da dobra das férias vencidas entram com Férias (fase 11) e Folha gerencial (fase 12); feriados estaduais e municipais entram no cadastro da empresa (fase 14).

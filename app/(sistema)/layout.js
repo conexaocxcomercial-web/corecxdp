@@ -2,6 +2,7 @@ import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { contarPendencias } from '@/lib/registros';
 import { alcanceAtual, resumoDoAlcance } from '@/lib/dados/alcance';
+import { contarEsperandoVoce } from '@/lib/dados/pendencias';
 import { navegacaoDe, precisaDeCliente } from '@/lib/navegacao';
 import { Navegacao } from '@/componentes/Navegacao';
 import { BarraInferior } from '@/componentes/BarraInferior';
@@ -22,17 +23,21 @@ export default async function LayoutDoSistema({ children }) {
   const { sessao, demonstracao } = alcance;
   const resumo = await resumoDoAlcance();
   const temCliente = Boolean(alcance.cliente);
-  const { grupos, barra, lancamentos, podeLancar, perfil, inicio } = navegacaoDe(alcance.perfil, { temCliente });
+  const { grupos, barra, lancamentos, podeLancar, perfil, inicio } = navegacaoDe(alcance.perfil, {
+    temCliente,
+    demonstracao,
+  });
   const usuario = { nome: sessao.nome, email: sessao.email, empresa: sessao.empresa };
   const caminho = (await headers()).get('x-caminho') || '';
   const pedeCliente = precisaDeCliente(caminho) && !temCliente;
 
-  // O número do Início na barra inferior. Se a leitura falhar, a casca
-  // aparece sem ele; a própria tela mostra o erro.
+  // O número do Início na barra inferior: na demonstração, o mesmo
+  // "esperando você" do Início (aprovações e prazos vencidos); fora dela,
+  // as pendências do painel. Se a leitura falhar, a casca aparece sem ele.
   let pendencias = 0;
   if (temCliente && podeLancar) {
     try {
-      pendencias = (await contarPendencias()).total;
+      pendencias = demonstracao ? await contarEsperandoVoce() : (await contarPendencias()).total;
     } catch {
       pendencias = 0;
     }

@@ -3032,3 +3032,818 @@ html.com-folha {
     width: 200px;
   }
 }
+
+/* ============================================================
+   INÍCIO E PENDÊNCIAS — fase 5 do redesenho (opção "Por assunto").
+   O violeta vira chão no topo do Início, como na entrada; prazos e
+   aprovações usam a mesma linha nas duas telas.
+   ============================================================ */
+
+/* ------------------------------------------------- faixa de urgência
+   Fina e escura (o que espera ação é escuro), só quando há algo vencido
+   ou vencendo em até 2 dias. Durante a implantação, vira a faixa da
+   revisão, em Véu Violeta. */
+.urgente {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 8px var(--respiro);
+  background: var(--tinta);
+  color: var(--papel);
+  font-size: 14px;
+  line-height: 1.4;
+  transition: background 0.15s;
+}
+@media (hover: hover) {
+  .urgente:hover {
+    background: color-mix(in srgb, var(--tinta) 88%, var(--papel));
+  }
+}
+.urgente-ponto {
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--papel);
+}
+.urgente-ponto.vencido {
+  background: var(--marca-rosa);
+}
+.urgente-ic {
+  font-size: 20px;
+  flex-shrink: 0;
+  color: var(--acao-texto);
+}
+.urgente-txt {
+  flex: 1;
+  min-width: 0;
+}
+.urgente-txt b {
+  font-weight: 700;
+}
+.urgente-quem {
+  color: color-mix(in srgb, var(--papel) 82%, var(--tinta));
+}
+.urgente-ir {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.urgente-ir .material-symbols-rounded {
+  font-size: 18px;
+  transition: transform 0.15s;
+}
+.urgente:hover .urgente-ir .material-symbols-rounded {
+  transform: translateX(2px);
+}
+.urgente.implantacao {
+  background: var(--acao-fraco);
+  color: var(--tinta);
+}
+.urgente.implantacao .urgente-quem {
+  color: var(--tinta-2);
+}
+@media (hover: hover) {
+  .urgente.implantacao:hover {
+    background: color-mix(in srgb, var(--acao-fraco) 80%, var(--marca-lilas));
+  }
+}
+
+/* ---------------------------------------------------- faixa violeta
+   Igual nos dois temas: texto preto (5,5:1), secundário em preto a 85%
+   (4,9:1). A folha de mesa sobe por cima dela, como na entrada. */
+.ini-faixa {
+  --sobre-violeta: var(--marca-preto);
+  --sobre-violeta-2: color-mix(in srgb, var(--marca-preto) 85%, var(--marca-violeta));
+  padding: 44px var(--respiro) 84px;
+  background: var(--marca-violeta);
+  color: var(--sobre-violeta);
+}
+.ini-faixa ::selection {
+  background: var(--marca-preto);
+  color: var(--marca-violeta);
+}
+.ini-faixa :focus-visible {
+  outline-color: var(--marca-preto);
+}
+.ini-faixa-in,
+.ini-folha-in {
+  max-width: calc(1280px - 64px);
+  margin: 0 auto;
+}
+.ini-faixa-in {
+  display: grid;
+  grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+  align-items: end;
+  gap: 56px;
+}
+.ini-frase {
+  max-width: 12em;
+  font-size: clamp(40px, 3.8vw, 56px);
+  font-weight: 700;
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+.ini-frase-2 {
+  display: block;
+  max-width: 20em;
+  margin-top: 16px;
+  font-size: clamp(22px, 1.9vw, 30px);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+.ini-linha {
+  margin-top: 14px;
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--sobre-violeta-2);
+  text-wrap: pretty;
+}
+/* Números do negócio: três colunas com fio preto no topo, como os perfis da entrada. */
+.ini-nums {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+.ini-num {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  height: 100%;
+  padding-top: 12px;
+  border-top: 1.5px solid var(--sobre-violeta);
+  color: inherit;
+}
+.ini-num-r {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--sobre-violeta-2);
+}
+.ini-num-v {
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.ini-num-p {
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--sobre-violeta-2);
+}
+@media (hover: hover) {
+  a.ini-num:hover .ini-num-r {
+    color: var(--sobre-violeta);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+}
+
+.ini-folha {
+  position: relative;
+  margin-top: -32px;
+  padding: 40px var(--respiro) 96px;
+  border-radius: var(--r-folha) var(--r-folha) 0 0;
+  background: var(--mesa);
+}
+
+/* ------------------------------------------------------- assuntos */
+.ini-grade {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.ini-tema {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 20px 20px 8px;
+  background: var(--papel);
+  border-radius: var(--r-card);
+  box-shadow: var(--e1);
+}
+.ini-tema-cab {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+}
+.ini-tema-t {
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -0.015em;
+}
+.ini-tema-nums {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 18px;
+}
+.ini-tema-nums > div {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: flex-end;
+  gap: 6px;
+  min-width: 0;
+}
+.ini-tema-nums dd {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+.ini-tema-nums dt {
+  font-size: 13px;
+  line-height: 1.35;
+  color: var(--tinta-3);
+}
+/* Número que pede cuidado: ponto rosa ao lado, nunca rosa no texto. */
+.ini-tema-nums .critico dd::after {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--marca-rosa);
+  box-shadow: inset 0 0 0 1px var(--graf-contorno);
+}
+.ini-tema-l {
+  margin-top: 14px;
+  border-top: 1px solid var(--linha);
+}
+.ini-tema-l .prazo-a {
+  min-height: 60px;
+}
+.ini-tema-pe {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 44px;
+  margin-top: auto;
+  padding-top: 4px;
+}
+.ini-tema-mais,
+.ini-tema-ir {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.ini-tema-mais {
+  color: var(--tinta-2);
+}
+.ini-tema-ir {
+  color: var(--acao-texto);
+}
+.ini-tema-ir .material-symbols-rounded {
+  font-size: 18px;
+  transition: transform 0.15s;
+}
+@media (hover: hover) {
+  .ini-tema-mais:hover {
+    color: var(--tinta);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .ini-tema-ir:hover .material-symbols-rounded {
+    transform: translateX(2px);
+  }
+}
+.ini-ativ {
+  margin-top: 40px;
+}
+.ini-ativ .sec-tit {
+  margin-bottom: 8px;
+}
+
+/* -------------------------------------------- linhas (prazo, aprovação) */
+.linhas > li + li > :first-child {
+  border-top: 1px solid var(--linha);
+}
+.prazo-a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 64px;
+  padding: 12px 0;
+  color: inherit;
+}
+.prazo-txt {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.prazo-t {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.35;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 4px;
+  transition: text-decoration-color 0.15s;
+}
+.prazo-d {
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--tinta-3);
+  text-wrap: pretty;
+}
+.prazo-ir {
+  flex-shrink: 0;
+  font-size: 20px;
+  color: var(--tinta-3);
+  transition: color 0.15s, transform 0.15s;
+}
+.prazo-etiqueta {
+  flex-shrink: 0;
+  font-size: 13px;
+  color: var(--tinta-3);
+}
+@media (hover: hover) {
+  a.prazo-a:hover .prazo-t {
+    text-decoration-color: currentColor;
+  }
+  a.prazo-a:hover .prazo-ir {
+    color: var(--acao-texto);
+    transform: translateX(2px);
+  }
+}
+
+/* Dias até o prazo: rosa venceu, escura esta semana, neutra depois,
+   contornada a conferir na implantação. */
+.quando {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 0 10px;
+  border-radius: var(--r-pill);
+  background: var(--papel-2);
+  color: var(--tinta-2);
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.quando.vencido {
+  background: var(--marca-rosa);
+  color: var(--marca-grafite);
+}
+.quando.semana {
+  background: var(--tinta);
+  color: var(--papel);
+}
+.quando.conferir {
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--linha-3);
+  color: var(--tinta-2);
+}
+
+/* Aprovação na linha: sai encolhendo quando decidida. */
+.pend {
+  display: grid;
+  grid-template-rows: 1fr;
+  transition: grid-template-rows 0.36s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.22s;
+}
+.pend.saindo {
+  grid-template-rows: 0fr;
+  opacity: 0;
+}
+.pend-in {
+  min-height: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 16px;
+  padding: 16px 0;
+}
+.pend.saindo > .pend-in {
+  overflow: hidden;
+}
+.pend-txt {
+  flex: 1 1 260px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.pend-nome {
+  align-self: flex-start;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 4px;
+  transition: text-decoration-color 0.15s;
+}
+@media (hover: hover) {
+  .pend-nome:hover {
+    text-decoration-color: currentColor;
+  }
+}
+.pend-o {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.pend-d {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--tinta-3);
+}
+.pend-acoes {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+.pend-acoes .btn {
+  min-width: 116px;
+}
+.pend-espera {
+  margin-left: auto;
+}
+
+/* Dentro do cartão liso, a linha leva o respiro do cartão. */
+.cartao-liso .linhas > li > :first-child {
+  padding-left: 24px;
+  padding-right: 24px;
+}
+.lista-vazia {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 18px 24px;
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--tinta-2);
+}
+.lista-vazia .material-symbols-rounded {
+  font-size: 20px;
+  color: var(--tinta-3);
+}
+
+/* Grupos de prazos de Pendências: título com ponto do tom e contagem. */
+.grupos-prazos {
+  padding-bottom: 4px;
+}
+.grupo-prazos + .grupo-prazos {
+  border-top: 1px solid var(--linha);
+}
+.grupo-prazos-t {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 18px 24px 6px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--tinta-2);
+}
+.grupo-prazos-n {
+  font-weight: 500;
+  color: var(--tinta-3);
+  font-variant-numeric: tabular-nums;
+}
+.grupo-ponto {
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--papel-2);
+  box-shadow: inset 0 0 0 1px var(--graf-contorno);
+}
+.grupo-ponto.vencido {
+  background: var(--marca-rosa);
+}
+.grupo-ponto.semana {
+  background: var(--tinta);
+}
+.grupo-ponto.mes {
+  background: var(--linha-2);
+}
+.mais summary {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 24px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--acao-texto);
+  list-style: none;
+  cursor: pointer;
+}
+.mais summary::-webkit-details-marker {
+  display: none;
+}
+.mais[open] summary {
+  display: none;
+}
+.mais > .linhas {
+  border-top: 1px solid var(--linha);
+}
+
+/* Revisão da implantação: cada item com o que conferir e a marca de conferido. */
+.revisao-intro {
+  max-width: 72ch;
+  padding: 20px 24px 8px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--tinta-2);
+}
+.revisao-l {
+  margin-top: 4px;
+}
+.revisao {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 16px;
+}
+.cartao-liso .revisao {
+  padding: 16px 24px;
+}
+.revisao + .revisao {
+  border-top: 1px solid var(--linha);
+}
+.revisao-txt {
+  flex: 1 1 280px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.revisao-p {
+  font-weight: 600;
+  color: var(--tinta-2);
+  text-decoration: underline;
+  text-decoration-color: var(--linha-2);
+  text-underline-offset: 3px;
+}
+.revisao-o {
+  margin-top: 2px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--tinta-2);
+}
+.revisao.conferido .prazo-t {
+  color: var(--tinta-3);
+}
+.revisao-erro {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--tinta);
+}
+.revisao-pe {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 20px;
+  padding: 16px 24px 20px;
+  border-top: 1px solid var(--linha);
+}
+.revisao-pe .nota {
+  flex: 1 1 280px;
+}
+
+/* ------------------------------------------------ atividade recente */
+.ativ li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 0;
+  border-top: 1px solid var(--linha);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--tinta-2);
+}
+.ativ li:first-child {
+  border-top: 0;
+}
+.ativ b {
+  font-weight: 600;
+  color: var(--tinta);
+}
+.ativ-p {
+  font-weight: 600;
+  color: var(--tinta);
+  text-decoration: underline;
+  text-decoration-color: var(--linha-2);
+  text-underline-offset: 3px;
+  transition: text-decoration-color 0.15s;
+}
+@media (hover: hover) {
+  .ativ-p:hover {
+    text-decoration-color: currentColor;
+  }
+}
+.ativ-q {
+  flex-shrink: 0;
+  font-size: 13px;
+  color: var(--tinta-3);
+  white-space: nowrap;
+}
+
+/* ---------------------------------------------- "Desfazer" e contagem */
+.desfazer {
+  position: fixed;
+  z-index: 26;
+  left: calc(50% + var(--cx-sb-w) / 2);
+  bottom: calc(24px + env(safe-area-inset-bottom));
+  width: min(460px, calc(100vw - 32px));
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+.desfazer-in {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 56px;
+  padding: 6px 6px 6px 16px;
+  border-radius: 14px;
+  background: var(--tinta);
+  color: var(--papel);
+  box-shadow: var(--e-pop);
+  font-size: 14px;
+  line-height: 1.4;
+  pointer-events: auto;
+  animation: desfazer-sobe 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.desfazer-in.erro {
+  background: var(--marca-rosa);
+  color: var(--marca-grafite);
+}
+.desfazer-in button {
+  flex-shrink: 0;
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: var(--r-ctrl);
+  background: var(--marca-violeta);
+  color: var(--marca-preto);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+@keyframes desfazer-sobe {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+/* O número que baixa ao decidir: desce do alto e entra em foco. */
+.conta {
+  display: inline-block;
+  font-variant-numeric: tabular-nums;
+}
+.conta.muda {
+  animation: conta-muda 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes conta-muda {
+  from {
+    opacity: 0.25;
+    filter: blur(3px);
+    transform: translateY(-0.3em);
+  }
+}
+
+/* --------------------------------------------------------- esqueleto */
+.esqueleto {
+  display: block;
+  border-radius: var(--r-card);
+  background: color-mix(in srgb, var(--linha) 70%, var(--mesa));
+  animation: esqueleto 1.4s ease-in-out infinite;
+}
+.ini-faixa .esqueleto {
+  background: color-mix(in srgb, var(--marca-preto) 12%, var(--marca-violeta));
+}
+@keyframes esqueleto {
+  50% {
+    opacity: 0.55;
+  }
+}
+
+/* ------------------------------------------------- telas médias e toque */
+@media (max-width: 1199px) {
+  .ini-grade {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 1100px) {
+  .ini-faixa-in {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+  }
+}
+@media (max-width: 900px) {
+  .urgente {
+    align-items: flex-start;
+    font-size: 13px;
+  }
+  .urgente-ponto {
+    margin-top: 6px;
+  }
+  .urgente-ir {
+    margin-top: 1px;
+  }
+  .ini-faixa {
+    padding: 28px var(--respiro) 56px;
+  }
+  .ini-frase {
+    font-size: clamp(28px, 8.2vw, 40px);
+    line-height: 1.06;
+  }
+  .ini-frase-2 {
+    margin-top: 12px;
+    font-size: clamp(19px, 5.4vw, 24px);
+  }
+  .ini-linha {
+    margin-top: 12px;
+  }
+  /* Celular: os números em linhas, rótulo à esquerda e valor à direita. */
+  .ini-nums {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+  .ini-num {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: baseline;
+    gap: 2px 12px;
+    padding: 12px 0;
+  }
+  .ini-num-v {
+    font-size: 22px;
+    text-align: right;
+  }
+  .ini-num-p {
+    grid-column: 1 / -1;
+  }
+  .ini-folha {
+    margin-top: -24px;
+    padding: 28px var(--respiro) 72px;
+  }
+  .ini-grade {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+  }
+  .ini-tema {
+    padding: 18px 16px 4px;
+  }
+  .cartao-liso .linhas > li > :first-child,
+  .cartao-liso .revisao {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  .lista-vazia,
+  .grupo-prazos-t,
+  .mais summary,
+  .revisao-intro,
+  .revisao-pe {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  .pend-acoes {
+    width: 100%;
+  }
+  .pend-acoes .btn {
+    flex: 1;
+    min-height: 44px;
+  }
+  .revisao > .btn,
+  .revisao-pe .btn {
+    width: 100%;
+    min-height: 44px;
+  }
+  .prazo-etiqueta {
+    display: none;
+  }
+  .desfazer {
+    left: 50%;
+    bottom: calc(76px + env(safe-area-inset-bottom));
+  }
+}
