@@ -1,6 +1,8 @@
 # Tabelas de 2026: conferência
 
-Fase 7 do [redesenho](redesenho.md). Os valores usados nos cálculos estão em [lib/tabelas.js](../lib/tabelas.js), que é a fonte da verdade; este documento serve para conferir. Levantamento de 13/10/2026. Os cálculos de [lib/calculos/](../lib/calculos/) só entram nas telas depois da conferência.
+Fase 7 do [redesenho](redesenho.md). Os valores usados nos cálculos estão em [lib/tabelas.js](../lib/tabelas.js), que é a fonte da verdade; este documento serve para conferir. Levantamento de 13/10/2026, **conferido pelo usuário em 13/10/2026** (decisões no fim).
+
+> **Antes do uso com clientes reais, as tabelas e os cálculos serão revisados pela contabilidade parceira.** Até lá, o sistema só os usa nos dados de demonstração.
 
 Tudo aqui serve a **estimativas gerenciais** (custo estimado de pessoal, folha gerencial, rescisão estimada). O cálculo oficial é o da contabilidade.
 
@@ -62,14 +64,14 @@ A multa do FGTS não incide sobre o FGTS do aviso indenizado (TST, OJ 42, II, da
 
 Fontes: CLT, arts. 146, 147, 477, 479, 484-A e 487; Lei 4.090/1962, art. 3º; TST, Súmulas 157, 171 e 261.
 
-## Escolhas da estimativa, para conferir
+## Escolhas da estimativa
 
 1. **Arredondamento:** centavos, meio para cima, no total. O INSS de quem ganha o mínimo dá R$ 121,58; há sistemas que truncam e dão R$ 121,57.
 2. **Sexta-feira da Paixão** entra como feriado nos prazos de pagamento. Pela Lei 9.093/1995, ela é feriado religioso municipal, mas o calendário federal a trata como nacional. Carnaval e Corpus Christi não entram, porque são ponto facultativo.
 3. **FAP:** sem o valor da empresa, a estimativa usa 1,0.
-4. **Saldo do FGTS para a multa:** quando não informado, a estimativa usa 8% do salário atual em cada mês do contrato, com o 13º e o terço proporcionais, sem juros, atualização nem saques.
+4. **Saldo do FGTS para a multa:** o saldo real, quando informado na ficha, substitui a estimativa. Sem ele, a estimativa usa 8% do salário atual em cada mês do contrato, com o 13º e o terço proporcionais, sem juros, atualização nem saques.
 5. **Acordo:** paga metade do aviso (arredondada para cima em dias) e projeta só essa metade nos avos.
-6. **Adiantamentos:** a rescisão estimada não desconta a 1ª parcela do 13º nem férias já pagas.
+6. **Adiantamentos:** a rescisão estimada desconta a 1ª parcela do 13º quando ela já foi paga: pelo valor informado ou, sem ele, a partir do prazo legal (30/11, no dia útil anterior), como metade do salário, limitada ao 13º do ano. O INSS do 13º continua sobre o total; o FGTS da parcela já foi depositado quando ela foi paga. Os outros adiantamentos (férias já pagas, vales) não são descontados.
 7. **Custo do mês:** salário + provisões de férias (com o terço) e de 13º + encargos sobre os três + a parte da empresa nos benefícios. No Simples (Anexos I, II, III e V), só o FGTS entra nos encargos, porque o resto está no DAS, que incide sobre a receita.
 
 ## Casos conferidos nos testes
@@ -90,3 +92,16 @@ Os casos estão em [testes/calculos.test.js](../testes/calculos.test.js).
 - **Término antecipado da experiência:** inclui o art. 479 (47 dias restantes, 1.566,67).
 - **Justa causa com férias em dobro.**
 - **Pedido de demissão e acordo.**
+
+## Decisões da conferência (13/10/2026)
+
+1. Arredondamento meio para cima: aprovado.
+2. As três incidências que vêm de jurisprudência (aviso indenizado sem INSS e com FGTS, 13º sobre o aviso com INSS, terço de férias gozadas com INSS patronal): aprovadas.
+3. Sexta-feira da Paixão como feriado: aprovada. Melhoria futura: cadastrar a cidade de cada CNPJ para considerar os feriados municipais e estaduais.
+4. FAP 1,0 quando a empresa não informa: aprovado.
+5. Saldo do FGTS estimado: aprovado, com o saldo real informado na ficha substituindo a estimativa quando existir.
+6. Acordo com metade do aviso: aprovado.
+7. Rescisão estimada: desconta a 1ª parcela do 13º quando ela já foi paga; os outros adiantamentos continuam sem desconto.
+
+Próximo passo obrigatório: **revisão pela contabilidade parceira** antes do uso com clientes reais.
+

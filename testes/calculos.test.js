@@ -15,6 +15,7 @@ import {
   avosDeFerias,
   avosDoDecimoTerceiro,
   diasDeAvisoPrevio,
+  primeiraParcelaJaPaga,
   rescisaoEstimada,
   somarMeses,
 } from '../lib/calculos/rescisao.js';
@@ -198,5 +199,45 @@ test('todo cliente da demonstração tem o que os encargos pedem', () => {
     });
     assert.ok(aliquotas.cota >= 0, cliente.nome);
   }
+});
+
+test('rescisão: desconta a 1ª parcela do 13º quando ela já foi paga', () => {
+  // 30/11/2026 é segunda: a 1ª parcela vence nesse dia.
+  assert.equal(primeiraParcelaJaPaga('2026-11-27'), false);
+  assert.equal(primeiraParcelaJaPaga('2026-11-30'), true);
+  const base = { salario: 3000, contrato: 'indeterminado', admissao: '2023-03-01', tipo: 'Pedido de demissão', aliquotas: PRESUMIDO };
+  // Saída em 10/12, sem aviso: 13º de 11/12 = 2.750; 1ª parcela já paga (metade do salário) = 1.500.
+  const dezembro = rescisaoEstimada({ ...base, saida: '2026-12-10' });
+  assert.deepEqual(dezembro.descontos.map((item) => [item.chave, item.valor]), [['adiantamentoDoDecimo', 1500]]);
+  const bruto = dezembro.verbas.reduce((soma, item) => soma + item.valor, 0);
+  assert.equal(dezembro.totais.verbas, centavos(bruto - 1500));
+  // O INSS do 13º é sobre o total; o FGTS da parcela já foi depositado quando ela foi paga.
+  const saldo = dezembro.verbas.find((item) => item.chave === 'saldo').valor;
+  assert.equal(dezembro.encargos.cota, centavos((saldo + 2750) * 0.2));
+  assert.equal(dezembro.fgts.doMes, centavos((saldo + 2750 - 1500) * 0.08));
+  // Antes do prazo, não desconta; com o valor informado, usa o informado.
+  assert.equal(rescisaoEstimada({ ...base, saida: '2026-10-13' }).descontos.length, 0);
+  assert.equal(rescisaoEstimada({ ...base, saida: '2026-10-13', primeiraParcelaPaga: 1200 }).descontos[0].valor, 1200);
+  assert.equal(rescisaoEstimada({ ...base, saida: '2026-12-10', primeiraParcelaPaga: false }).descontos.length, 0);
+});
+
+test('rescisão: aviso que passa do fim do ano leva avos do 13º do ano seguinte', () => {
+  // Saída em 15/12/2026 com 39 dias de aviso: projeção até 23/01/2027.
+  const r = rescisaoEstimada({
+    salario: 3000, contrato: 'indeterminado', admissao: '2023-03-01', saida: '2026-12-15', tipo: 'Dispensa sem justa causa',
+    aliquotas: PRESUMIDO, primeiraParcelaPaga: false,
+  });
+  assert.equal(r.projecao, '2027-01-23');
+  // 2026: até 15/12 são 12 avos (dezembro com 15 dias conta); 2027: janeiro com 23 dias, 1 avo do aviso.
+  assert.deepEqual([r.avos.decimoTerceiro, r.verbas.find((item) => item.chave === 'decimoTerceiroDoAviso').valor], [13, 250]);
+});
+
+test('rescisão: o saldo real do FGTS, quando informado, substitui a estimativa', () => {
+  const r = rescisaoEstimada({
+    salario: 3000, contrato: 'indeterminado', admissao: '2023-03-01', saida: '2026-10-13', tipo: 'Dispensa sem justa causa',
+    aliquotas: PRESUMIDO, saldoDoFgts: 10000,
+  });
+  assert.equal(r.fgts.saldoInformado, true);
+  assert.equal(r.fgts.multa, centavos((10000 + 4050 * 0.08) * 0.4));
 });
 
