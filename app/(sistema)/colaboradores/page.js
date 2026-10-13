@@ -1,4 +1,5 @@
 import { OPCOES, listarColaboradores, mensagemParaTela } from '@/lib/registros';
+import { permissoesAtuais } from '@/lib/dados/alcance';
 import { apenasDigitos, formatarData, hojeISO, plural } from '@/lib/formato';
 import {
   Cabecalho,
@@ -26,6 +27,7 @@ export default async function Colaboradores({ searchParams }) {
   const busca = String(parametros?.busca || '').trim().toLowerCase();
   const area = String(parametros?.area || '');
   const situacao = String(parametros?.status || '');
+  const permissoes = await permissoesAtuais();
 
   let pessoas;
   try {
@@ -100,7 +102,7 @@ export default async function Colaboradores({ searchParams }) {
       <Cabecalho
         titulo="Colaboradores"
         subtitulo={`${filtradas.length} de ${pessoas.length}`}
-        acoes={cadastro(parametros?.lancar === '1')}
+        acoes={permissoes.lancar ? cadastro(parametros?.lancar === '1') : null}
       >
         <Busca placeholder="Buscar por nome, matrícula, cargo ou CPF" />
         <Seletor chave="area" rotulo="Todas as áreas" opcoes={areas} />
@@ -110,9 +112,11 @@ export default async function Colaboradores({ searchParams }) {
       <Wrap>
         <Cartao liso>
           {filtradas.length === 0 ? (
-            <Vazio icone={pessoas.length === 0 ? 'group_add' : 'search_off'} acao={pessoas.length === 0 ? cadastro() : null}>
+            <Vazio icone={pessoas.length === 0 ? 'group_add' : 'search_off'} acao={pessoas.length === 0 && permissoes.lancar ? cadastro() : null}>
               {pessoas.length === 0
-                ? 'Nenhum colaborador cadastrado. Cadastre a primeira pessoa para abrir o registro de pessoal da empresa.'
+                ? permissoes.lancar
+                  ? 'Nenhum colaborador cadastrado. Cadastre a primeira pessoa para abrir o registro de pessoal da empresa.'
+                  : 'Nenhum colaborador cadastrado nesta empresa ainda.'
                 : 'Nenhum colaborador corresponde à busca. Limpe os filtros ou tente outro termo.'}
             </Vazio>
           ) : (

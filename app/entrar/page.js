@@ -15,7 +15,7 @@ export const viewport = { themeColor: '#7371FF' };
 
 export default async function Entrar({ searchParams }) {
   const parametros = await searchParams;
-  const destino = typeof parametros?.de === 'string' ? parametros.de : '/painel';
+  const destino = typeof parametros?.de === 'string' ? parametros.de : '';
   const { whatsapp, email } = MARCA.contato;
 
   return (

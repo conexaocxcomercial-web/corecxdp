@@ -1,6 +1,7 @@
 import {
   OPCOES, listarColaboradores, listarOcorrencias, mensagemParaTela,
 } from '@/lib/registros';
+import { permissoesAtuais } from '@/lib/dados/alcance';
 import { formatarData, hojeISO } from '@/lib/formato';
 import {
   Cabecalho, Cartao, Celula, Faixa, LinhaTabela, Nome, Tabela, Vazio, Wrap,
@@ -19,6 +20,7 @@ export default async function Ocorrencias({ searchParams }) {
   const parametros = await searchParams;
   const busca = String(parametros?.busca || '').trim().toLowerCase();
   const tipo = String(parametros?.tipo || '');
+  const permissoes = await permissoesAtuais();
 
   let ocorrencias;
   let pessoas;
@@ -89,7 +91,7 @@ export default async function Ocorrencias({ searchParams }) {
       <Cabecalho
         titulo="Ocorrências e faltas"
         subtitulo={`${filtradas.length} de ${ocorrencias.length}`}
-        acoes={registro(parametros?.lancar === '1')}
+        acoes={permissoes.lancar ? registro(parametros?.lancar === '1') : null}
       >
         <Busca placeholder="Buscar por pessoa, matrícula ou motivo" />
         <Seletor chave="tipo" rotulo="Todos os tipos" opcoes={OPCOES.tiposDeOcorrencia} />
@@ -98,9 +100,11 @@ export default async function Ocorrencias({ searchParams }) {
       <Wrap>
         <Cartao liso>
           {filtradas.length === 0 ? (
-            <Vazio icone={ocorrencias.length === 0 ? 'event_available' : 'search_off'} acao={ocorrencias.length === 0 ? registro() : null}>
+            <Vazio icone={ocorrencias.length === 0 ? 'event_available' : 'search_off'} acao={ocorrencias.length === 0 && permissoes.lancar ? registro() : null}>
               {ocorrencias.length === 0
-                ? 'Nenhuma ocorrência registrada. Registre a primeira para começar o histórico de ausências da empresa.'
+                ? permissoes.lancar
+                  ? 'Nenhuma ocorrência registrada. Registre a primeira para começar o histórico de ausências da empresa.'
+                  : 'Nenhuma ocorrência registrada nesta empresa ainda.'
                 : 'Nenhuma ocorrência corresponde à busca. Limpe os filtros ou tente outro termo.'}
             </Vazio>
           ) : (

@@ -1,4 +1,5 @@
 import { OPCOES, listarAtestados, listarColaboradores, mensagemParaTela } from '@/lib/registros';
+import { permissoesAtuais } from '@/lib/dados/alcance';
 import { formatarData, hojeISO, plural } from '@/lib/formato';
 import {
   Cabecalho, Cartao, Celula, Faixa, LinhaTabela, Nome, Tabela, Vazio, Wrap,
@@ -14,8 +15,8 @@ export const metadata = { title: 'Atestados' };
 
 const GRADE = '1.5fr 112px 64px 84px 1fr 204px';
 
-function Validacao({ item }) {
-  if (item.status !== 'Pendente') return <Status>{item.status}</Status>;
+function Validacao({ item, podeAprovar }) {
+  if (item.status !== 'Pendente' || !podeAprovar) return <Status>{item.status}</Status>;
 
   return (
     <span className="flex flex-wrap items-center gap-2">
@@ -46,6 +47,7 @@ export default async function Atestados({ searchParams }) {
   const parametros = await searchParams;
   const busca = String(parametros?.busca || '').trim().toLowerCase();
   const status = String(parametros?.status || '');
+  const permissoes = await permissoesAtuais();
 
   let atestados;
   let pessoas;
@@ -131,7 +133,7 @@ export default async function Atestados({ searchParams }) {
       <Cabecalho
         titulo="Atestados"
         subtitulo={pendentes > 0 ? `${pendentes} ${plural(pendentes, 'pendente', 'pendentes')}` : `${atestados.length} no total`}
-        acoes={registro(parametros?.lancar === '1')}
+        acoes={permissoes.lancar ? registro(parametros?.lancar === '1') : null}
       >
         <Busca placeholder="Buscar por pessoa, matrícula ou CID" />
         <Seletor chave="status" rotulo="Todas as validações" opcoes={OPCOES.statusAtestado} />
@@ -141,15 +143,19 @@ export default async function Atestados({ searchParams }) {
         {pendentes > 0 ? (
           <Faixa tom="alerta">
             <b>{pendentes}</b> {plural(pendentes, 'atestado espera', 'atestados esperam')} validação
-            do DP. Aprovar ou rejeitar atualiza o registro do colaborador.
+            {permissoes.aprovar
+              ? ' do DP. Aprovar ou rejeitar atualiza o registro do colaborador.'
+              : ' da Gestão da empresa.'}
           </Faixa>
         ) : null}
 
         <Cartao liso>
           {filtrados.length === 0 ? (
-            <Vazio icone={atestados.length === 0 ? 'clinical_notes' : 'search_off'} acao={atestados.length === 0 ? registro() : null}>
+            <Vazio icone={atestados.length === 0 ? 'clinical_notes' : 'search_off'} acao={atestados.length === 0 && permissoes.lancar ? registro() : null}>
               {atestados.length === 0
-                ? 'Nenhum atestado registrado. Registre o primeiro para acompanhar afastamentos e dias cobertos.'
+                ? permissoes.lancar
+                  ? 'Nenhum atestado registrado. Registre o primeiro para acompanhar afastamentos e dias cobertos.'
+                  : 'Nenhum atestado registrado nesta empresa ainda.'
                 : 'Nenhum atestado corresponde à busca. Limpe os filtros ou tente outro termo.'}
             </Vazio>
           ) : (
@@ -176,13 +182,15 @@ export default async function Atestados({ searchParams }) {
                     <span className="num">{item.dias}</span>
                   </Celula>
                   <Celula rotulo="CID" alinha="d">
-                    <span className="num text-[var(--tinta-2)]">{item.cid || '—'}</span>
+                    <span className="num text-[var(--tinta-2)]">
+                      {item.cidRestrito ? 'Restrito' : item.cid || '—'}
+                    </span>
                   </Celula>
                   <Celula rotulo="Documento" alinha="c">
                     <Anexo url={item.anexo} />
                   </Celula>
                   <Celula rotulo="Validação" alinha="c">
-                    <Validacao item={item} />
+                    <Validacao item={item} podeAprovar={permissoes.aprovar} />
                   </Celula>
                 </LinhaTabela>
               ))}

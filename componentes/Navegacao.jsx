@@ -12,7 +12,7 @@ import { estaAtiva } from '@/lib/navegacao';
  * a 248px no hover ou fica fixo aberto. Os grupos vêm de lib/navegacao.js.
  * No celular quem navega é a BarraInferior.
  */
-export function Navegacao({ empresa, grupos }) {
+export function Navegacao({ empresa, grupos, inicio = '/painel' }) {
   const caminho = usePathname();
   const [fixa, setFixa] = useState(false);
   const [fechados, setFechados] = useState({});
@@ -60,7 +60,7 @@ export function Navegacao({ empresa, grupos }) {
   return (
     <nav className={`cxsidebar ${fixa ? 'fixa' : ''}`} aria-label="Navegação principal">
       <div className="cxsb-head">
-        <Link href="/painel" className="cxsb-marca" aria-label="Início">
+        <Link href={inicio} className="cxsb-marca" aria-label="Início">
           <Marca modulo={false} />
         </Link>
         <span className="cxsb-sigla" aria-hidden="true">

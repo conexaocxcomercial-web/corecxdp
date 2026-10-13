@@ -3,6 +3,7 @@ import {
   OPCOES, buscarColaborador, listarAtestados, listarMovimentacoes, listarOcorrencias,
   mensagemParaTela,
 } from '@/lib/registros';
+import { permissoesAtuais } from '@/lib/dados/alcance';
 import { formatarData, iniciais, plural, tempoDeCasa } from '@/lib/formato';
 import {
   Cabecalho, Cartao, Celula, Faixa, LinhaTabela, Secao, Tabela, Vazio, Wrap,
@@ -38,6 +39,7 @@ function Chip({ icone, rotulo, children }) {
 
 export default async function Ficha({ params }) {
   const { matricula } = await params;
+  const permissoes = await permissoesAtuais();
 
   let pessoa;
   let ocorrencias;
@@ -124,29 +126,33 @@ export default async function Ficha({ params }) {
               </div>
             </div>
 
-            <form
-              action={alterarStatusDoColaborador}
-              className="flex w-full items-end gap-2 min-[901px]:w-auto"
-            >
-              <input type="hidden" name="linha" value={pessoa.linha} />
-              <input type="hidden" name="matricula" value={pessoa.matricula} />
-              <div className="fg min-w-0 flex-1 min-[901px]:flex-none">
-                <label htmlFor="status">Situação</label>
-                <select
-                  id="status"
-                  name="status"
-                  defaultValue={pessoa.status}
-                  className="campo cursor-pointer"
-                >
-                  {OPCOES.statusColaborador.map((opcao) => (
-                    <option key={opcao}>{opcao}</option>
-                  ))}
-                </select>
-              </div>
-              <BotaoEnviar variante="fant" enviando="Salvando…">
-                Salvar
-              </BotaoEnviar>
-            </form>
+            {permissoes.lancar ? (
+              <form
+                action={alterarStatusDoColaborador}
+                className="flex w-full items-end gap-2 min-[901px]:w-auto"
+              >
+                <input type="hidden" name="linha" value={pessoa.linha} />
+                <input type="hidden" name="matricula" value={pessoa.matricula} />
+                <div className="fg min-w-0 flex-1 min-[901px]:flex-none">
+                  <label htmlFor="status">Situação</label>
+                  <select
+                    id="status"
+                    name="status"
+                    defaultValue={pessoa.status}
+                    className="campo cursor-pointer"
+                  >
+                    {OPCOES.statusColaborador.map((opcao) => (
+                      <option key={opcao}>{opcao}</option>
+                    ))}
+                  </select>
+                </div>
+                <BotaoEnviar variante="fant" enviando="Salvando…">
+                  Salvar
+                </BotaoEnviar>
+              </form>
+            ) : (
+              <Status>{pessoa.status}</Status>
+            )}
           </div>
         </div>
 
@@ -219,7 +225,9 @@ export default async function Ficha({ params }) {
                       <span className="num">{item.dias}</span>
                     </Celula>
                     <Celula rotulo="CID" alinha="d">
-                      <span className="num text-[var(--tinta-2)]">{item.cid || '—'}</span>
+                      <span className="num text-[var(--tinta-2)]">
+                        {item.cidRestrito ? 'Restrito' : item.cid || '—'}
+                      </span>
                     </Celula>
                     <Celula rotulo="Validação" alinha="c">
                       <Status>{item.status}</Status>

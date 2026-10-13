@@ -18,9 +18,7 @@ export async function middleware(requisicao) {
   const valida = await sessaoValida(requisicao.cookies.get(NOME_DO_COOKIE)?.value);
 
   if (caminho === '/entrar') {
-    return valida
-      ? NextResponse.redirect(new URL('/painel', requisicao.url))
-      : NextResponse.next();
+    return valida ? NextResponse.redirect(new URL('/', requisicao.url)) : NextResponse.next();
   }
 
   if (!valida) {
@@ -29,7 +27,11 @@ export async function middleware(requisicao) {
     return NextResponse.redirect(destino);
   }
 
-  return NextResponse.next();
+  // O layout das telas internas precisa saber a rota (para pedir um
+  // cliente no alcance quando a tela é de um cliente).
+  const cabecalhos = new Headers(requisicao.headers);
+  cabecalhos.set('x-caminho', caminho);
+  return NextResponse.next({ request: { headers: cabecalhos } });
 }
 
 export const config = {

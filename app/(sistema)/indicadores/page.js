@@ -3,6 +3,7 @@ import {
   listarAtestados, listarColaboradores, listarMovimentacoes, listarOcorrencias, mensagemParaTela,
 } from '@/lib/registros';
 import { calcularIndicadores } from '@/lib/indicadores';
+import { permissoesAtuais } from '@/lib/dados/alcance';
 import { plural } from '@/lib/formato';
 import {
   Cabecalho, Cartao, Faixa, Numero, Numeros, Secao, Vazio, Wrap,
@@ -18,6 +19,7 @@ export default async function Indicadores({ searchParams }) {
   const parametros = await searchParams;
   const escolhido = Number(parametros?.meses);
   const meses = PERIODOS.includes(escolhido) ? escolhido : 6;
+  const permissoes = await permissoesAtuais();
 
   let pessoas;
   let ocorrencias;
@@ -66,7 +68,16 @@ export default async function Indicadores({ searchParams }) {
         <Cabecalho titulo="Indicadores" acoes={seletor} />
         <Wrap>
           <Cartao>
-            <Vazio icone="monitoring" acao={<BotaoLink href="/colaboradores" icone="add">Cadastrar colaborador</BotaoLink>}>
+            <Vazio
+              icone="monitoring"
+              acao={
+                permissoes.lancar ? (
+                  <BotaoLink href="/colaboradores?lancar=1" icone="add">
+                    Cadastrar colaborador
+                  </BotaoLink>
+                ) : null
+              }
+            >
               Ainda não há o que medir. Os indicadores são calculados a partir das admissões,
               ausências e movimentações registradas.
             </Vazio>

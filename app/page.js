@@ -1,5 +1,8 @@
 import { redirect } from 'next/navigation';
+import { alcanceAtual } from '@/lib/dados/alcance';
+import { inicioDoPerfil } from '@/lib/navegacao';
 
-export default function Inicio() {
-  redirect('/painel');
+export default async function Inicio() {
+  const alcance = await alcanceAtual();
+  redirect(alcance ? inicioDoPerfil(alcance.perfil) : '/entrar');
 }

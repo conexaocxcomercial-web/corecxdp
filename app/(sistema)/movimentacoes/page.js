@@ -1,6 +1,7 @@
 import {
   OPCOES, listarColaboradores, listarMovimentacoes, mensagemParaTela,
 } from '@/lib/registros';
+import { permissoesAtuais } from '@/lib/dados/alcance';
 import { formatarData, hojeISO } from '@/lib/formato';
 import {
   Cabecalho, Cartao, Celula, Faixa, LinhaTabela, Nome, Tabela, Vazio, Wrap,
@@ -16,8 +17,8 @@ export const metadata = { title: 'Movimentações' };
 
 const GRADE = '1.4fr 1fr 120px 1.6fr 230px';
 
-function Checklist({ item }) {
-  if (item.checklist === 'Concluído') return <Status>{item.checklist}</Status>;
+function Checklist({ item, podeLancar }) {
+  if (item.checklist === 'Concluído' || !podeLancar) return <Status>{item.checklist}</Status>;
   const proximo = item.checklist === 'Pendente' ? 'Em andamento' : 'Concluído';
 
   return (
@@ -36,6 +37,7 @@ export default async function Movimentacoes({ searchParams }) {
   const parametros = await searchParams;
   const busca = String(parametros?.busca || '').trim().toLowerCase();
   const tipo = String(parametros?.tipo || '');
+  const permissoes = await permissoesAtuais();
 
   let movimentacoes;
   let pessoas;
@@ -105,7 +107,7 @@ export default async function Movimentacoes({ searchParams }) {
       <Cabecalho
         titulo="Movimentações"
         subtitulo={`${filtradas.length} de ${movimentacoes.length}`}
-        acoes={registro(parametros?.lancar === '1')}
+        acoes={permissoes.lancar ? registro(parametros?.lancar === '1') : null}
       >
         <Busca placeholder="Buscar por pessoa, matrícula ou motivo" />
         <Seletor chave="tipo" rotulo="Todos os tipos" opcoes={OPCOES.tiposDeMovimentacao} />
@@ -114,9 +116,11 @@ export default async function Movimentacoes({ searchParams }) {
       <Wrap>
         <Cartao liso>
           {filtradas.length === 0 ? (
-            <Vazio icone={movimentacoes.length === 0 ? 'swap_horiz' : 'search_off'} acao={movimentacoes.length === 0 ? registro() : null}>
+            <Vazio icone={movimentacoes.length === 0 ? 'swap_horiz' : 'search_off'} acao={movimentacoes.length === 0 && permissoes.lancar ? registro() : null}>
               {movimentacoes.length === 0
-                ? 'Nenhuma movimentação registrada. Registre a primeira para acompanhar promoções, transferências e desligamentos.'
+                ? permissoes.lancar
+                  ? 'Nenhuma movimentação registrada. Registre a primeira para acompanhar promoções, transferências e desligamentos.'
+                  : 'Nenhuma movimentação registrada nesta empresa ainda.'
                 : 'Nenhuma movimentação corresponde à busca. Limpe os filtros ou tente outro termo.'}
             </Vazio>
           ) : (
@@ -145,7 +149,7 @@ export default async function Movimentacoes({ searchParams }) {
                     <span className="text-[var(--tinta-2)]">{item.motivo || '—'}</span>
                   </Celula>
                   <Celula rotulo="Checklist" alinha="c">
-                    <Checklist item={item} />
+                    <Checklist item={item} podeLancar={permissoes.lancar} />
                   </Celula>
                 </LinhaTabela>
               ))}

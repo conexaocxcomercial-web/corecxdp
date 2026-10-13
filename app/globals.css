@@ -1797,10 +1797,16 @@ html.com-folha {
   display: flex;
   align-items: center;
   gap: 14px;
+  width: 100%;
   min-height: 56px;
   padding: 10px 12px;
+  border: none;
   border-radius: var(--r-ctrl);
+  background: none;
   color: var(--tinta);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
   transition: background 0.14s;
 }
 @media (hover: hover) {
@@ -2547,6 +2553,114 @@ html.com-folha {
   font-size: 16px;
 }
 
+/* ------------------------------------------------------------- alcance
+   Botão da barra do topo com a trilha "Parceiro › Cliente › CNPJ". */
+.alcance-botao {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  max-width: 360px;
+  padding: 0 10px;
+  border: 1px solid var(--linha-2);
+  border-radius: var(--r-ctrl);
+  background: var(--papel);
+  color: var(--tinta);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.alcance-botao:hover {
+  border-color: var(--tinta-3);
+}
+.alcance-botao-ic {
+  font-size: 18px;
+  color: var(--tinta-3);
+  flex-shrink: 0;
+}
+.alcance-trilha {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  overflow: hidden;
+}
+.alcance-parte {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.alcance-parte + .alcance-parte::before {
+  content: '›';
+  margin: 0 6px;
+  color: var(--tinta-3);
+  font-weight: 500;
+}
+/* Na folha, cada nível é um grupo de opções de rádio. */
+.alcance {
+  gap: 24px;
+}
+.alcance-t {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--tinta-3);
+  margin-bottom: 4px;
+}
+.alcance ul {
+  margin: 0 -12px;
+}
+.opcao-radio {
+  min-height: 52px;
+}
+.opcao-marca {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1.5px var(--linha-3);
+  color: var(--sobre-acao);
+}
+.opcao-marca .material-symbols-rounded {
+  font-size: 16px;
+}
+.opcao-radio.marcada .opcao-marca {
+  background: var(--acao);
+  box-shadow: none;
+}
+.opcao-radio.marcada .opcao-nome {
+  font-weight: 700;
+}
+
+/* Só consulta: Parceiro e Administração vendo um cliente. Fica presa logo
+   abaixo da barra do topo, para nunca sumir da vista. */
+.so-consulta {
+  position: sticky;
+  top: 56px;
+  z-index: 15;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 8px var(--respiro);
+  background: var(--acao-fraco);
+  color: var(--tinta);
+  font-size: 14px;
+  line-height: 1.4;
+  text-align: center;
+}
+.so-consulta .material-symbols-rounded {
+  font-size: 18px;
+  color: var(--acao-texto);
+  flex-shrink: 0;
+}
+.so-consulta b {
+  font-weight: 700;
+}
+
 /* --------------------------------------------------- busca de pessoa */
 .busca-p {
   position: relative;
@@ -2758,6 +2872,21 @@ html.com-folha {
 .menu-u-sair .btn {
   width: 100%;
 }
+.menu-u-alcance {
+  grid-column: 1 / -1;
+}
+.menu-u-perfis {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+.menu-u-perfis .btn.atual,
+.menu-u-perfis .btn.atual:disabled {
+  background: var(--acao-fraco);
+  color: var(--tinta);
+  cursor: default;
+}
 
 /* ---------------------------------------------- barra inferior (celular)
    Cinco posições no alcance do polegar, 64px mais a área segura. Lançar
@@ -2785,7 +2914,8 @@ html.com-folha {
   }
   .barra-inf ul {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
     height: 64px;
     max-width: 560px;
     margin: 0 auto;
@@ -2869,6 +2999,23 @@ html.com-folha {
   /* No celular a busca fica na aba Pessoas, o Lançar na barra inferior. */
   .top-dir .busca-p,
   .top-dir .top-lancar {
+    display: none;
+  }
+  .so-consulta {
+    top: 52px;
+    justify-content: flex-start;
+    text-align: left;
+    font-size: 13px;
+  }
+  /* O alcance fica com o último nível (o cliente ou o CNPJ). */
+  .alcance-botao {
+    max-width: 46vw;
+    min-height: 44px;
+  }
+  .alcance-parte:not(:last-child) {
+    display: none;
+  }
+  .alcance-botao > .alcance-botao-ic:first-child {
     display: none;
   }
   .top-dir {

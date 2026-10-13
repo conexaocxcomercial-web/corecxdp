@@ -1,0 +1,54 @@
+{
+  "cabecalho": [
+    "Cliente",
+    "Parceiro",
+    "Empresa",
+    "Nome",
+    "Email",
+    "Senha",
+    "Perfil",
+    "Ativo"
+  ],
+  "registros": [
+    {
+      "Cliente": "teste",
+      "Parceiro": "",
+      "Empresa": "Empresa Teste",
+      "Nome": "teste",
+      "Email": "teste@gmail.com",
+      "Senha": "demo123",
+      "Perfil": "gestao",
+      "Ativo": "sim"
+    },
+    {
+      "Cliente": "teste",
+      "Parceiro": "",
+      "Empresa": "Empresa Teste",
+      "Nome": "Gabriela Souza",
+      "Email": "gestao@demo.test",
+      "Senha": "demo123",
+      "Perfil": "gestao",
+      "Ativo": "sim"
+    },
+    {
+      "Cliente": "",
+      "Parceiro": "conexao-cx",
+      "Empresa": "Conexão CX",
+      "Nome": "Paulo Andrade",
+      "Email": "parceiro@demo.test",
+      "Senha": "demo123",
+      "Perfil": "parceiro",
+      "Ativo": "sim"
+    },
+    {
+      "Cliente": "*",
+      "Parceiro": "",
+      "Empresa": "Administração da plataforma",
+      "Nome": "Ana Lúcia Prado",
+      "Email": "admin@demo.test",
+      "Senha": "demo123",
+      "Perfil": "admin",
+      "Ativo": "sim"
+    }
+  ]
+}

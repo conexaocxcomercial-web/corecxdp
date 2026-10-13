@@ -235,7 +235,7 @@ Toda fase é testada em 375px e 1440px, nos temas claro e escuro, e termina com 
 |---|---|---|---|
 | 1 | **Fundação visual** ✅ concluída em 12/10/2026 | Tipografia e medidas da entrada nas telas internas; `Cabecalho`, seções, `Numero`, tabelas e cartões, campos de 48px; aplicada às 7 telas atuais **sem mudar o conteúdo**; DESIGN.md atualizado | As 7 telas atuais funcionando com o visual novo |
 | 2 | **Navegação e casca** ✅ concluída em 12/10/2026 | Barra inferior, menu lateral reorganizado, menu de usuário, busca de pessoa, `Folha` genérica; textos novos dos perfis na entrada (`lib/marca.js`) | Navegar tudo com uma mão em 375px; teclado e leitor de tela |
-| 3 | **Camada de dados, perfis e alcance** | `lib/dados/`, permissões, seletor de alcance, logins por perfil, "Ver como…"; navegação de cada perfil (incluindo a do Parceiro no celular) | Testes de isolamento; cada login vê só o que alcança |
+| 3 | **Camada de dados, perfis e alcance** ✅ concluída em 12/10/2026 | `lib/dados/`, permissões, seletor de alcance, logins por perfil, "Ver como…"; navegação de cada perfil (incluindo a do Parceiro no celular) | Testes de isolamento; cada login vê só o que alcança |
 | 4 | **Dados de demonstração ampliados** | Gerador com datas ancoradas em hoje, parceiros, clientes, CNPJs, 18 meses de histórico | Números das telas atuais mudam com coerência ao trocar o alcance |
 | 5 | **Início da Gestão e Pendências** | **Primeiro: três estruturas da tela inicial lado a lado para escolha.** Depois: a escolhida, Pendências, regras de prazo em configuração | Aprovar e rejeitar no celular; prazos batem com os dados |
 | 6 | **Ficha e lista de colaboradores** | Resumo, números, abas com endereço, linha do tempo, valores mascarados, situação calculada | Abrir pelo alerta e cair na aba certa; Parceiro vê o CID como restrito |
@@ -286,4 +286,17 @@ O que cada fase entregou e o que ficou decidido no caminho, para a fase seguinte
 - `contarPendencias()` em `lib/registros.js` serve o painel e o número da barra inferior. `emDemonstracao()` em `lib/contexto.js` mostra a etiqueta "Dados de demonstração".
 - Textos novos dos perfis na entrada (`MARCA.perfis`): Gestão lança, Gestão aprova, Parceiro acompanha.
 - Acessibilidade da casca: "Pular para o conteúdo", `<header>` na barra do topo, `<main id="conteudo">`, hover do Tailwind só em quem tem mouse (`hoverOnlyWhenSupported`).
+
+### Fase 3: camada de dados, perfis e alcance (12/10/2026)
+
+- `lib/permissoes.js`: `pode(perfil, ação)` e `normalizarPerfil` (Cliente "*" é Administração; "administrador" e "Operador" antigos viram Gestão). Usado nas telas, nas ações e de novo em `lib/registros.js` antes de gravar (segunda barreira).
+- `lib/dados/`: `regras.js` (puro: resolve o alcance e recorta as linhas; é o que os testes cobrem), `estrutura.js` (parceiros → clientes → CNPJs, no formato das tabelas do Supabase), `alcance.js` (sessão + cookie `core_cx_alcance`, sempre revalidado no servidor) e `usuarios.js`. Os domínios novos (eventos, férias, folha…) ganham repositório quando o módulo deles for feito.
+- `lib/contexto.js › clienteAtual` agora vem do alcance. Telas de cliente sem cliente no alcance mostram "Escolha um cliente" (o layout sabe a rota pelo cabeçalho `x-caminho` que o middleware põe). Por enquanto toda tela atual mostra um cliente por vez: a visão consolidada de vários clientes chega com a carteira completa (fase 15) e os indicadores (fase 10), já com ids únicos (a matrícula se repete entre clientes).
+- Demonstração: `lib/demo/dados/estrutura.json` com 2 parceiros (Conexão CX e Contabilidade Horizonte, fictícia) e 3 clientes, cada um com 1 CNPJ; só "Empresa Teste" tem registros (a fase 4 gera o resto). Logins: `teste@gmail.com` e `gestao@demo.test` (Gestão), `parceiro@demo.test`, `admin@demo.test`, todos com `demo123`. "Ver como…" no menu do usuário troca de perfil sem senha.
+- O cache em memória da demonstração recomeça quando o conteúdo dos JSON muda (não precisa reiniciar o `next dev`).
+- Telas novas, só na demonstração e em versão inicial: `/carteira` (Parceiro: clientes, pessoas ativas, atestados por validar e "Consultar") e `/admin` (Administração: parceiros, clientes, usuários e "Consultar").
+- Fora da demonstração nada muda: todo login é Gestão do próprio cliente (Cliente "*" continua vendo tudo).
+- CID: `listarAtestados` não entrega o CID a quem não pode vê-lo (`cidRestrito`); as telas mostram "Restrito".
+- Filtro por CNPJ: o alcance já guarda o CNPJ, mas nenhum cliente da demonstração tem mais de um ainda; o recorte dos registros por CNPJ entra na fase 4, com os dados.
+- Testes: `npm test` (`node --test`, sem dependência) roda `testes/isolamento.test.js`: 11 casos de alcance, recorte, permissões e navegação.
 

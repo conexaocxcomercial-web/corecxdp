@@ -1,0 +1,114 @@
+{
+  "cabecalho": [
+    "Cliente",
+    "ID_Movimentacao",
+    "Data_Registro",
+    "Matricula",
+    "Tipo_Movimentacao",
+    "Data_Efetiva",
+    "Motivo",
+    "Status_Checklist"
+  ],
+  "registros": [
+    {
+      "Cliente": "teste",
+      "ID_Movimentacao": "MOV001",
+      "Data_Registro": "2026-03-25",
+      "Matricula": "MAT001",
+      "Tipo_Movimentacao": "Promoção",
+      "Data_Efetiva": "2026-04-01",
+      "Motivo": "Promovida a Pleno após ciclo de avaliação, aprovada pela diretoria.",
+      "Status_Checklist": "Concluído"
+    },
+    {
+      "Cliente": "teste",
+      "ID_Movimentacao": "MOV002",
+      "Data_Registro": "2026-04-20",
+      "Matricula": "MAT009",
+      "Tipo_Movimentacao": "Alteração Salarial",
+      "Data_Efetiva": "2026-05-01",
+      "Motivo": "Reenquadramento salarial por equiparação de mercado.",
+      "Status_Checklist": "Concluído"
+    },
+    {
+      "Cliente": "teste",
+      "ID_Movimentacao": "MOV003",
+      "Data_Registro": "2026-05-28",
+      "Matricula": "MAT011",
+      "Tipo_Movimentacao": "Transferência",
+      "Data_Efetiva": "2026-06-01",
+      "Motivo": "Transferido do turno da noite para o turno da manhã a pedido.",
+      "Status_Checklist": "Concluído"
+    },
+    {
+      "Cliente": "teste",
+      "ID_Movimentacao": "MOV004",
+      "Data_Registro": "2026-07-24",
+      "Matricula": "MAT012",
+      "Tipo_Movimentacao": "Desligamento",
+      "Data_Efetiva": "2026-07-31",
+      "Motivo": "Pedido de demissão para assumir vaga em outra cidade.",
+      "Status_Checklist": "Concluído"
+    },
+    {
+      "Cliente": "teste",
+      "ID_Movimentacao": "MOV005",
+      "Data_Registro": "2026-07-17",
+      "Matricula": "MAT009",
+      "Tipo_Movimentacao": "Afastamento",
+      "Data_Efetiva": "2026-07-20",
+      "Motivo": "Afastamento por acidente de trajeto, encaminhado ao INSS.",
+      "Status_Checklist": "Em andamento"
+    },
+    {
+      "Cliente": "teste",
+      "ID_Movimentacao": "MOV006",
+      "Data_Registro": "2026-08-14",
+      "Matricula": "MAT006",
+      "Tipo_Movimentacao": "Desligamento",
+      "Data_Efetiva": "2026-08-21",
+      "Motivo": "Desligamento sem justa causa por reestruturação da área comercial.",
+      "Status_Checklist": "Em andamento"
+    },
+    {
+      "Cliente": "teste",
+      "ID_Movimentacao": "MOV007",
+      "Data_Registro": "2026-09-01",
+      "Matricula": "MAT013",
+      "Tipo_Movimentacao": "Mudança de Cargo",
+      "Data_Efetiva": "2026-09-15",
+      "Motivo": "Assume responsabilidade técnica da squad de pagamentos.",
+      "Status_Checklist": "Pendente"
+    },
+    {
+      "Cliente": "teste",
+      "ID_Movimentacao": "MOV008",
+      "Data_Registro": "2026-09-10",
+      "Matricula": "MAT003",
+      "Tipo_Movimentacao": "Promoção",
+      "Data_Efetiva": "2026-10-01",
+      "Motivo": "Promoção a Sênior após dois ciclos consecutivos acima do esperado.",
+      "Status_Checklist": "Pendente"
+    },
+    {
+      "Cliente": "teste",
+      "ID_Movimentacao": "MOV009",
+      "Data_Registro": "2026-06-09",
+      "Matricula": "MAT005",
+      "Tipo_Movimentacao": "Mudança de Cargo",
+      "Data_Efetiva": "2026-06-15",
+      "Motivo": "Efetivada como analista após período de estágio.",
+      "Status_Checklist": "Concluído"
+    },
+    {
+      "Cliente": "teste",
+      "ID_Movimentacao": "MOV010",
+      "Data_Registro": "2026-08-28",
+      "Matricula": "MAT003",
+      "Tipo_Movimentacao": "Alteração Salarial",
+      "Data_Efetiva": "2026-09-01",
+      "Motivo": "Ajuste salarial previsto em acordo coletivo.",
+      "Status_Checklist": "Pendente"
+    }
+  ]
+}

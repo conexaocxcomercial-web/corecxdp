@@ -1,0 +1,180 @@
+{
+  "cabecalho": [
+    "Cliente",
+    "Matricula",
+    "Nome_Completo",
+    "CPF",
+    "Departamento",
+    "Cargo",
+    "Gestor_Imediato",
+    "Data_Admissao",
+    "Status"
+  ],
+  "registros": [
+    {
+      "Cliente": "teste",
+      "Matricula": "MAT001",
+      "Nome_Completo": "Ana Beatriz Moreira",
+      "CPF": "111.222.333-96",
+      "Departamento": "Tecnologia",
+      "Cargo": "Desenvolvedora Pleno",
+      "Gestor_Imediato": "Rafael Lima Andrade",
+      "Data_Admissao": "2023-02-06",
+      "Status": "Ativo"
+    },
+    {
+      "Cliente": "teste",
+      "Matricula": "MAT002",
+      "Nome_Completo": "Carlos Eduardo Nunes",
+      "CPF": "222.333.444-05",
+      "Departamento": "Operações",
+      "Cargo": "Analista de Logística",
+      "Gestor_Imediato": "Juliana Prado Martins",
+      "Data_Admissao": "2021-08-16",
+      "Status": "Ativo"
+    },
+    {
+      "Cliente": "teste",
+      "Matricula": "MAT003",
+      "Nome_Completo": "Daniela Rocha Vieira",
+      "CPF": "333.444.555-08",
+      "Departamento": "Recursos Humanos",
+      "Cargo": "Analista de DP Sênior",
+      "Gestor_Imediato": "Marcos Teixeira Pinto",
+      "Data_Admissao": "2019-03-11",
+      "Status": "Ativo"
+    },
+    {
+      "Cliente": "teste",
+      "Matricula": "MAT004",
+      "Nome_Completo": "Rafael Lima Andrade",
+      "CPF": "444.555.666-19",
+      "Departamento": "Tecnologia",
+      "Cargo": "Gerente de Engenharia",
+      "Gestor_Imediato": "Marcos Teixeira Pinto",
+      "Data_Admissao": "2018-05-02",
+      "Status": "Ativo"
+    },
+    {
+      "Cliente": "teste",
+      "Matricula": "MAT005",
+      "Nome_Completo": "Juliana Prado Martins",
+      "CPF": "555.666.777-20",
+      "Departamento": "Operações",
+      "Cargo": "Coordenadora de Operações",
+      "Gestor_Imediato": "Marcos Teixeira Pinto",
+      "Data_Admissao": "2020-01-13",
+      "Status": "Ativo"
+    },
+    {
+      "Cliente": "teste",
+      "Matricula": "MAT006",
+      "Nome_Completo": "Felipe Souza Ramos",
+      "CPF": "666.777.888-30",
+      "Departamento": "Comercial",
+      "Cargo": "Executivo de Contas",
+      "Gestor_Imediato": "Patrícia Gomes Alves",
+      "Data_Admissao": "2024-06-03",
+      "Status": "Inativo"
+    },
+    {
+      "Cliente": "teste",
+      "Matricula": "MAT007",
+      "Nome_Completo": "Patrícia Gomes Alves",
+      "CPF": "777.888.999-41",
+      "Departamento": "Comercial",
+      "Cargo": "Gerente Comercial",
+      "Gestor_Imediato": "Marcos Teixeira Pinto",
+      "Data_Admissao": "2017-09-18",
+      "Status": "Ativo"
+    },
+    {
+      "Cliente": "teste",
+      "Matricula": "MAT008",
+      "Nome_Completo": "Bruno Carvalho Dias",
+      "CPF": "888.999.111-93",
+      "Departamento": "Tecnologia",
+      "Cargo": "Desenvolvedor Júnior",
+      "Gestor_Imediato": "Rafael Lima Andrade",
+      "Data_Admissao": "2025-11-10",
+      "Status": "Ativo"
+    },
+    {
+      "Cliente": "teste",
+      "Matricula": "MAT009",
+      "Nome_Completo": "Letícia Barbosa Cruz",
+      "CPF": "999.111.222-71",
+      "Departamento": "Financeiro",
+      "Cargo": "Analista Financeiro Pleno",
+      "Gestor_Imediato": "Marcos Teixeira Pinto",
+      "Data_Admissao": "2022-04-04",
+      "Status": "Ativo"
+    },
+    {
+      "Cliente": "teste",
+      "Matricula": "MAT010",
+      "Nome_Completo": "Marcos Teixeira Pinto",
+      "CPF": "123.456.789-09",
+      "Departamento": "Diretoria",
+      "Cargo": "Diretor Geral",
+      "Gestor_Imediato": "",
+      "Data_Admissao": "2016-02-01",
+      "Status": "Ativo"
+    },
+    {
+      "Cliente": "teste",
+      "Matricula": "MAT011",
+      "Nome_Completo": "Gabriel Antunes Melo",
+      "CPF": "234.567.891-73",
+      "Departamento": "Operações",
+      "Cargo": "Auxiliar de Logística",
+      "Gestor_Imediato": "Juliana Prado Martins",
+      "Data_Admissao": "2026-03-02",
+      "Status": "Ativo"
+    },
+    {
+      "Cliente": "teste",
+      "Matricula": "MAT012",
+      "Nome_Completo": "Renata Lopes Ferreira",
+      "CPF": "345.678.912-28",
+      "Departamento": "Marketing",
+      "Cargo": "Analista de Marketing",
+      "Gestor_Imediato": "Patrícia Gomes Alves",
+      "Data_Admissao": "2025-02-17",
+      "Status": "Inativo"
+    },
+    {
+      "Cliente": "teste",
+      "Matricula": "MAT013",
+      "Nome_Completo": "Thiago Moreira Pinto",
+      "CPF": "456.789.123-64",
+      "Departamento": "Tecnologia",
+      "Cargo": "Desenvolvedor Pleno",
+      "Gestor_Imediato": "Rafael Lima Andrade",
+      "Data_Admissao": "2024-09-09",
+      "Status": "Ativo"
+    },
+    {
+      "Cliente": "teste",
+      "Matricula": "MAT014",
+      "Nome_Completo": "Camila Duarte Rocha",
+      "CPF": "567.891.234-82",
+      "Departamento": "Recursos Humanos",
+      "Cargo": "Assistente de DP",
+      "Gestor_Imediato": "Daniela Rocha Vieira",
+      "Data_Admissao": "2026-05-18",
+      "Status": "Ativo"
+    },
+    {
+      "Cliente": "teste",
+      "Matricula": "MAT015",
+      "Nome_Completo": "Vinícius Prado Salles",
+      "CPF": "678.912.345-82",
+      "Departamento": "Financeiro",
+      "Cargo": "Assistente Financeiro",
+      "Gestor_Imediato": "Letícia Barbosa Cruz",
+      "Data_Admissao": "2026-07-06",
+      "Status": "Ativo"
+    }
+  ]
+}

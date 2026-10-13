@@ -1,0 +1,34 @@
+{
+  "parceiros": [
+    { "id": "conexao-cx", "nome": "Conexão CX", "ficticio": false },
+    { "id": "contabilidade-horizonte", "nome": "Contabilidade Horizonte (fictícia)", "ficticio": true }
+  ],
+  "clientes": [
+    {
+      "id": "teste",
+      "parceiro_id": "conexao-cx",
+      "codigo": "teste",
+      "nome": "Empresa Teste",
+      "regime_tributario": "Simples Nacional"
+    },
+    {
+      "id": "padaria-pao-de-mel",
+      "parceiro_id": "conexao-cx",
+      "codigo": "padaria-pao-de-mel",
+      "nome": "Padaria Pão de Mel",
+      "regime_tributario": "Simples Nacional"
+    },
+    {
+      "id": "oficina-bom-motor",
+      "parceiro_id": "contabilidade-horizonte",
+      "codigo": "oficina-bom-motor",
+      "nome": "Oficina Bom Motor",
+      "regime_tributario": "Lucro Presumido"
+    }
+  ],
+  "cnpjs": [
+    { "id": "teste-matriz", "cliente_id": "teste", "cnpj": "11.222.333/0001-81", "nome": "Empresa Teste", "tipo": "matriz" },
+    { "id": "padaria-matriz", "cliente_id": "padaria-pao-de-mel", "cnpj": "44.555.666/0001-81", "nome": "Padaria Pão de Mel", "tipo": "matriz" },
+    { "id": "oficina-matriz", "cliente_id": "oficina-bom-motor", "cnpj": "77.888.999/0001-81", "nome": "Oficina Bom Motor", "tipo": "matriz" }
+  ]
+}

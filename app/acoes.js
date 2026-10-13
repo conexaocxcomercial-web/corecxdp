@@ -4,6 +4,11 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { abrirSessao, fecharSessao } from '@/lib/sessao';
 import { autenticar } from '@/lib/usuarios';
+import { gravarAlcance, limparAlcance } from '@/lib/dados/alcance';
+import { emDemonstracao } from '@/lib/dados/estrutura';
+import { usuarioDeExemplo } from '@/lib/dados/usuarios';
+import { inicioDoPerfil } from '@/lib/navegacao';
+import { PERFIS } from '@/lib/permissoes';
 import {
   cadastrarColaborador,
   listarColaboradores,
@@ -38,17 +43,22 @@ const RECADOS = {
  * "/\outro.com" começam com barra, mas o navegador lê como outro
  * domínio: por isso a conferência é pela origem, não pelo começo.
  */
-function destinoSeguro(destino) {
+function destinoSeguro(destino, padrao) {
   const base = 'http://core.cx';
   try {
     const url = new URL(destino, base);
     if (!destino.startsWith('/') || url.origin !== base || url.pathname === '/entrar') {
-      return '/painel';
+      return padrao;
     }
     return `${url.pathname}${url.search}${url.hash}`;
   } catch {
-    return '/painel';
+    return padrao;
   }
+}
+
+/** Fora da demonstração todo login é Gestão (lib/dados/alcance.js). */
+function inicioDe(perfil) {
+  return inicioDoPerfil(emDemonstracao() ? perfil : 'gestao');
 }
 
 export async function entrar(_estado, dados) {
@@ -79,12 +89,51 @@ export async function entrar(_estado, dados) {
   }
 
   await abrirSessao(resultado.usuario, { manterConectado });
-  redirect(destinoSeguro(destino));
+  await limparAlcance();
+  const inicio = inicioDe(resultado.usuario.perfil);
+  redirect(destino ? destinoSeguro(destino, inicio) : inicio);
 }
 
 export async function sair() {
   await fecharSessao();
+  await limparAlcance();
   redirect('/entrar');
+}
+
+/* ----------------------------------------------------------------- alcance */
+
+/**
+ * Troca o alcance (parceiro, cliente, CNPJ). O pedido é conferido no
+ * servidor: o que o perfil não alcança é ignorado.
+ */
+export async function mudarAlcance(pedido) {
+  const alcance = await gravarAlcance({
+    parceiro: pedido?.parceiro || null,
+    cliente: pedido?.cliente || null,
+    cnpj: pedido?.cnpj || null,
+  });
+  revalidatePath('/', 'layout');
+  return { chave: alcance?.chave || 'tudo' };
+}
+
+/** "Ver como…": só na demonstração, entra como o usuário de exemplo do perfil. */
+export async function verComo(dados) {
+  const perfil = ler(dados, 'perfil');
+  if (!emDemonstracao() || !PERFIS[perfil]) return;
+
+  const usuario = await usuarioDeExemplo(perfil);
+  if (!usuario) return;
+
+  await abrirSessao({
+    nome: usuario.nome,
+    email: usuario.email,
+    cliente: usuario.perfil === 'parceiro' ? '' : usuario.cliente,
+    parceiro: usuario.parceiro,
+    empresa: usuario.empresa,
+    perfil: usuario.perfil,
+  });
+  await limparAlcance();
+  redirect(inicioDoPerfil(usuario.perfil));
 }
 
 /* ----------------------------------------------------------- colaboradores */

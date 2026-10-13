@@ -8,6 +8,7 @@ import {
   mensagemParaTela,
 } from '@/lib/registros';
 import { calcularIndicadores } from '@/lib/indicadores';
+import { permissoesAtuais } from '@/lib/dados/alcance';
 import { dataPorExtenso, formatarData, paraData, plural } from '@/lib/formato';
 import {
   Cartao,
@@ -39,6 +40,7 @@ const CORES_DO_LIVRO = {
 const GRADE = '1.4fr .8fr .8fr 2fr';
 
 export default async function Painel() {
+  const permissoes = await permissoesAtuais();
   let pessoas;
   let ocorrencias;
   let atestados;
@@ -77,7 +79,13 @@ export default async function Painel() {
           <Cartao>
             <Vazio
               icone="group_add"
-              acao={<BotaoLink href="/colaboradores" icone="add">Cadastrar colaborador</BotaoLink>}
+              acao={
+                permissoes.lancar ? (
+                  <BotaoLink href="/colaboradores?lancar=1" icone="add">
+                    Cadastrar colaborador
+                  </BotaoLink>
+                ) : null
+              }
             >
               Nenhum colaborador registrado. Cadastre a primeira pessoa para o painel mostrar o
               quadro, as pendências e o histórico.

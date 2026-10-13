@@ -1,32 +1,41 @@
+import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { usuarioDaSessao } from '@/lib/sessao';
 import { contarPendencias } from '@/lib/registros';
-import { emDemonstracao } from '@/lib/contexto';
-import { navegacaoDe } from '@/lib/navegacao';
+import { alcanceAtual, resumoDoAlcance } from '@/lib/dados/alcance';
+import { navegacaoDe, precisaDeCliente } from '@/lib/navegacao';
 import { Navegacao } from '@/componentes/Navegacao';
 import { BarraInferior } from '@/componentes/BarraInferior';
 import { BuscaDePessoa } from '@/componentes/BuscaDePessoa';
+import { EscolhaDeCliente } from '@/componentes/EscolhaDeCliente';
+import { MarcaDoAlcance, SeletorDeAlcance } from '@/componentes/Filtros';
 import { BotaoLancar } from '@/componentes/Lancar';
 import { BotaoDoUsuario } from '@/componentes/MenuDoUsuario';
 import { Marca } from '@/componentes/Marca';
+import { Icone } from '@/componentes/Icones';
 
 export const dynamic = 'force-dynamic';
 
 export default async function LayoutDoSistema({ children }) {
-  const sessao = await usuarioDaSessao();
-  if (!sessao) redirect('/entrar');
+  const alcance = await alcanceAtual();
+  if (!alcance) redirect('/entrar');
 
+  const { sessao, demonstracao } = alcance;
+  const resumo = await resumoDoAlcance();
+  const temCliente = Boolean(alcance.cliente);
+  const { grupos, barra, lancamentos, podeLancar, perfil, inicio } = navegacaoDe(alcance.perfil, { temCliente });
   const usuario = { nome: sessao.nome, email: sessao.email, empresa: sessao.empresa };
-  const { grupos, barra, lancamentos, podeLancar, perfil } = navegacaoDe(sessao.perfil);
-  const demonstracao = emDemonstracao();
+  const caminho = (await headers()).get('x-caminho') || '';
+  const pedeCliente = precisaDeCliente(caminho) && !temCliente;
 
   // O número do Início na barra inferior. Se a leitura falhar, a casca
   // aparece sem ele; a própria tela mostra o erro.
   let pendencias = 0;
-  try {
-    pendencias = (await contarPendencias()).total;
-  } catch {
-    pendencias = 0;
+  if (temCliente && podeLancar) {
+    try {
+      pendencias = (await contarPendencias()).total;
+    } catch {
+      pendencias = 0;
+    }
   }
 
   return (
@@ -34,7 +43,8 @@ export default async function LayoutDoSistema({ children }) {
       <a href="#conteudo" className="pular">
         Pular para o conteúdo
       </a>
-      <Navegacao empresa={sessao.empresa} grupos={grupos} />
+      <MarcaDoAlcance chave={alcance.chave} />
+      <Navegacao empresa={alcance.cliente?.nome || sessao.empresa} grupos={grupos} inicio={inicio} />
 
       <header className="top-bar">
         <div className="top-esq">
@@ -48,14 +58,23 @@ export default async function LayoutDoSistema({ children }) {
               Dados de demonstração
             </span>
           ) : null}
-          <BuscaDePessoa />
-          {podeLancar ? <BotaoLancar lancamentos={lancamentos} /> : null}
-          <BotaoDoUsuario usuario={usuario} perfil={perfil} demonstracao={demonstracao} />
+          <SeletorDeAlcance alcance={resumo} />
+          {temCliente ? <BuscaDePessoa /> : null}
+          {podeLancar && temCliente ? <BotaoLancar lancamentos={lancamentos} /> : null}
+          <BotaoDoUsuario usuario={usuario} perfil={perfil} alcance={resumo} demonstracao={demonstracao} />
         </div>
       </header>
 
       <main id="conteudo" tabIndex={-1}>
-        {children}
+        {!podeLancar && temCliente ? (
+          <p className="so-consulta">
+            <Icone nome="visibility" />
+            <span>
+              <b>Só consulta</b> · {alcance.cliente.nome}. Lançar e aprovar ficam com a Gestão da empresa.
+            </span>
+          </p>
+        ) : null}
+        {pedeCliente ? <EscolhaDeCliente alcance={resumo} /> : children}
       </main>
 
       <BarraInferior
@@ -65,6 +84,7 @@ export default async function LayoutDoSistema({ children }) {
         contadores={{ pendencias }}
         usuario={usuario}
         perfil={perfil}
+        alcance={resumo}
         demonstracao={demonstracao}
       />
     </>

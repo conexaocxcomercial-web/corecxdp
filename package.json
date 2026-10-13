@@ -7,7 +7,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "senha": "node scripts/senha.mjs"
+    "senha": "node scripts/senha.mjs",
+    "test": "node --test --disable-warning=MODULE_TYPELESS_PACKAGE_JSON \"testes/**/*.test.js\""
   },
   "dependencies": {
     "google-auth-library": "^9.14.1",

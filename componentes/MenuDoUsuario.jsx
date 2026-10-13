@@ -3,12 +3,14 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { sair } from '@/app/acoes';
+import { sair, verComo } from '@/app/acoes';
+import { trilhaDoAlcance } from '@/componentes/Filtros';
 import { Folha } from '@/componentes/Folha';
 import { Icone } from '@/componentes/Icones';
 import { SeletorDeTema } from '@/componentes/Tema';
 import { iniciais } from '@/lib/formato';
 import { estaAtiva } from '@/lib/navegacao';
+import { PERFIS } from '@/lib/permissoes';
 import { MARCA } from '@/lib/marca';
 
 export function Avatar({ nome, grande = false }) {
@@ -24,9 +26,11 @@ export function Avatar({ nome, grande = false }) {
  * sair. Com `grupos` (aba Menu do celular), mostra também a navegação
  * completa entre o bloco da pessoa e o tema.
  */
-export function ConteudoDoMenu({ usuario, perfil, demonstracao, grupos, aoNavegar }) {
+export function ConteudoDoMenu({ usuario, perfil, alcance, demonstracao, grupos, aoNavegar }) {
   const caminho = usePathname();
   const { whatsapp, email } = MARCA.suporte;
+  const vinculo = { gestao: 'Empresa', parceiro: 'Parceiro', admin: 'Acesso' }[alcance?.perfil] || 'Empresa';
+  const trilha = alcance ? trilhaDoAlcance(alcance) : [];
 
   return (
     <div className="folha-corpo menu-u">
@@ -44,9 +48,15 @@ export function ConteudoDoMenu({ usuario, perfil, demonstracao, grupos, aoNavega
           <dd>{perfil}</dd>
         </div>
         <div>
-          <dt>Empresa</dt>
+          <dt>{vinculo}</dt>
           <dd>{usuario.empresa}</dd>
         </div>
+        {trilha.length ? (
+          <div className="menu-u-alcance">
+            <dt>Alcance</dt>
+            <dd>{trilha.join(' › ')}</dd>
+          </div>
+        ) : null}
       </dl>
 
       {demonstracao ? (
@@ -117,6 +127,30 @@ export function ConteudoDoMenu({ usuario, perfil, demonstracao, grupos, aoNavega
         </ul>
       </section>
 
+      {demonstracao ? (
+        <section className="menu-u-bloco" aria-labelledby="menu-u-vercomo">
+          <p id="menu-u-vercomo" className="menu-u-bloco-t">
+            Ver como…
+          </p>
+          <p className="menu-u-txt">Só na demonstração: entre como outro perfil, sem senha.</p>
+          <div className="menu-u-perfis">
+            {Object.entries(PERFIS).map(([chave, nome]) => (
+              <form key={chave} action={verComo}>
+                <input type="hidden" name="perfil" value={chave} />
+                <button
+                  type="submit"
+                  className={`btn btn-fant btn-mini ${alcance?.perfil === chave ? 'atual' : ''}`}
+                  aria-current={alcance?.perfil === chave ? 'true' : undefined}
+                  disabled={alcance?.perfil === chave}
+                >
+                  {nome}
+                </button>
+              </form>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
       <form action={sair} className="menu-u-sair">
         <button type="submit" className="btn btn-fant">
           <Icone nome="logout" />
@@ -128,7 +162,7 @@ export function ConteudoDoMenu({ usuario, perfil, demonstracao, grupos, aoNavega
 }
 
 /** Avatar da barra do topo: abre o menu (popover no computador, folha no celular). */
-export function BotaoDoUsuario({ usuario, perfil, demonstracao }) {
+export function BotaoDoUsuario({ usuario, perfil, alcance, demonstracao }) {
   const [aberto, setAberto] = useState(false);
 
   return (
@@ -143,7 +177,7 @@ export function BotaoDoUsuario({ usuario, perfil, demonstracao }) {
         <Avatar nome={usuario.nome} />
       </button>
       <Folha aberta={aberto} aoFechar={() => setAberto(false)} tipo="popover" titulo="Sua conta">
-        <ConteudoDoMenu usuario={usuario} perfil={perfil} demonstracao={demonstracao} />
+        <ConteudoDoMenu usuario={usuario} perfil={perfil} alcance={alcance} demonstracao={demonstracao} />
       </Folha>
     </>
   );
