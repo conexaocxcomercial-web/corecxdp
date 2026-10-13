@@ -263,7 +263,7 @@ Toda fase é testada em 375px e 1440px, nos temas claro e escuro, e termina com 
 | 8 | **Lançar, Ocorrências, Atestados e afastamentos, Movimentações** ✅ concluída em 13/10/2026 | Lançar em três passos, autoria, tipos de afastamento, validação com CID, INSS acima de 15 dias; PRODUCT.md com a terminologia nova | Lançar de qualquer tela; aparece no histórico com autor; afastamento muda a situação |
 | 9 | **Admissões e Desligamentos** ✅ concluída em 13/10/2026 | Admissão completa no Lançar com custos admissionais informados, passos, experiência; desligamento com custos demissionais informados e prazo da rescisão | Desligar alguém e ver custo informado, prazo e alerta |
 | 10 | **Estrutura de indicadores** ✅ concluída em 13/10/2026 | Central, modelo de painel e de detalhe; Quadro, Absenteísmo e Saúde, Movimentações; regra dos menos de 3 | Do número à pessoa em 3 cliques; grupo pequeno oculto |
-| 11 | **Férias** + painel Férias | Períodos, programação e aprovação, dobra, prazos | Vencidas, vencendo e programadas batem com a ficha |
+| 11 | **Férias** + painel Férias ✅ concluída em 13/10/2026 | Períodos, programação e aprovação, dobra, prazos | Vencidas, vencendo e programadas batem com a ficha |
 | 12 | **Folha gerencial, encargos e 13º** + painel Custos | Competência, composição, fator de custo, provisões e parcelas, selo de estimativa | Totais batem com os cálculos testados; trocar o regime ou o percentual da empresa muda os encargos |
 | 13 | **Benefícios** + painel Benefícios | Catálogo, empresa paga e desconto, quem não tem | Custo entra na folha gerencial |
 | 14 | **Documentos e Empresa** | Validade, completude, CNPJs, departamentos (com o anexo do Simples Nacional), usuários, importação da planilha modelo (abas e erros por linha, ver § 9 › Implantação), histórico | Subir uma planilha com erros e ver o que corrigir |
@@ -373,6 +373,28 @@ O que cada fase entregou e o que ficou decidido no caminho, para a fase seguinte
 - Nada disso vai para as telas antes da conferência do usuário (fases 9, 11 e 12).
 - Conferência do usuário em 13/10/2026: as sete escolhas aprovadas, com dois acréscimos: o saldo real do FGTS informado na ficha substitui a estimativa (o campo entra na fase 9, com o custo de desligar), e a rescisão desconta a 1ª parcela do 13º quando ela já foi paga (pelo valor informado ou pelo prazo legal). O 13º sobre o aviso que passa do fim do ano agora leva os avos do ano seguinte. `npm test`: 66 casos.
 - Antes do uso com clientes reais, a contabilidade parceira revisa as tabelas e os cálculos (`docs/tabelas.md`).
+
+### Fase 11: Férias (13/10/2026)
+
+- **Situação pelas datas** (`lib/ferias.js`, aplicada no recorte):
+  - o gozo aprovado anda sozinho: programada, em andamento, gozada;
+  - os dias por tirar viram "a vencer" quando faltam menos de 60 dias para o fim do período concessivo, e "vencida" depois dele;
+  - o pedido esperando a Gestão continua esperando.
+- **Lançar › Férias** (também pela ficha e pela linha da tela de Férias): escolhe o período com dias por tirar, o primeiro dia, os dias e a aprovação (aprovadas agora ou esperar em Pendências). A prévia mostra o fim, o aviso e o pagamento.
+- **Regras da CLT** (art. 134, em `regrasDePrazo.js` › `fracionamentoDeFerias`):
+  - até 3 parcelas, uma de 14 dias ou mais e nenhuma abaixo de 5;
+  - os dias que sobram viram um registro novo do mesmo período;
+  - não começa em dia de descanso nem nos 2 dias antes do domingo ou de feriado;
+  - não sobrepõe outras férias nem afastamento.
+  - A confirmação avisa quando o aviso de 30 dias já passou e quando parte das férias cai depois do período (pagamento em dobro, sem valor calculado).
+- **Tela `/ferias`:**
+  - pedidos esperando a Gestão (a mesma lista de Pendências, com Desfazer);
+  - por tirar: vencidas e vencendo em 90 dias, com o dia limite para começar e "Programar";
+  - programadas e em andamento, com o aviso e o pagamento (dia útil anterior);
+  - saldo por pessoa, com o período em aquisição e quando tirar, ou "programadas para…".
+- **Painel Férias** nos indicadores: pessoas com férias vencidas, quadro com férias em dia, vencendo em 90 dias, programadas e de férias hoje, com as séries mês a mês e as pessoas por trás de cada número.
+- O Início leva de "Férias e 13º" para `/ferias`. Fora da demonstração, Férias fica oculta (a planilha não tem férias), e o Lançar só oferece os tipos disponíveis no modo.
+- Testes: `testes/ferias.test.js` (situação, início proibido, prazos, parcelas, sobreposição, dobra e o resumo batendo com a ficha e o painel). `npm test`: 84 casos.
 
 ### Fase 10: Estrutura de indicadores (13/10/2026)
 

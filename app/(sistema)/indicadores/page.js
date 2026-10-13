@@ -94,7 +94,7 @@ export default async function Indicadores({ searchParams }) {
           })}
         </div>
         <p className="nota ind-nota">
-          Férias e 13º, Custos e Benefícios ganham o próprio painel quando os módulos chegarem. Indicadores de saúde são sempre de grupo: com menos de 3 pessoas, ficam ocultos.
+          Custos e Benefícios ganham o próprio painel quando os módulos chegarem. Indicadores de saúde são sempre de grupo: com menos de 3 pessoas, ficam ocultos.
         </p>
       </Wrap>
     </>

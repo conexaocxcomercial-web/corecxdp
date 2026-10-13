@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { createContext, startTransition, useActionState, useContext, useEffect, useRef, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { buscarPessoas, lancar, opcoesParaLancar } from '@/app/acoes';
+import { buscarPessoas, lancar, opcoesParaLancar, periodosParaFerias } from '@/app/acoes';
 import { Caixa, Data, Paragrafo, Selecao, Texto } from '@/componentes/Campos';
 import { Folha } from '@/componentes/Folha';
 import { Icone } from '@/componentes/Icones';
@@ -18,6 +18,7 @@ import {
   TIPOS_DE_OCORRENCIA,
 } from '@/lib/lancamentos';
 import { prazoDaRescisao } from '@/lib/prazos';
+import { motivoParaNaoComecar, prazosDaProgramacao } from '@/lib/ferias';
 import { hojeISO } from '@/lib/formato';
 
 /*
@@ -29,7 +30,7 @@ import { hojeISO } from '@/lib/formato';
  * da ficha, pelos botões das listas e por ?lancar=afastamento&matricula=…
  */
 
-const Contexto = createContext({ abrir() {}, podeLancar: false });
+const Contexto = createContext({ abrir() {}, podeLancar: false, tipos: [] });
 
 export function useLancar() {
   return useContext(Contexto);
@@ -62,7 +63,7 @@ export function ProvedorDoLancar({ tipos, podeLancar, children }) {
   }, [parametros]);
 
   return (
-    <Contexto.Provider value={{ abrir, podeLancar }}>
+    <Contexto.Provider value={{ abrir, podeLancar, tipos }}>
       {children}
       {podeLancar ? (
         <FolhaDoLancar
@@ -92,8 +93,9 @@ export function BotaoLancar() {
 
 /** Um botão que abre o Lançar já num tipo (e, da ficha, já com a pessoa). */
 export function BotaoDeLancar({ tipo, pessoa, rotulo, icone = 'add', variante = 'acao', mini = false }) {
-  const { abrir, podeLancar } = useLancar();
-  if (!podeLancar) return null;
+  const { abrir, podeLancar, tipos } = useLancar();
+  // Sem permissão, ou tipo que não existe neste modo (fora da demonstração): sem botão.
+  if (!podeLancar || (tipo && !tipos.some((item) => item.chave === tipo))) return null;
   return (
     <button
       type="button"
@@ -287,6 +289,7 @@ const FORMULARIOS = {
   movimentacao: CamposDaMovimentacao,
   desligamento: CamposDoDesligamento,
   admissao: CamposDaAdmissao,
+  ferias: CamposDasFerias,
 };
 
 function Formulario({ tipo, pessoa, aoVoltar, aoTrocarPessoa, aoRegistrar }) {
@@ -327,7 +330,7 @@ function Formulario({ tipo, pessoa, aoVoltar, aoTrocarPessoa, aoRegistrar }) {
             </button>
           </p>
         ) : null}
-        <Campos />
+        <Campos pessoa={pessoa} />
       </div>
       {estado?.erro ? (
         <div className="folha-erro">
@@ -526,6 +529,111 @@ function CamposDoDesligamento() {
   );
 }
 
+function CamposDasFerias({ pessoa }) {
+  const [periodos, setPeriodos] = useState(null);
+  const [aviso, setAviso] = useState('');
+  const [escolhido, setEscolhido] = useState('');
+  const [inicio, setInicio] = useState('');
+  const [dias, setDias] = useState('');
+  useEffect(() => {
+    if (!pessoa?.matricula) return;
+    periodosParaFerias(pessoa.matricula).then((resposta) => {
+      setPeriodos(resposta.periodos || []);
+      setAviso(resposta.aviso || '');
+      const primeiro = resposta.periodos?.[0];
+      if (primeiro) {
+        setEscolhido(primeiro.valor);
+        setDias(String(Math.min(primeiro.saldo, 30)));
+      }
+    });
+  }, [pessoa?.matricula]);
+
+  if (periodos === null) return <p className="nota">Lendo os períodos de férias…</p>;
+  if (!periodos.length) {
+    return (
+      <div className="faixa info">
+        <Icone nome="info" />
+        <span>{aviso || 'Esta pessoa não tem dias de férias por tirar num período já completo.'}</span>
+      </div>
+    );
+  }
+
+  const periodo = periodos.find((item) => item.valor === escolhido) || periodos[0];
+  const dataOk = dataCompleta(inicio);
+  const impedimento = dataOk ? motivoParaNaoComecar(inicio) : null;
+  const prazos = dataOk && !impedimento ? prazosDaProgramacao(inicio) : null;
+  const fim = dataOk && Number(dias) > 0 ? somarDias(inicio, dias) : null;
+  const sobram = periodo.saldo - Number(dias || 0);
+
+  return (
+    <>
+      {periodos.length > 1 ? (
+        <Selecao
+          rotulo="Período aquisitivo"
+          nome="periodo"
+          opcoes={periodos}
+          value={periodo.valor}
+          onChange={(evento) => {
+            setEscolhido(evento.target.value);
+            const novo = periodos.find((item) => item.valor === evento.target.value);
+            if (novo) setDias(String(Math.min(novo.saldo, 30)));
+          }}
+        />
+      ) : (
+        <input type="hidden" name="periodo" value={periodo.valor} />
+      )}
+      <p className="nota">
+        {periodo.saldo} dias por tirar deste período, até {emBr(periodo.concessivo_fim)}.
+        {periodo.parcelas ? ` Já há ${periodo.parcelas} ${periodo.parcelas === 1 ? 'parcela programada' : 'parcelas programadas'}.` : ''}
+      </p>
+      {periodo.vencido ? (
+        <div className="faixa alerta">
+          <Icone nome="warning" />
+          <span>Este período já venceu: as férias saem com pagamento em dobro. Programe o quanto antes.</span>
+        </div>
+      ) : null}
+      <div className="folha-duas">
+        <Data rotulo="Primeiro dia" nome="inicio" value={inicio} min={hojeISO()} onChange={(evento) => setInicio(evento.target.value)} required />
+        <Texto
+          rotulo="Dias"
+          nome="dias"
+          type="number"
+          inputMode="numeric"
+          min={5}
+          max={periodo.saldo}
+          value={dias}
+          onChange={(evento) => setDias(evento.target.value)}
+          dica={fim ? `até ${emBr(fim)}` : undefined}
+          required
+        />
+      </div>
+      {impedimento ? (
+        <div className="faixa alerta">
+          <Icone nome="warning" />
+          <span>{impedimento}</span>
+        </div>
+      ) : null}
+      {prazos ? (
+        <p className="nota">
+          Aviso por escrito até <b>{emBr(prazos.aviso)}</b> e pagamento até <b>{emBr(prazos.pagamento)}</b>
+          {prazos.notaDoPagamento ? ` (${prazos.notaDoPagamento}: vale o dia útil anterior)` : ''}. Os dois prazos entram em Pendências.
+        </p>
+      ) : null}
+      {sobram > 0 && Number(dias) >= 5 ? (
+        <p className="nota">Sobram {sobram} dias deste período para outra parcela (até 3 parcelas, uma de 14 dias ou mais).</p>
+      ) : null}
+      <Selecao
+        rotulo="Aprovação"
+        nome="aprovacao"
+        opcoes={[
+          { valor: 'aprovar', texto: 'Aprovadas agora' },
+          { valor: 'esperar', texto: 'Esperar aprovação (fica em Pendências)' },
+        ]}
+      />
+    </>
+  );
+}
+
 function CamposDaAdmissao() {
   const [opcoes, setOpcoes] = useState({ departamentos: [], cnpjs: [], gestores: [], unidadeAtual: null });
   const [contrato, setContrato] = useState(CONTRATOS[0].valor);
@@ -599,6 +707,7 @@ const FEITO = {
   movimentacao: 'Movimentação registrada',
   desligamento: 'Desligamento registrado',
   admissao: 'Admissão registrada',
+  ferias: 'Férias programadas',
 };
 
 function Confirmacao({ feito, tipo, aoFechar, aoLancarOutro }) {
@@ -624,6 +733,29 @@ function Confirmacao({ feito, tipo, aoFechar, aoLancarOutro }) {
         </div>
       ) : null}
       {feito.passaAValer ? <p className="nota">A mudança passa a valer em {feito.passaAValer}; até lá, a ficha mostra o que vale hoje.</p> : null}
+      {feito.ferias ? (
+        <>
+          <p className="nota">
+            De <b>{feito.ferias.de}</b> a <b>{feito.ferias.ate}</b>, com retorno em {feito.ferias.retorno}. Aviso até {feito.ferias.aviso} e pagamento
+            até {feito.ferias.pagamento}
+            {feito.ferias.notaDoPagamento ? ` (${feito.ferias.notaDoPagamento})` : ''}.
+          </p>
+          {feito.ferias.esperando ? <p className="nota">O pedido ficou em Pendências, esperando a aprovação.</p> : null}
+          {feito.ferias.avisoFora ? (
+            <div className="faixa alerta">
+              <Icone nome="warning" />
+              <span>Os 30 dias do aviso já passaram: combine a data com a pessoa e registre o aviso mesmo assim.</span>
+            </div>
+          ) : null}
+          {feito.ferias.emDobro ? (
+            <div className="faixa alerta">
+              <Icone nome="warning" />
+              <span>Parte destas férias cai depois do fim do período para tirar: esses dias saem com pagamento em dobro.</span>
+            </div>
+          ) : null}
+          {feito.ferias.sobram ? <p className="nota">Sobram {feito.ferias.sobram} dias deste período para programar depois.</p> : null}
+        </>
+      ) : null}
       {feito.rescisao ? (
         <p className="nota">
           A rescisão vence em <b>{feito.rescisao.data}</b>

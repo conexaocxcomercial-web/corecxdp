@@ -101,10 +101,10 @@ test('do número à pessoa: o detalhe lista quem está por trás, com a aba cert
   assert.equal(painel(dados, 'nao-existe'), null);
 });
 
-test('demonstração: a central tem os três temas e os números batem com os painéis', () => {
+test('demonstração: a central tem os temas e os números batem com os painéis', () => {
   const recorte = recortar(gerarDemonstracao(HOJE), { cliente: 'teste' });
   const temas = central(recorte, { meses: 12 });
-  assert.deepEqual(temas.map((tema) => tema.chave), ['quadro', 'saude', 'movimentacoes']);
+  assert.deepEqual(temas.map((tema) => tema.chave), ['quadro', 'saude', 'ferias', 'movimentacoes']);
   const quadro = painel(recorte, 'quadro', { meses: 12 });
   assert.equal(temas[0].principal.valor, quadro.indicadores[0].valor);
   assert.equal(quadro.indicadores[0].serie.length, 12);

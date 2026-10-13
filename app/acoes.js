@@ -11,6 +11,8 @@ import { concluirRevisao, conferir, decidir, desfazer } from '@/lib/dados/penden
 import {
   informarCustos,
   lancarAdmissao,
+  lancarFerias,
+  periodosDeFerias,
   lancarAfastamento,
   lancarDesligamento,
   lancarMovimentacao,
@@ -288,6 +290,14 @@ const LANCAMENTOS = {
       motivo: ler(dados, 'motivo'),
       ...lerCustos(dados),
     }),
+  ferias: (dados) =>
+    lancarFerias({
+      matricula: ler(dados, 'matricula'),
+      periodo: ler(dados, 'periodo'),
+      inicio: ler(dados, 'inicio'),
+      dias: ler(dados, 'dias'),
+      aprovadas: ler(dados, 'aprovacao') !== 'esperar',
+    }),
   admissao: (dados) =>
     lancarAdmissao({
       nome: ler(dados, 'nome'),
@@ -353,6 +363,14 @@ export async function informarCustosDaPessoa(_estado, dados) {
     return { ok: true, ...resultado, quando: Date.now() };
   } catch (erro) {
     return { erro: mensagemDeFalha(erro) };
+  }
+}
+
+export async function periodosParaFerias(matricula) {
+  try {
+    return await periodosDeFerias(String(matricula || ''));
+  } catch (erro) {
+    return { periodos: [], aviso: mensagemParaTela(erro, 'Não foi possível ler os períodos de férias agora.') };
   }
 }
 

@@ -96,6 +96,7 @@ export function AcoesRapidas({ pessoa }) {
   const acoes = [
     { tipo: 'afastamento', rotulo: 'Atestado', icone: 'clinical_notes' },
     { tipo: 'ocorrencia', rotulo: 'Ocorrência', icone: 'event_busy' },
+    { tipo: 'ferias', rotulo: 'Férias', icone: 'beach_access' },
     { tipo: 'movimentacao', rotulo: 'Movimentação', icone: 'swap_horiz' },
     // Quem já tem desligamento marcado (aviso trabalhado) não é desligado de novo.
     ...(pessoa.desligamento ? [] : [{ tipo: 'desligamento', rotulo: 'Desligar', icone: 'person_remove' }]),
