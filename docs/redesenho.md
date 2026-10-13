@@ -386,7 +386,11 @@ O que cada fase entregou e o que ficou decidido no caminho, para a fase seguinte
 - **Prévia da entrada redesenhada:** o Início em miniatura (faixa violeta com o quadro, a frase e os números do negócio; "Esperando você" e "Pessoas e contratos" com as pílulas de prazo). `Kpis`/`Kpi` e o CSS congelado saíram.
 - **`/painel` redireciona** para o início de cada perfil na demonstração. Fora dela, o painel continua, porque o Início depende dos dados novos (Supabase).
 - O início da Administração só fica ativo no menu no endereço exato (antes, ficava junto com Parceiros, Clientes e Usuários).
-- A revisão final é a auditoria das telas das fases 10 a 16, logo a seguir.
+- **Revisão final** (auditoria do skill impeccable nas telas das fases 10 a 16):
+  - o detector não acusou nada;
+  - o axe (WCAG 2.1 AA), a rolagem horizontal, os alvos de toque, as fontes e os campos passaram em todas as telas, em 1440px e 375px, claro e escuro. O único aviso é a caixa "Manter conectado", e é falso positivo (o rótulo inteiro é o alvo);
+  - correções do polish: o selo de estimativa foi para o lado do título da seção (`Secao` ganhou `acao`), as abas de Empresa, Administração e Folha ganharam respiro antes do conteúdo, e o seletor de alcance no celular perdeu o separador antes do último nível.
+- **[Roteiro de testes](roteiro-de-testes.md)** para conferir o sistema inteiro, por perfil, com espaço para anotar problemas.
 
 ### Fase 15: Parceiro (13/10/2026)
 

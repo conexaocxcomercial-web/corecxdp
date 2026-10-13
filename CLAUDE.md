@@ -60,7 +60,7 @@ Logins de teste, todos com a senha `demo123`: `teste@gmail.com` e `gestao@demo.t
 | `/exportacoes` | CSV da carteira, dos indicadores e dos colaboradores do cliente (sem CPF, salário nem CID) e páginas para imprimir |
 | `/admin` | Administração: suporte (o que conferir com cada cliente ou parceiro), `/admin/parceiros` (marca e contraste), `/admin/clientes` e `/admin/usuarios`, com "Consultar" (só na demonstração) |
 
-As telas internas ficam em `app/(sistema)/` (layout com barra do topo, menu lateral no computador e barra inferior no celular). Ações de servidor em [app/acoes.js](app/acoes.js). Acesso protegido por [middleware.js](middleware.js), que também passa a rota ao layout (`x-caminho`). O andamento do redesenho e as decisões de cada fase ficam em [docs/redesenho.md](docs/redesenho.md).
+As telas internas ficam em `app/(sistema)/` (layout com barra do topo, menu lateral no computador e barra inferior no celular). Ações de servidor em [app/acoes.js](app/acoes.js). Acesso protegido por [middleware.js](middleware.js), que também passa a rota ao layout (`x-caminho`). O andamento do redesenho e as decisões de cada fase ficam em [docs/redesenho.md](docs/redesenho.md). O passo a passo para conferir tudo, por perfil, está em [docs/roteiro-de-testes.md](docs/roteiro-de-testes.md).
 
 ## Componentes (`componentes/`)
 
