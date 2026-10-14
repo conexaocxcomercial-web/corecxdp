@@ -879,67 +879,10 @@ body {
   /* Lima e lilás somem sobre branco (1,3:1 e 1,6:1). O contorno dá a
      toda barra e ponto de legenda o mesmo limite visível, sem trocar
      a cor da marca — e lembra o ".cx" vazado do logo. */
-  .sb-b,
   .bh-f,
-  .graf-ponto {
+  .graf-ponto,
+  .sl-ponto {
     box-shadow: inset 0 0 0 1px var(--graf-contorno);
-  }
-
-  /* ----------------------------------------------- série temporal */
-  .serie {
-    display: flex;
-    align-items: flex-end;
-    gap: 4px;
-    height: 168px;
-    padding-top: 22px;
-  }
-  /* 40px cabe o rótulo "nov/25" em 12px: 12 meses cabem a partir de
-     ~1200px de janela; abaixo disso a série rola dentro do cartão em
-     vez de sobrepor os rótulos. */
-  .sb {
-    flex: 1 1 0;
-    min-width: 40px;
-    max-width: 76px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 5px;
-  }
-  .sb-b {
-    width: 100%;
-    background: var(--acao);
-    border-radius: 4px 4px 0 0;
-    min-height: 2px;
-  }
-  .sb-n {
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--tinta-2);
-    white-space: nowrap;
-    margin-bottom: 3px;
-  }
-  .sb-x {
-    font-size: 12px;
-    color: var(--tinta-3);
-    white-space: nowrap;
-  }
-  .serie-rolagem {
-    overflow-x: auto;
-    overflow-y: hidden;
-  }
-  .serie-dica {
-    display: none;
-    font-size: 12px;
-    color: var(--tinta-3);
-    margin-top: 9px;
-    text-align: center;
-  }
-  .sb-dupla {
-    display: flex;
-    align-items: flex-end;
-    gap: 3px;
-    width: 100%;
   }
 
   /* ------------------------------------------------------ formulário */
@@ -1231,26 +1174,6 @@ body {
   .tb-l .d:not([data-r])::before,
   .tb-l .c:not([data-r])::before {
     display: none;
-  }
-
-  .serie-rolagem {
-    overflow-x: auto;
-    overflow-y: hidden;
-    margin: 0 -16px;
-    padding: 0 16px;
-    -webkit-overflow-scrolling: touch;
-  }
-  .serie {
-    height: 172px;
-    gap: 6px;
-    min-width: min-content;
-  }
-  .sb {
-    max-width: none;
-    flex: 0 0 48px;
-  }
-  .serie-dica {
-    display: block;
   }
 
   .bh-l {
@@ -5035,4 +4958,196 @@ html.com-folha {
 }
 .wrap > .abas {
   margin-bottom: 28px;
+}
+
+/* --------------------------------------------- gráfico de linha (evolução) */
+
+.sl {
+  margin: 0;
+}
+/* Em destaque, só o último mês e a variação sobre o anterior. */
+.sl-destaque {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  margin-bottom: 16px;
+}
+.sl-dest-r {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--tinta-2);
+}
+.sl-dest-v {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.sl-dest-p {
+  font-size: 13px;
+  color: var(--tinta-2);
+}
+.sl-destaque .numero-var {
+  margin: 0;
+}
+.sl-legenda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 14px;
+  color: var(--tinta-2);
+}
+.sl-legenda li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.sl-legenda b {
+  color: var(--tinta);
+}
+.sl-legenda-ponto {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px var(--graf-contorno);
+}
+.sl-legenda-quando {
+  color: var(--tinta-3);
+}
+.sl-area {
+  position: relative;
+  padding-top: 8px;
+}
+.sl-plot {
+  position: relative;
+}
+/* Grade recessiva: o valor de cima, o do meio e o de baixo do eixo. */
+.sl-grade {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 0;
+  border-top: 1px dashed var(--linha-2);
+}
+.sl-grade-r {
+  position: absolute;
+  left: 0;
+  bottom: 3px;
+  padding-right: 6px;
+  background: var(--papel);
+  font-size: 12px;
+  color: var(--tinta-3);
+  line-height: 1;
+}
+.sl-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.sl-ponto {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  outline: 2px solid var(--papel);
+  pointer-events: none;
+}
+.sl-ponto.ultimo {
+  width: 12px;
+  height: 12px;
+}
+/* Cada mês tem uma coluna de toque, mouse e teclado com a dica do valor. */
+.sl-col {
+  position: absolute;
+  top: -8px;
+  bottom: -8px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: default;
+}
+.sl-col::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  left: 50%;
+  width: 1px;
+  background: var(--linha-3);
+  opacity: 0;
+}
+.sl-col:hover::before,
+.sl-col:focus-visible::before {
+  opacity: 1;
+}
+.sl-col:focus-visible {
+  outline: 2px solid var(--acao);
+  outline-offset: -2px;
+  border-radius: 6px;
+}
+.sl-dica {
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  top: calc(var(--topo) + 8px);
+  display: none;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 10px;
+  border-radius: var(--r-ctrl);
+  background: var(--tinta);
+  color: var(--papel);
+  font-size: 13px;
+  line-height: 1.3;
+  white-space: nowrap;
+  transform: translate(-50%, calc(-100% - 12px));
+  box-shadow: var(--e2);
+  pointer-events: none;
+}
+.sl-dica b {
+  font-weight: 700;
+}
+.sl-col.ini .sl-dica {
+  left: 0;
+  transform: translate(0, calc(-100% - 12px));
+}
+.sl-col.fim .sl-dica {
+  left: auto;
+  right: 0;
+  transform: translate(0, calc(-100% - 12px));
+}
+.sl-col:hover .sl-dica,
+.sl-col:focus-visible .sl-dica,
+.sl-col:active .sl-dica {
+  display: flex;
+}
+.sl-eixo {
+  position: relative;
+  height: 22px;
+  margin-top: 10px;
+}
+.sl-x {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  font-size: 12px;
+  color: var(--tinta-3);
+  white-space: nowrap;
+}
+.sl-aviso {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--tinta-3);
+}
+/* Celular: um mês a cada dois no eixo, sempre o último. */
+@media (max-width: 600px) {
+  .sl-x.so-largo {
+    display: none;
+  }
 }

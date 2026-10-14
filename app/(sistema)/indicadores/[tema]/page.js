@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { filtrosDoEndereco, lerPainel } from '@/lib/dados/indicadores';
 import { mensagemParaTela } from '@/lib/avisos';
-import { casasDoFormato, temaDe } from '@/lib/paineis';
+import { temaDe } from '@/lib/paineis';
 import { Cabecalho, Cartao, Faixa, Numero, Numeros, Secao, Wrap } from '@/componentes/Estrutura';
 import { Seletor } from '@/componentes/Filtros';
 import { Serie } from '@/componentes/Graficos';
@@ -12,8 +12,6 @@ export async function generateMetadata({ params }) {
   const { tema } = await params;
   return { title: temaDe(tema)?.nome || 'Indicadores' };
 }
-
-const SUFIXO = { percentual: '%' };
 
 /**
  * Painel de um tema (fase 10 do redesenho): os números do tema, cada um
@@ -86,7 +84,7 @@ export default async function PainelDoTema({ params, searchParams }) {
             <div className="duas">
               {comSerie.map((item) => (
                 <Cartao key={item.chave} titulo={item.nomeDaSerie}>
-                  <Serie itens={item.serie} casas={casasDoFormato(item.formato)} sufixo={SUFIXO[item.formato] || ''} rotulo={`${item.nome}, mês a mês`} />
+                  <Serie itens={item.serie} formato={item.formato} rotulo={`${item.nomeDaSerie}, mês a mês`} />
                 </Cartao>
               ))}
             </div>

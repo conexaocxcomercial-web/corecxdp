@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { filtrosDoEndereco, lerDetalhe } from '@/lib/dados/indicadores';
 import { mensagemParaTela } from '@/lib/avisos';
-import { casasDoFormato, indicadorDe, temaDe } from '@/lib/paineis';
+import { indicadorDe, temaDe } from '@/lib/paineis';
 import {
   Cabecalho, Cartao, Celula, Faixa, LinhaTabela, Nome, Numero, Numeros, Secao, Tabela, Vazio, Wrap,
 } from '@/componentes/Estrutura';
@@ -15,8 +15,6 @@ export async function generateMetadata({ params }) {
   const { tema, indicador } = await params;
   return { title: indicadorDe(tema, indicador)?.nome || 'Indicador' };
 }
-
-const SUFIXO = { percentual: '%' };
 const GRADE = '1.6fr 1fr 1fr';
 
 /**
@@ -83,7 +81,7 @@ export default async function DetalheDoIndicador({ params, searchParams }) {
         {lido.serie ? (
           <Secao titulo="Mês a mês" nota="o mês atual vai até hoje">
             <Cartao>
-              <Serie itens={lido.serie} casas={casasDoFormato(lido.formato)} sufixo={SUFIXO[lido.formato] || ''} rotulo={`${lido.nome}, mês a mês`} />
+              <Serie itens={lido.serie} formato={lido.formato} rotulo={`${lido.nomeDaSerie}, mês a mês`} />
             </Cartao>
           </Secao>
         ) : null}
@@ -91,7 +89,7 @@ export default async function DetalheDoIndicador({ params, searchParams }) {
         {lido.distribuicao?.length ? (
           <Secao titulo={lido.chave === 'tempo-de-casa' ? 'Por faixa de tempo de casa' : 'Por tipo'}>
             <Cartao>
-              <BarrasH itens={lido.distribuicao} />
+              <BarrasH itens={lido.distribuicao} formato={lido.formatoDaDistribuicao} />
             </Cartao>
           </Secao>
         ) : null}

@@ -104,11 +104,11 @@ export default async function FolhaGerencial({ searchParams }) {
               <Cartao titulo="Composição do custo" descricao="De onde vem cada real do custo estimado.">
                 <BarrasH
                   itens={lido.composicao.map((parte) => ({ rotulo: parte.rotulo, valor: Math.round(parte.valor), sub: porcento(parte.fracao) }))}
-                  formatar={(valor) => emReais(valor)}
+                  formato="reais"
                 />
               </Cartao>
               <Cartao titulo="Custo estimado, mês a mês" descricao="Os últimos 12 meses; o mês atual vai até hoje.">
-                <Serie itens={lido.serie} rotulo="Custo estimado de pessoal, mês a mês" formatar={(valor) => `${Math.round(valor / 1000)} mil`} />
+                <Serie itens={lido.serie} rotulo="Custo estimado de pessoal, mês a mês" formato="reais" />
               </Cartao>
             </div>
 

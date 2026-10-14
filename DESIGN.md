@@ -298,7 +298,7 @@ components:
 
 **Creative North Star: "Papel sobre a mesa"**
 
-O sistema fala a língua dos próprios tokens: uma **mesa** cinza-gelo, folhas de **papel** branco apoiadas nela, **tinta** grafite para o texto e uma **linha** fina para separar. Sobre esse escritório quieto, o violeta da marca (#7371ff) é a única voz de ação: o botão que conclui, o item de menu em que você está, a barra da série, o anel de foco. Tudo o mais é tom de papel e de tinta. A densidade é de ferramenta de trabalho legível com uma mão: corpo em 14px, apoio em 13px, vãos de 12px, seções a 40px uma da outra e tabelas que viram listas no celular sem perder nenhum dado.
+O sistema fala a língua dos próprios tokens: uma **mesa** cinza-gelo, folhas de **papel** branco apoiadas nela, **tinta** grafite para o texto e uma **linha** fina para separar. Sobre esse escritório quieto, o violeta da marca (#7371ff) é a única voz de ação: o botão que conclui, o item de menu em que você está, a linha da evolução mês a mês, o anel de foco. Tudo o mais é tom de papel e de tinta. A densidade é de ferramenta de trabalho legível com uma mão: corpo em 14px, apoio em 13px, vãos de 12px, seções a 40px uma da outra e tabelas que viram listas no celular sem perder nenhum dado.
 
 A paleta inteira são as oito cores obrigatórias da marca, e só elas. Todo tom intermediário sai de `color-mix()` entre essas oito; não existe outro hex no sistema. As situações (pílulas, marcas de gráfico) usam a paleta como código: lima resolve, escura espera, rosa recusa, violeta em curso, lilás férias, neutro encerrado. O tema escuro troca os valores dos tokens e nenhuma classe de componente muda: a mesa vira preto, o papel vira grafite, a tinta vira gelo.
 
@@ -319,7 +319,7 @@ A tela de entrada leva o mesmo mundo para fora do sistema. A coluna do formulár
 Oito cores de marca obrigatórias, organizadas em papéis semânticos (`--mesa`, `--papel`, `--tinta`, `--linha`, `--acao`) que mudam de valor entre os temas claro e escuro.
 
 ### Primary
-- **Violeta de Marca** (violeta): a cor de ação. Fundo do botão principal, do item de menu ativo, da pílula "em curso", das barras de série e de barras horizontais, do quadro marcado da Caixa e do anel de foco (2px, afastado 2px). No palco da entrada é a superfície inteira. Como texto sobre claro dá só 3,8:1, por isso nunca é texto: o texto sobre ele é preto (5,5:1).
+- **Violeta de Marca** (violeta): a cor de ação. Fundo do botão principal, do item de menu ativo, da pílula "em curso", da linha da evolução mês a mês e das barras horizontais, do quadro marcado da Caixa e do anel de foco (2px, afastado 2px). No palco da entrada é a superfície inteira. Como texto sobre claro dá só 3,8:1, por isso nunca é texto: o texto sobre ele é preto (5,5:1).
 - **Violeta Claro de Hover** (acao-forte): violeta misturado 25% com lilás. O hover do botão principal clareia em vez de escurecer, porque escurecer com texto preto derrubaria o contraste para 3,9:1; assim fica em 6,9:1.
 - **Violeta Tinta** (acao-texto): violeta escurecido com 30% de preto, para quando o violeta precisa ser texto ou ícone sobre papel claro (link "Perdeu o acesso?", ícones dos contatos, ícone da faixa informativa). No escuro, esse papel passa ao lilás.
 - **Véu Violeta** (acao-fraco): lilás a 40% sobre branco. Halo de 3px do campo em foco e fundo da faixa informativa. No escuro, violeta a 22% sobre grafite.
@@ -369,7 +369,7 @@ Oito cores de marca obrigatórias, organizadas em papéis semânticos (`--mesa`,
 - **Apoio** (13px, 1,5–1,6, Tinta de Apoio): notas corridas, apoio dos números, dica de campo, cabeçalho de tabela (600) e rótulo das células quando a tabela vira lista. Pílulas também em 13px.
 - **Label** (600, 14px, Tinta Secundária, em frase): rótulo de campo, igual nas telas internas e na entrada.
 - **Campo** (500, 16px): todo campo e seletor, para o iOS não dar zoom.
-- **Miúdo** (12px): só os rótulos dos gráficos de série (valor e mês das barras), a dica do trilho e o grupo do menu lateral, que muda na fase 2.
+- **Miúdo** (12px): só as marcas e os meses do eixo dos gráficos, o aviso de eixo que não começa do zero, a dica do trilho e o grupo do menu lateral.
 
 ### Named Rules
 **The Doze-Pixels Rule.** Nenhum texto abaixo de 12px, em nenhuma tela. O menor tamanho do sistema é 12px, e campos em toque têm 16px.
@@ -380,7 +380,7 @@ Oito cores de marca obrigatórias, organizadas em papéis semânticos (`--mesa`,
 
 Telas internas: barra do topo fixa de 56px (52px em toque) e, abaixo dela, o `Cabecalho` da página, que não é fixo: título e subtítulo à esquerda, ações à direita (em largura total no celular) e a linha de filtros logo abaixo, a 24px. Quando o título grande passa por baixo da barra, ele aparece pequeno na própria barra (ao lado da marca no computador; no lugar dela no celular). Conteúdo num invólucro de no máximo 1280px com respiro lateral de 32px (16px em toque), o mesmo do cabeçalho, que começa 40px abaixo da barra (24px em toque). Seções separadas por 40px (32px em toque), com 16px entre o título e o conteúdo. Grades de números usam `auto-fit` com mínimo de 200px e vão de 12px; grades de duas e três colunas usam vão de 12px e viram uma coluna em toque, com vão de 8px. O cabeçalho fica direto na mesa: ali campo e botão fantasma viram papel e o trilho do segmentado vira linha, porque o `--papel-2` some contra a mesa. O menu lateral é um trilho de 60px que se abre a 248px sobrepondo no hover ou empurra o conteúdo quando fixado; em toque vira gaveta com véu.
 
-Ponto de virada principal: 900px. Abaixo dele, números em duas colunas, tabelas viram listas dentro do cartão (cada linha um bloco com o primeiro campo no alto e os outros em fluxo, com o rótulo vindo de `data-r`), a série temporal rola dentro do cartão em vez de sobrepor rótulos, janelas sobem de baixo e ações na linha e segmentados ganham 44px. Hover de linha só existe em quem tem mouse (`hover: hover`), para não ficar preso no toque.
+Ponto de virada principal: 900px. Abaixo dele, números em duas colunas, tabelas viram listas dentro do cartão (cada linha um bloco com o primeiro campo no alto e os outros em fluxo, com o rótulo vindo de `data-r`), o eixo dos gráficos de linha mostra um mês a cada dois (sempre o último) e nada rola de lado, janelas sobem de baixo e ações na linha e segmentados ganham 44px. Hover de linha só existe em quem tem mouse (`hover: hover`), para não ficar preso no toque.
 
 Entrada: duas colunas no desktop (`minmax(440px, 5fr) 6fr`). A coluna do formulário tem marca no alto, o bloco do formulário com no máximo 380px centralizado na vertical e o rodapé com assinatura e seletor de tema, todos na mesma borda esquerda. O palco violeta fica fixo na altura da janela, com a prévia saindo pela borda inferior e direita. Abaixo de 1280px os perfis perdem o texto de apoio; em telas baixas (até 820px de altura) o palco se compacta. Abaixo de 1024px vale a folha: faixa violeta no alto com marca, frase e perfis numa linha, e o formulário numa folha de papel com cantos de 24px que sobe 20px por cima da faixa, com largura de conteúdo de até 440px.
 
@@ -400,7 +400,7 @@ Profundidade híbrida e discreta: cada sombra combina um difuso suave com um con
 
 ## Shapes
 
-Cantos suaves e consistentes em poucas medidas: 9px nos controles (botões, campos, segmentado), 12px nos cartões, números e faixas, 16px nas janelas, 24px (`--r-folha`) no topo de tudo que sobe de baixo (janela de cadastro e folha da entrada no celular), 14px na prévia, 6px nos miúdos (opção do segmentado, quadro da Caixa, dica do trilho) e pílula inteira (999px) para situação, contador e trilhos de barra. Barras de série arredondam só o topo (4px). Avatares e o botão de sair são círculos. Bordas, quando existem, são de 1px em `--linha`; o quadro da Caixa usa 1,5px em Tinta de Apoio, e os perfis do palco têm um fio de 1,5px em preto no topo.
+Cantos suaves e consistentes em poucas medidas: 9px nos controles (botões, campos, segmentado), 12px nos cartões, números e faixas, 16px nas janelas, 24px (`--r-folha`) no topo de tudo que sobe de baixo (janela de cadastro e folha da entrada no celular), 14px na prévia, 6px nos miúdos (opção do segmentado, quadro da Caixa, dica do trilho) e pílula inteira (999px) para situação, contador e trilhos de barra. Avatares e o botão de sair são círculos. Bordas, quando existem, são de 1px em `--linha`; o quadro da Caixa usa 1,5px em Tinta de Apoio, e os perfis do palco têm um fio de 1,5px em preto no topo.
 
 **The Folha-Que-Sobe Rule.** Em toque, o que se abre por cima sobe de baixo como folha com os cantos de cima arredondados em 24px: a janela de cadastro e a coluna da entrada sobre a faixa violeta.
 
@@ -523,3 +523,13 @@ A troca entre claro e escuro usa view-transition: a tela inteira se dissolve de 
 - **Don't** usar sombra dura ou deslocada; a profundidade é difusa e sempre contornada.
 - **Don't** marcar tom de cartão com tarja lateral colorida. O `Numero` marca o tom com um ponto ao lado do rótulo.
 - **Don't** voltar a títulos de seção, rótulos de campo ou cabeçalhos de tabela em maiúsculas pequenas: o registro denso foi substituído.
+
+### Gráficos
+
+Regras de `componentes/Graficos.jsx`, que valem para todos os gráficos do sistema:
+
+- **Evolução no tempo é linha** (`Serie`), de 2px no violeta (ou na cor de cada série), com pontos de 8px envoltos por um anel do papel e o último mês em 12px. O eixo vertical começa perto do menor valor, com folga, e mostra a nota "O eixo vertical não começa do zero, para a variação aparecer" quando não começa. Quantidades (pessoas, dias) usam marcas inteiras. A grade é recessiva: três fios tracejados em `--linha-2` com as marcas em 12px Tinta Suave.
+- **Só um valor em destaque:** o do último mês, em 24px, com a variação sobre o anterior na pílula de variação. Os outros meses aparecem numa dica escura (tinta sobre papel invertido) ao passar o mouse, tocar ou chegar pelo teclado: cada mês é uma coluna de toque com nome acessível ("out/26: R$ 256 mil").
+- **Comparar categorias é barra horizontal** (`BarrasH`): o rótulo em cima, o trilho de 7px e o valor numa coluna própria à direita, nunca sobre a barra.
+- **Formatação** de `lib/formato.js` › `formatarCurto`: reais curtos ("R$ 241 mil", "R$ 1,2 mi"), percentual com uma casa, fator com duas, quantidades inteiras. Nunca número cru.
+- **Celular:** os meses do eixo saem de dois em dois (sempre o último), a dica não sai da tela e nada rola de lado.
