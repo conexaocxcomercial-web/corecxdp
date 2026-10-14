@@ -4,12 +4,13 @@ import { formatarCurto, variacaoCurta } from '@/lib/formato';
 /*
  * Gráficos do sistema, num lugar só (todos os gráficos se beneficiam):
  *
- * - Evolução no tempo é linha (`Serie`, uma ou mais séries no mesmo eixo).
- *   Em destaque, só o último mês com a variação sobre o anterior; cada mês
- *   tem uma área de toque que mostra o valor ao passar o mouse, tocar ou
- *   chegar pelo teclado. O eixo vertical começa perto do menor valor, com o
- *   aviso de que não começa do zero. No celular, os rótulos do eixo saem de
- *   dois em dois meses e nada rola de lado.
+ * - Evolução no tempo é coluna (`Serie`, uma ou mais séries lado a lado).
+ *   O eixo começa do zero, porque a altura da coluna é o valor. Em
+ *   destaque, só o último mês (a coluna cheia, as outras mais claras) com a
+ *   variação sobre o anterior; cada mês tem uma área de toque que mostra o
+ *   valor ao passar o mouse, tocar ou chegar pelo teclado. Nenhum valor
+ *   escrito sobre as colunas. No celular, os rótulos do eixo saem de dois
+ *   em dois meses e nada rola de lado.
  * - Comparar unidades, departamentos e categorias é barra (`BarrasH`), com o
  *   valor numa coluna própria ao fim da linha, nunca sobre a barra.
  * - Valores sempre formatados (lib/formato.js › formatarCurto): reais curtos,
@@ -23,33 +24,21 @@ export const PALETA = [1, 2, 3, 4, 5, 6, 7].map((n) => `var(--graf-${n})`);
 
 const ALTURA = 150;
 
+/** Os passos redondos do eixo (1; 1,2; 1,5; 2; 2,5; 3; 4; 5; 6; 8, em cada potência de 10). */
+const PASSOS = [1, 1.2, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10];
+
 /**
- * O eixo vertical: perto do menor valor, com folga em cima e embaixo. Começa
- * do zero quando o menor valor já está perto dele (aí não há o que avisar).
+ * O eixo vertical das colunas: do zero até um valor redondo um pouco acima
+ * do maior, em dois passos iguais (o do meio também é redondo). Quantidades
+ * (pessoas, dias, registros) em passos inteiros, com pelo menos 2 de altura.
  */
 function eixo(valores, formato) {
-  const limites = eixoBruto(valores);
-  // Quantidades (pessoas, dias, registros): o eixo em números inteiros, com pelo menos 2 de altura.
-  if (formato === 'numero' || formato === 'dias') {
-    const baixo = Math.floor(limites.baixo);
-    const alto = Math.max(Math.ceil(limites.alto), baixo + 2);
-    return { baixo, alto, naoComecaDoZero: baixo > 0 };
-  }
-  return limites;
-}
-
-function eixoBruto(valores) {
-  const minimo = Math.min(...valores);
-  const maximo = Math.max(...valores);
-  if (minimo === maximo) {
-    const folga = Math.abs(maximo) * 0.1 || 1;
-    const baixo = minimo >= 0 && minimo - folga < 0 ? 0 : minimo - folga;
-    return { baixo, alto: maximo + folga, naoComecaDoZero: baixo > 0 };
-  }
-  const folga = (maximo - minimo) * 0.18;
-  let baixo = minimo - folga;
-  if (minimo >= 0 && (baixo <= 0 || minimo <= (maximo - minimo) * 0.5)) baixo = 0;
-  return { baixo, alto: maximo + folga, naoComecaDoZero: baixo > 0 };
+  const maximo = Math.max(...valores, 0);
+  const meio = maximo > 0 ? (maximo * 1.08) / 2 : 0.5;
+  const potencia = 10 ** Math.floor(Math.log10(meio));
+  let passo = PASSOS.find((item) => item * potencia >= meio) * potencia;
+  if (formato === 'numero' || formato === 'dias') passo = Math.max(1, Math.ceil(passo));
+  return { baixo: 0, alto: passo * 2 };
 }
 
 function SetaDaVariacao({ texto }) {
@@ -64,9 +53,9 @@ function SetaDaVariacao({ texto }) {
 }
 
 /**
- * Evolução mês a mês, em linha. itens: [{ rotulo, valor }] (ou, com
+ * Evolução mês a mês, em colunas. itens: [{ rotulo, valor }] (ou, com
  * `series`, [{ rotulo, [campo]: valor }]). formato: o de formatarCurto.
- * series: [{ campo, nome, cor }] para mais de uma linha no mesmo eixo.
+ * series: [{ campo, nome, cor }] para mais de uma coluna por mês.
  */
 export function Serie({ itens, formato = 'numero', rotulo = 'Evolução mês a mês', cor = 'var(--acao)', series = null }) {
   const linhas = series || [{ campo: 'valor', nome: rotulo, cor }];
@@ -74,9 +63,10 @@ export function Serie({ itens, formato = 'numero', rotulo = 'Evolução mês a m
   if (!n) return <p className="nota">Sem dados no período.</p>;
   const valor = (item, campo) => Number(item[campo]) || 0;
   const todos = itens.flatMap((item) => linhas.map((linha) => valor(item, linha.campo)));
-  const { baixo, alto, naoComecaDoZero } = eixo(todos, formato);
+  const { baixo, alto } = eixo(todos, formato);
   const y = (v) => ALTURA - ((v - baixo) / (alto - baixo || 1)) * ALTURA;
   const x = (indice) => ((indice + 0.5) / n) * 100;
+  const altura = (v) => Math.max(v > 0 ? 2 : 0, ALTURA - y(v));
   const ultimo = itens[n - 1];
   const anterior = itens[n - 2];
   // No celular, com mais de 6 meses, o eixo mostra um mês a cada dois (sempre o último).
@@ -125,30 +115,18 @@ export function Serie({ itens, formato = 'numero', rotulo = 'Evolução mês a m
               <span className="sl-grade-r num">{marca.texto}</span>
             </span>
           ))}
-          <svg className="sl-svg" viewBox={`0 0 100 ${ALTURA}`} preserveAspectRatio="none" aria-hidden="true" focusable="false">
-            {linhas.map((linha) => (
-              <polyline
-                key={linha.campo}
-                points={itens.map((item, indice) => `${x(indice)},${y(valor(item, linha.campo))}`).join(' ')}
-                fill="none"
-                stroke={linha.cor}
-                strokeWidth="2"
-                strokeLinejoin="round"
-                strokeLinecap="round"
-                vectorEffect="non-scaling-stroke"
-              />
-            ))}
-          </svg>
-          {itens.map((item, indice) =>
-            linhas.map((linha) => (
-              <span
-                key={`${linha.campo}-${indice}`}
-                className={`sl-ponto ${indice === n - 1 ? 'ultimo' : ''}`}
-                style={{ left: `${x(indice)}%`, top: y(valor(item, linha.campo)), background: linha.cor }}
-                aria-hidden="true"
-              />
-            ))
-          )}
+          {itens.map((item, indice) => (
+            <span
+              key={item.rotulo}
+              className={`sc-mes ${indice === n - 1 ? 'ultimo' : ''}`}
+              style={{ left: `${(indice / n) * 100}%`, width: `${100 / n}%`, '--series': linhas.length }}
+              aria-hidden="true"
+            >
+              {linhas.map((linha) => (
+                <span key={linha.campo} className="sc-barra" style={{ height: altura(valor(item, linha.campo)), '--cor': linha.cor }} />
+              ))}
+            </span>
+          ))}
           {itens.map((item, indice) => {
             const texto = linhas.map((linha) => `${linhas.length > 1 ? `${linha.nome}: ` : ''}${formatarCurto(valor(item, linha.campo), formato)}`).join(' · ');
             const topo = Math.min(...linhas.map((linha) => y(valor(item, linha.campo))));
@@ -177,12 +155,11 @@ export function Serie({ itens, formato = 'numero', rotulo = 'Evolução mês a m
           ))}
         </div>
       </div>
-      {naoComecaDoZero ? <figcaption className="sl-aviso">O eixo vertical não começa do zero, para a variação aparecer.</figcaption> : null}
     </figure>
   );
 }
 
-/** Duas ou mais séries no mesmo eixo (por exemplo, entradas e saídas). */
+/** Duas ou mais séries lado a lado em cada mês (por exemplo, entradas e saídas). */
 export function SerieDupla({ itens, series, rotulo = 'Evolução mês a mês', formato = 'numero' }) {
   return <Serie itens={itens} series={series} rotulo={rotulo} formato={formato} />;
 }
